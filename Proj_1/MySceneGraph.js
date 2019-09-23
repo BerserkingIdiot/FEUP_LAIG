@@ -227,7 +227,7 @@ class MySceneGraph {
      * @param {view block element} viewsNode
      */
     parseView(viewsNode) {
-        this.onXMLMinorError("To do: Parse views and create cameras.");
+        this.onXMLMinorError("To do: Parse views and create cameras."); //TODO: Parse views and create cameras
 
         return null;
     }
@@ -393,7 +393,7 @@ class MySceneGraph {
     parseTextures(texturesNode) {
 
         //For each texture in textures block, check ID and file URL
-        this.onXMLMinorError("To do: Parse textures.");
+        this.onXMLMinorError("To do: Parse textures."); //TODO: Parse textures
         return null;
     }
 
@@ -427,7 +427,7 @@ class MySceneGraph {
                 return "ID must be unique for each light (conflict: ID = " + materialID + ")";
 
             //Continue here
-            this.onXMLMinorError("To do: Parse materials.");
+            this.onXMLMinorError("To do: Parse materials.");    //TODO: Parse materials
         }
 
         //this.log("Parsed materials");
@@ -477,11 +477,11 @@ class MySceneGraph {
                         transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
                         break;
                     case 'scale':                        
-                        this.onXMLMinorError("To do: Parse scale transformations.");
+                        this.onXMLMinorError("To do: Parse scale transformations.");    //TODO: Parse scale transformations
                         break;
                     case 'rotate':
                         // angle
-                        this.onXMLMinorError("To do: Parse rotate transformations.");
+                        this.onXMLMinorError("To do: Parse rotate transformations.");   //TODO: Parse rotate transformations
                         break;
                 }
             }
@@ -560,7 +560,7 @@ class MySceneGraph {
                 this.primitives[primitiveId] = rect;
             }
             else {
-                console.warn("To do: Parse other primitives.");
+                console.warn("To do: Parse other primitives."); //TODO: Parse other primitives
             }
         }
 
@@ -610,14 +610,14 @@ class MySceneGraph {
             var textureIndex = nodeNames.indexOf("texture");
             var childrenIndex = nodeNames.indexOf("children");
 
-            this.onXMLMinorError("To do: Parse components.");
-            // Transformations
+            this.onXMLMinorError("To do: Parse components.");   //TODO: Parse components
+            // TODO: Component Transformations
 
-            // Materials
+            // TODO: Component Materials
 
-            // Texture
+            // TODO: Component Texture
 
-            // Children
+            // TODO: Component Children
         }
     }
 
@@ -737,7 +737,7 @@ class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        //To do: Create display loop for transversing the scene graph
+        //TODO: Create display loop for transversing the scene graph
 
         //To test the parsing/creation of the primitives, call the display function directly
         this.primitives['demoRectangle'].display();
