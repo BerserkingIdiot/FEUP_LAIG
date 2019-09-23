@@ -612,6 +612,81 @@ class MySceneGraph {
 
                 this.primitives[primitiveId] = triangle;
             }
+            else if (primitiveType = 'cylinder') {
+                // base -> has to be positive
+                var base = this.reader.getFloat(grandChildren[0], 'base');
+                if (!(base != null && !isNaN(base) && base > 0))
+                    return "unable to parse base of the primitive coordinates for ID = " + primitiveId;
+
+                // top -> has to be positive
+                var top = this.reader.getFloat(grandChildren[0], 'top');
+                if (!(top != null && !isNaN(top) && top > 0))
+                    return "unable to parse top of the primitive coordinates for ID = " + primitiveId;
+
+                // height -> has to be positive
+                var height = this.reader.getFloat(grandChildren[0], 'height');
+                if (!(height != null && !isNaN(height) && height > 0))
+                    return "unable to parse height of the primitive coordinates for ID = " + primitiveId;
+
+                // slices -> has to be greater than 2, otherwise it is not a valid object
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices >= 3))
+                    return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+
+                // stacks -> has to be positive
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks > 0))
+                    return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
+                    
+                var cylinder = new MyCylinder(this.scene, primitiveId, base, top , height, slices, stacks);
+
+                this.primitives[primitiveId] = cylinder;
+            }
+            else if (primitiveType = 'sphere') {
+                // radius -> has to be positive
+                var radius = this.reader.getFloat(grandChildren[0], 'radius');
+                if (!(radius != null && !isNaN(radius) && radius > 0))
+                    return "unable to parse radius of the primitive coordinates for ID = " + primitiveId;
+
+                // slices -> has to be greater than 2, otherwise it is not a valid object
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices >= 3)) //FIXME: change slices according to tests
+                    return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+
+                // stacks -> has to be positive
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks > 0)) //FIXME: change stacks according to tests
+                    return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
+
+                var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
+
+                this.primitives[primitiveId] = sphere;
+            }
+            else if (primitiveType = 'torus') {
+                // inner -> has to be positive
+                var inner = this.reader.getFloat(grandChildren[0], 'inner');
+                if (!(inner != null && !isNaN(inner) && inner > 0))
+                    return "unable to parse inner of the primitive coordinates for ID = " + primitiveId;
+
+                // outer -> has to be positive and greater than inner radius
+                var outer = this.reader.getFloat(grandChildren[0], 'outer');
+                if (!(outer != null && !isNaN(outer) && outer > 0 && outer > inner))
+                    return "unable to parse outer of the primitive coordinates for ID = " + primitiveId;
+
+                // slices -> has to be greater than 2, otherwise it is not a valid object
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices >= 3)) //FIXME: change slices according to tests
+                    return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+
+                // stacks -> has to be positive
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks > 0)) //FIXME: change stacks according to tests
+                    return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
+
+                var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, stacks);
+
+                this.primitives[primitiveId] = torus;
+            }
             else {
                 console.warn("To do: Parse other primitives."); //TODO: Parse other primitives
             }
