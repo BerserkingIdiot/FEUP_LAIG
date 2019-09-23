@@ -687,9 +687,6 @@ class MySceneGraph {
 
                 this.primitives[primitiveId] = torus;
             }
-            else {
-                console.warn("To do: Parse other primitives."); //TODO: Parse other primitives
-            }
         }
 
         this.log("Parsed primitives");
