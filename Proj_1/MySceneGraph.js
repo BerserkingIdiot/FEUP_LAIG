@@ -227,8 +227,75 @@ class MySceneGraph {
      * @param {view block element} viewsNode
      */
     parseView(viewsNode) {
-        this.onXMLMinorError("To do: Parse views and create cameras."); //TODO: Parse views and create cameras
+        var children = viewsNode.children;
+        var default_id = this.reader.getString(viewsNode, 'id');
 
+        this.views = [];
+        
+        var grandChildren =[];
+
+
+        //Go through all views
+        for(var i = 0; i < children.length; i++) {
+            if (children[i].nodeName != 'perspective' && children[i].nodeName != 'ortho') {
+                this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
+                continue;
+            }
+
+            // Get id of the current view.
+            var viewId = this.reader.getString(children[i], 'id');
+            if (viewId == null)
+                return "no ID defined for view";
+
+            // Checks for repeated IDs.
+            if (this.views[viewId] != null)
+                return "ID must be unique for each view (conflict: ID = " + viewId + ")";
+
+            // Near clipping distance value
+            var near = this.reader.getFloat(children[i], 'near');
+            // Far clipping distance value
+            var far = this.reader.getFloat(children[i], 'far');
+            
+            if(children[i].nodeName == 'perspective') {
+
+                // FOV angle value
+                var angle = this.reader.getFloat(children[i], 'angle');
+
+                grandChildren = children[i].children;
+
+                //Checking if both 'to' and 'from' properties are defined
+                if (grandChildren.length != 2 ||
+                    !((grandChildren[0].nodeName == 'from' && grandChildren[1].nodeName == 'to') ||
+                      (grandChildren[0].nodeName == 'to' && grandChildren[1].nodeName == 'from'))) {
+                    return "2 properties must be defined (to and from)";
+                }
+
+                // 'to' vector coordinates
+                var to_x, to_y, to_z;
+                // 'from' vector coordinates
+                var from_x, from_y, from_z;
+
+                for(var j = 0; j < grandChildren.length; j++) {
+                    if (grandChildren[j].nodeName == 'to') {
+                        to_x = this.reader.getFloat(grandChildren[j], 'x');
+                        to_y = this.reader.getFloat(grandChildren[j], 'y');
+                        to_z = this.reader.getFloat(grandChildren[j], 'z');
+                    }
+                    else {
+                        from_x = this.reader.getFloat(grandChildren[j], 'x');
+                        from_y = this.reader.getFloat(grandChildren[j], 'y');
+                        from_z = this.reader.getFloat(grandChildren[j], 'z');
+                    }
+                }
+
+                var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from_x, from_y, from_z), vec3.fromValues(to_x, to_y, to_z));
+                this.views[viewId] = perspective;
+            }
+            else {
+                
+            }
+        }
+        
         return null;
     }
 
@@ -515,7 +582,7 @@ class MySceneGraph {
             // Get id of the current primitive.
             var primitiveId = this.reader.getString(children[i], 'id');
             if (primitiveId == null)
-                return "no ID defined for texture";
+                return "no ID defined for primitive";
 
             // Checks for repeated IDs.
             if (this.primitives[primitiveId] != null)
@@ -528,7 +595,7 @@ class MySceneGraph {
                 (grandChildren[0].nodeName != 'rectangle' && grandChildren[0].nodeName != 'triangle' &&
                     grandChildren[0].nodeName != 'cylinder' && grandChildren[0].nodeName != 'sphere' &&
                     grandChildren[0].nodeName != 'torus')) {
-                return "There must be exactly 1 primitive type (rectangle, triangle, cylinder, sphere or torus)"
+                return "There must be exactly 1 primitive type (rectangle, triangle, cylinder, sphere or torus)";
             }
 
             // Specifications for the current primitive.
