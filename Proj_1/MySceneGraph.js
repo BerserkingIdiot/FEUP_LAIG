@@ -263,18 +263,17 @@ class MySceneGraph {
 
                 grandChildren = children[i].children;
 
-                //Checking if both 'to' and 'from' properties are defined
-                if (grandChildren.length != 2 ||
-                    !((grandChildren[0].nodeName == 'from' && grandChildren[1].nodeName == 'to') ||
-                      (grandChildren[0].nodeName == 'to' && grandChildren[1].nodeName == 'from'))) {
+                // Checking if both 'to' and 'from' properties are defined
+                if (grandChildren.length != 2 || toIndex == null || fromIndex == null) {
                     return "2 properties must be defined (to and from)";
                 }
 
-                // 'to' vector coordinates
+                // Target vector coordinates
                 var to_x, to_y, to_z;
-                // 'from' vector coordinates
+                // Source vector coordinates
                 var from_x, from_y, from_z;
 
+                // We accept both properties in any order
                 for(var j = 0; j < grandChildren.length; j++) {
                     if (grandChildren[j].nodeName == 'to') {
                         to_x = this.reader.getFloat(grandChildren[j], 'x');
@@ -292,10 +291,16 @@ class MySceneGraph {
                 this.views[viewId] = perspective;
             }
             else {
-                
+                var left = this.reader.getFloat(children[i], 'left');
+                var right = this.reader.getFloat(children[i], 'right');
+                var top = this.reader.getFloat(children[i], 'top');
+                var bottom = this.reader.getFloat(children[i], 'bottom');
+
+
             }
         }
         
+        //TODO: parse views
         return null;
     }
 
