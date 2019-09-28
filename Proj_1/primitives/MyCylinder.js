@@ -3,10 +3,12 @@
  * @constructor
  */
 class MyCylinder extends CGFobject {
-    constructor(scene, slices, radius, height) {
+    constructor(scene, base, top, height, slices, stacks) {
         super(scene);
         this.slices = slices;
-        this.radius = radius;
+        this.stacks = stacks;
+        this.base = base;
+        this.top = top;
         this.height = height;
         this.initBuffers();
     }
@@ -25,15 +27,15 @@ class MyCylinder extends CGFobject {
             // even if they are shared with others, as the normals 
             // in each face will be different
 
-            var sa=this.radius*Math.sin(ang);
-            var saa=this.radius*Math.sin(ang+alphaAng);
-            var ca=this.radius*Math.cos(ang);
-            var caa=this.radius*Math.cos(ang+alphaAng);
+            var sa=this.base*Math.sin(ang);
+            var saa=this.base*Math.sin(ang+alphaAng);
+            var ca=this.base*Math.cos(ang);
+            var caa=this.base*Math.cos(ang+alphaAng);
 
-            this.vertices.push(ca, 0, -sa);
-            this.vertices.push(ca, this.height, -sa);
-            this.vertices.push(caa, 0, -saa);
-            this.vertices.push(caa, this.height, -saa);
+            this.vertices.push(ca, -sa, 0);
+            this.vertices.push(ca, -sa, this.height);
+            this.vertices.push(caa, -saa, 0);
+            this.vertices.push(caa, -saa, this.height);
 
             var normal1 = [
                 ca,
