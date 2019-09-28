@@ -229,14 +229,14 @@ class MySceneGraph {
     parseView(viewsNode) {
         var children = viewsNode.children;
         var default_id = this.reader.getString(viewsNode, 'id');
-
+        //TODO: understand how to activate a camera
         this.views = [];
 
         var grandChildren = [];
 
-
         //Go through all views
         for (var i = 0; i < children.length; i++) {
+            // Checking if there is an invalid tag
             if (children[i].nodeName != 'perspective' && children[i].nodeName != 'ortho') {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
@@ -248,88 +248,95 @@ class MySceneGraph {
             var viewId = this.reader.getString(children[i], 'id');
             if (viewId == null)
                 return "no ID defined for view";
-
             // Checks for repeated IDs.
             if (this.views[viewId] != null)
                 return "ID must be unique for each view (conflict: ID = " + viewId + ")";
 
             // Near clipping plane distance value
             var near = this.reader.getFloat(children[i], 'near');
+            if (!(near != null && !isNaN(near))) {
+                return "unable to parse near component of the view with ID " + viewId;
+            }
             // Far clipping plane distance value
             var far = this.reader.getFloat(children[i], 'far');
-            // 
+            if (!(far != null && !isNaN(far))) {
+                return "unable to parse far component of the view with ID " + viewId;
+            }
+
+            // Finding to and from properties
             var toIndex = grandChildren.indexOf("to");
             var fromIndex = grandChildren.indexOf("from");
-            // Camera's target vector coordinates
-            var to_x, to_y, to_z;
-            // Camera's position vector coordinates
-            var from_x, from_y, from_z;
+            if (!(toIndex != null && fromIndex != null)) {
+                return "<to> and <from> must be defined as children of view with ID " + viewId;
+            }
 
+            // Camera's target vector coordinates
+            var to = this.parseCoordinates3D(grandChildren[toIndex], "<to> for view ID " + viewId);
+            // Camera's position vector coordinates
+            var from = this.parseCoordinates3D(grandChildren[fromIndex], "<from> for view ID " + viewId);
+            // <to> and <from> are accepted in any order
+
+            // Only perspectives have an angle component
             if (children[i].nodeName == 'perspective') {
                 // FOV angle value
                 var angle = this.reader.getFloat(children[i], 'angle');
-
-                // Checking if both 'to' and 'from' properties are defined
-                if (grandChildren.length != 2 || toIndex == null || fromIndex == null) {
-                    return "2 properties must be defined (to and from)";
+                if (!(angle != null && !isNaN(angle))) {
+                    return "unable to parse angle component of the view with ID " + viewId;
                 }
 
-                // We accept both properties in any order
-                to_x = this.reader.getFloat(grandChildren[toIndex], 'x');
-                to_y = this.reader.getFloat(grandChildren[toIndex], 'y');
-                to_z = this.reader.getFloat(grandChildren[toIndex], 'z');
+                // Checking if there are aditional children
+                if (grandChildren.length != 2) {
+                    this.onXMLMinorError("unknow tag on view ID " + viewId + "'s children");
+                }
 
-                from_x = this.reader.getFloat(grandChildren[fromIndex], 'x');
-                from_y = this.reader.getFloat(grandChildren[fromIndex], 'y');
-                from_z = this.reader.getFloat(grandChildren[fromIndex], 'z');
-
-                var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from_x, from_y, from_z), vec3.fromValues(to_x, to_y, to_z));
+                var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]));
                 this.views[viewId] = perspective;
-            } else {
+            } else { // Orthogonal cameras have more components and an optional <up> child
+                // Left bound of the frustrum
                 var left = this.reader.getFloat(children[i], 'left');
+                if (!(left != null && !isNaN(left))) {
+                    return "unable to parse left component of the view with ID " + viewId;
+                }
+                // Right bound of the frustrum
                 var right = this.reader.getFloat(children[i], 'right');
+                if (!(right != null && !isNaN(right))) {
+                    return "unable to parse right component of the view with ID " + viewId;
+                }
+                // Top bound of the frustrum
                 var top = this.reader.getFloat(children[i], 'top');
+                if (!(top != null && !isNaN(top))) {
+                    return "unable to parse top component of the view with ID " + viewId;
+                }
+                // Bottom bound of the frustrum
                 var bottom = this.reader.getFloat(children[i], 'bottom');
-                var up_x = 0,
-                    up_y = 1,
-                    up_z = 0;
-
+                if (!(bottom != null && !isNaN(bottom))) {
+                    return "unable to parse bottom component of the view with ID " + viewId;
+                }
+                // Up vector default coordinates
+                var up = [0, 1, 0];
                 var upIndex = grandChildren.indexOf("up");
 
-                // Checking if both 'to' and 'from' properties are defined
-                if (toIndex == null || fromIndex == null) {
-                    return "to and from must be defined";
-                }
-                // Checking if there are the right number of properties defined
-                if (grandChildren.length < 2 || grandChildren.length > 3) {
-                    return "there must be at least 2 and at most 3 properties defined (to, from and up)";
+                // Checking if there are aditional tags
+                if (grandChildren.length > 3) {
+                    this.onXMLMinorError("the number of children of view ID " + viewId + " is not correct; ignoring not recognized tags");
                 }
                 // Checking if the third property is 'up'. If it isn't a camera with default 'up' will be created
                 if (grandChildren.length == 3 && upIndex == null) {
-                    this.onXMLMinorError("unknow tag on " + viewId + "'s children. The default value (0,1,0) will be used for up property");
+                    this.onXMLMinorError("unknow tag on " + viewId + "'s children; assuming up = (0, 1, 0)");
                 }
-
-                // We accept the properties in any order
-                to_x = this.reader.getFloat(grandChildren[toIndex], 'x');
-                to_y = this.reader.getFloat(grandChildren[toIndex], 'y');
-                to_z = this.reader.getFloat(grandChildren[toIndex], 'z');
-
-                from_x = this.reader.getFloat(grandChildren[fromIndex], 'x');
-                from_y = this.reader.getFloat(grandChildren[fromIndex], 'y');
-                from_z = this.reader.getFloat(grandChildren[fromIndex], 'z');
-
+                // If there is an up component it is parsed
                 if (upIndex != null) {
-                    up_x = this.reader.getFloat(grandChildren[upIndex], 'x');
-                    up_y = this.reader.getFloat(grandChildren[upIndex], 'y');
-                    up_z = this.reader.getFloat(grandChildren[upIndex], 'z');
+                    up = this.parseCoordinates3D(upIndex, "up component of view with ID " + viewId);
                 }
 
                 var ortho = new CGFcameraOrtho(left, right, bottom, top, near, far,
-                    vec3.fromValues(from_x, from_y, from_z), vec3.fromValues(to_x, to_y, to_z), vec3.fromValues(up_x, up_y, up_z));
+                    vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]), vec3.fromValues(up[0], up[1], up[2]));
                 this.views[viewId] = ortho;
             }
         }
-        //TODO: fix duplicate code
+
+        this.log("Parsed Views");
+
         return null;
     }
 
@@ -953,7 +960,7 @@ class MySceneGraph {
         return color;
     }
 
-    /*
+    /**
      * Callback to be executed on any read error, showing an error on the console.
      * @param {string} message
      */
