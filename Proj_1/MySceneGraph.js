@@ -548,12 +548,38 @@ class MySceneGraph {
 
                         transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
                         break;
-                    case 'scale':                        
-                        this.onXMLMinorError("To do: Parse scale transformations.");    //TODO: Parse scale transformations
+                    case 'scale':
+                        var coordinates = this.parseCoordinates3D(grandChildren[j], "scale transformation for ID " + transformationID);
+                        if (!Array.isArray(coordinates))
+                            return coordinates;
+    
+                        transfMatrix = mat4.scale(transfMatrix, transfMatrix, coordinates);                        
+                        //this.onXMLMinorError("To do: Parse scale transformations.");    //TODO: Parse scale transformations
                         break;
                     case 'rotate':
+                        // axis
+                        var axis = this.reader.getChar(node, 'axis');
+                        if (!(axis != null && !isNaN(axis)))
+                            return "unable to parse axis of the rotate transformation for ID " + transformationID;
+
                         // angle
-                        this.onXMLMinorError("To do: Parse rotate transformations.");   //TODO: Parse rotate transformations
+                        var angle = DEGREE_TO_RAD * this.reader.getFloat(node, 'angle');
+                        if (!(angle != null && !isNaN(angle)))
+                            return "unable to parse angle of the rotate transformation for ID " + transformationID;
+
+                        switch(axis){
+                            case 'x':
+                                transfMatrix = mat4.rotateX(transfMatrix, transfMatrix, angle);
+                                break;
+                            case 'y':
+                                transfMatrix = mat4.rotateY(transfMatrix, transfMatrix, angle);
+                                break;
+                            case 'z':
+                                transfMatrix = mat4.rotateZ(transfMatrix, transfMatrix, angle);
+                                break;
+
+                        }
+                        //this.onXMLMinorError("To do: Parse rotate transformations.");   //TODO: Parse rotate transformations
                         break;
                 }
             }
