@@ -27,7 +27,7 @@ class MySceneGraph {
 
         this.nodes = [];
 
-        this.idRoot = null;                    // The id of the root element.
+        this.idRoot = null; // The id of the root element.
 
         this.axisCoords = [];
         this.axisCoords['x'] = [1, 0, 0];
@@ -231,16 +231,18 @@ class MySceneGraph {
         var default_id = this.reader.getString(viewsNode, 'id');
 
         this.views = [];
-        
-        var grandChildren =[];
+
+        var grandChildren = [];
 
 
         //Go through all views
-        for(var i = 0; i < children.length; i++) {
+        for (var i = 0; i < children.length; i++) {
             if (children[i].nodeName != 'perspective' && children[i].nodeName != 'ortho') {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
+
+            grandChildren = children[i].children;
 
             // Get id of the current view.
             var viewId = this.reader.getString(children[i], 'id');
@@ -251,56 +253,83 @@ class MySceneGraph {
             if (this.views[viewId] != null)
                 return "ID must be unique for each view (conflict: ID = " + viewId + ")";
 
-            // Near clipping distance value
+            // Near clipping plane distance value
             var near = this.reader.getFloat(children[i], 'near');
-            // Far clipping distance value
+            // Far clipping plane distance value
             var far = this.reader.getFloat(children[i], 'far');
-            
-            if(children[i].nodeName == 'perspective') {
+            // 
+            var toIndex = grandChildren.indexOf("to");
+            var fromIndex = grandChildren.indexOf("from");
+            // Camera's target vector coordinates
+            var to_x, to_y, to_z;
+            // Camera's position vector coordinates
+            var from_x, from_y, from_z;
 
+            if (children[i].nodeName == 'perspective') {
                 // FOV angle value
                 var angle = this.reader.getFloat(children[i], 'angle');
-
-                grandChildren = children[i].children;
 
                 // Checking if both 'to' and 'from' properties are defined
                 if (grandChildren.length != 2 || toIndex == null || fromIndex == null) {
                     return "2 properties must be defined (to and from)";
                 }
 
-                // Target vector coordinates
-                var to_x, to_y, to_z;
-                // Source vector coordinates
-                var from_x, from_y, from_z;
-
                 // We accept both properties in any order
-                for(var j = 0; j < grandChildren.length; j++) {
-                    if (grandChildren[j].nodeName == 'to') {
-                        to_x = this.reader.getFloat(grandChildren[j], 'x');
-                        to_y = this.reader.getFloat(grandChildren[j], 'y');
-                        to_z = this.reader.getFloat(grandChildren[j], 'z');
-                    }
-                    else {
-                        from_x = this.reader.getFloat(grandChildren[j], 'x');
-                        from_y = this.reader.getFloat(grandChildren[j], 'y');
-                        from_z = this.reader.getFloat(grandChildren[j], 'z');
-                    }
-                }
+                to_x = this.reader.getFloat(grandChildren[toIndex], 'x');
+                to_y = this.reader.getFloat(grandChildren[toIndex], 'y');
+                to_z = this.reader.getFloat(grandChildren[toIndex], 'z');
+
+                from_x = this.reader.getFloat(grandChildren[fromIndex], 'x');
+                from_y = this.reader.getFloat(grandChildren[fromIndex], 'y');
+                from_z = this.reader.getFloat(grandChildren[fromIndex], 'z');
 
                 var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from_x, from_y, from_z), vec3.fromValues(to_x, to_y, to_z));
                 this.views[viewId] = perspective;
-            }
-            else {
+            } else {
                 var left = this.reader.getFloat(children[i], 'left');
                 var right = this.reader.getFloat(children[i], 'right');
                 var top = this.reader.getFloat(children[i], 'top');
                 var bottom = this.reader.getFloat(children[i], 'bottom');
+                var up_x = 0,
+                    up_y = 1,
+                    up_z = 0;
 
+                var upIndex = grandChildren.indexOf("up");
 
+                // Checking if both 'to' and 'from' properties are defined
+                if (toIndex == null || fromIndex == null) {
+                    return "to and from must be defined";
+                }
+                // Checking if there are the right number of properties defined
+                if (grandChildren.length < 2 || grandChildren.length > 3) {
+                    return "there must be at least 2 and at most 3 properties defined (to, from and up)";
+                }
+                // Checking if the third property is 'up'. If it isn't a camera with default 'up' will be created
+                if (grandChildren.length == 3 && upIndex == null) {
+                    this.onXMLMinorError("unknow tag on " + viewId + "'s children. The default value (0,1,0) will be used for up property");
+                }
+
+                // We accept the properties in any order
+                to_x = this.reader.getFloat(grandChildren[toIndex], 'x');
+                to_y = this.reader.getFloat(grandChildren[toIndex], 'y');
+                to_z = this.reader.getFloat(grandChildren[toIndex], 'z');
+
+                from_x = this.reader.getFloat(grandChildren[fromIndex], 'x');
+                from_y = this.reader.getFloat(grandChildren[fromIndex], 'y');
+                from_z = this.reader.getFloat(grandChildren[fromIndex], 'z');
+
+                if (upIndex != null) {
+                    up_x = this.reader.getFloat(grandChildren[upIndex], 'x');
+                    up_y = this.reader.getFloat(grandChildren[upIndex], 'y');
+                    up_z = this.reader.getFloat(grandChildren[upIndex], 'z');
+                }
+
+                var ortho = new CGFcameraOrtho(left, right, bottom, top, near, far,
+                    vec3.fromValues(from_x, from_y, from_z), vec3.fromValues(to_x, to_y, to_z), vec3.fromValues(up_x, up_y, up_z));
+                this.views[viewId] = ortho;
             }
         }
-        
-        //TODO: parse views
+        //TODO: fix duplicate code
         return null;
     }
 
@@ -365,8 +394,7 @@ class MySceneGraph {
             if (children[i].nodeName != "omni" && children[i].nodeName != "spot") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
-            }
-            else {
+            } else {
                 attributeNames.push(...["location", "ambient", "diffuse", "specular"]);
                 attributeTypes.push(...["position", "color", "color", "color"]);
             }
@@ -413,8 +441,7 @@ class MySceneGraph {
                         return aux;
 
                     global.push(aux);
-                }
-                else
+                } else
                     return "light " + attributeNames[i] + " undefined for ID = " + lightId;
             }
 
@@ -438,8 +465,7 @@ class MySceneGraph {
                         return aux;
 
                     targetLight = aux;
-                }
-                else
+                } else
                     return "light target undefined for ID = " + lightId;
 
                 global.push(...[angle, exponent, targetLight])
@@ -499,7 +525,7 @@ class MySceneGraph {
                 return "ID must be unique for each light (conflict: ID = " + materialID + ")";
 
             //Continue here
-            this.onXMLMinorError("To do: Parse materials.");    //TODO: Parse materials
+            this.onXMLMinorError("To do: Parse materials."); //TODO: Parse materials
         }
 
         //this.log("Parsed materials");
@@ -552,8 +578,8 @@ class MySceneGraph {
                         var coordinates = this.parseCoordinates3D(grandChildren[j], "scale transformation for ID " + transformationID);
                         if (!Array.isArray(coordinates))
                             return coordinates;
-    
-                        transfMatrix = mat4.scale(transfMatrix, transfMatrix, coordinates);                        
+
+                        transfMatrix = mat4.scale(transfMatrix, transfMatrix, coordinates);
                         //this.onXMLMinorError("To do: Parse scale transformations.");    //TODO: Parse scale transformations
                         break;
                     case 'rotate':
@@ -567,7 +593,7 @@ class MySceneGraph {
                         if (!(angle != null && !isNaN(angle)))
                             return "unable to parse angle of the rotate transformation for ID " + transformationID;
 
-                        switch(axis){
+                        switch (axis) {
                             case 'x':
                                 transfMatrix = mat4.rotateX(transfMatrix, transfMatrix, angle);
                                 break;
@@ -657,8 +683,7 @@ class MySceneGraph {
                 var rect = new MyRectangle(this.scene, primitiveId, x1, x2, y1, y2);
 
                 this.primitives[primitiveId] = rect;
-            }
-            else if (primitiveType == 'triangle') {
+            } else if (primitiveType == 'triangle') {
                 // x1
                 var x1 = this.reader.getFloat(grandChildren[0], 'x1');
                 if (!(x1 != null && !isNaN(x1)))
@@ -709,8 +734,7 @@ class MySceneGraph {
                 var triangle = new MyTriangle(this.scene, primitiveId, x1, x2, x3, y1, y2, y3, z1, z2, z3);
 
                 this.primitives[primitiveId] = triangle;
-            }
-            else if (primitiveType = 'cylinder') {
+            } else if (primitiveType = 'cylinder') {
                 // base -> has to be positive
                 var base = this.reader.getFloat(grandChildren[0], 'base');
                 if (!(base != null && !isNaN(base) && base > 0))
@@ -735,12 +759,11 @@ class MySceneGraph {
                 var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
                 if (!(stacks != null && !isNaN(stacks) && stacks > 0))
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
-                    
-                var cylinder = new MyCylinder(this.scene, primitiveId, base, top , height, slices, stacks);
+
+                var cylinder = new MyCylinder(this.scene, primitiveId, base, top, height, slices, stacks);
 
                 this.primitives[primitiveId] = cylinder;
-            }
-            else if (primitiveType = 'sphere') {
+            } else if (primitiveType = 'sphere') {
                 // radius -> has to be positive
                 var radius = this.reader.getFloat(grandChildren[0], 'radius');
                 if (!(radius != null && !isNaN(radius) && radius > 0))
@@ -759,8 +782,7 @@ class MySceneGraph {
                 var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
 
                 this.primitives[primitiveId] = sphere;
-            }
-            else if (primitiveType = 'torus') {
+            } else if (primitiveType = 'torus') {
                 // inner -> has to be positive
                 var inner = this.reader.getFloat(grandChildren[0], 'inner');
                 if (!(inner != null && !isNaN(inner) && inner > 0))
@@ -792,9 +814,9 @@ class MySceneGraph {
     }
 
     /**
-   * Parses the <components> block.
-   * @param {components block element} componentsNode
-   */
+     * Parses the <components> block.
+     * @param {components block element} componentsNode
+     */
     parseComponents(componentsNode) {
         var children = componentsNode.children;
 
@@ -833,7 +855,7 @@ class MySceneGraph {
             var textureIndex = nodeNames.indexOf("texture");
             var childrenIndex = nodeNames.indexOf("children");
 
-            this.onXMLMinorError("To do: Parse components.");   //TODO: Parse components
+            this.onXMLMinorError("To do: Parse components."); //TODO: Parse components
             // TODO: Component Transformations
 
             // TODO: Component Materials
