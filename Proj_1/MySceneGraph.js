@@ -228,11 +228,16 @@ class MySceneGraph {
      */
     parseView(viewsNode) {
         var children = viewsNode.children;
-        var default_id = this.reader.getString(viewsNode, 'id');
+        var default_id = this.reader.getString(viewsNode, 'default');
+        //checking if default_id is a valid string
+        if (default_id == null || typeof default_id !== 'string') {
+            this.onXMLMinorError("unable to set default camera from <views> block; assuming first camera found as default");
+        }
         //TODO: understand how to activate a camera
         this.views = [];
 
         var grandChildren = [];
+        var nodeNames = [];
 
         //Go through all views
         for (var i = 0; i < children.length; i++) {
@@ -243,6 +248,9 @@ class MySceneGraph {
             }
 
             grandChildren = children[i].children;
+            for (var j = 0; j < grandChildren.length; j++){
+                nodeNames.push(grandChildren[j].nodeName);
+            }
 
             // Get id of the current view.
             var viewId = this.reader.getString(children[i], 'id');
@@ -264,8 +272,8 @@ class MySceneGraph {
             }
 
             // Finding to and from properties
-            var toIndex = grandChildren.indexOf("to");
-            var fromIndex = grandChildren.indexOf("from");
+            var toIndex = nodeNames.indexOf("to");
+            var fromIndex = nodeNames.indexOf("from");
             if (!(toIndex != null && fromIndex != null)) {
                 return "<to> and <from> must be defined as children of view with ID " + viewId;
             }
@@ -290,7 +298,6 @@ class MySceneGraph {
                 }
 
                 var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]));
-                this.views[viewId] = perspective;
             } else { // Orthogonal cameras have more components and an optional <up> child
                 // Left bound of the frustrum
                 var left = this.reader.getFloat(children[i], 'left');
@@ -314,7 +321,7 @@ class MySceneGraph {
                 }
                 // Up vector default coordinates
                 var up = [0, 1, 0];
-                var upIndex = grandChildren.indexOf("up");
+                var upIndex = nodeNames.indexOf("up");
 
                 // Checking if there are aditional tags
                 if (grandChildren.length > 3) {
@@ -335,8 +342,12 @@ class MySceneGraph {
             }
         }
 
-        this.log("Parsed Views");
+        // Views is a map, so we have to guarantee that its size isn't zero
+        if(this.views.size == 0){
+            return "at least one view must be defined";
+        }
 
+        this.log("Parsed views");
         return null;
     }
 
@@ -591,12 +602,12 @@ class MySceneGraph {
                         break;
                     case 'rotate':
                         // axis
-                        var axis = this.reader.getChar(node, 'axis');
-                        if (!(axis != null && !isNaN(axis)))
+                        var axis = this.reader.getString(grandChildren[j], 'axis');
+                        if (!(axis != null && typeof axis === 'string'))
                             return "unable to parse axis of the rotate transformation for ID " + transformationID;
 
                         // angle
-                        var angle = DEGREE_TO_RAD * this.reader.getFloat(node, 'angle');
+                        var angle = DEGREE_TO_RAD * this.reader.getFloat(grandChildren[j], 'angle');
                         if (!(angle != null && !isNaN(angle)))
                             return "unable to parse angle of the rotate transformation for ID " + transformationID;
 
@@ -629,7 +640,6 @@ class MySceneGraph {
      */
     parsePrimitives(primitivesNode) {
         var children = primitivesNode.children;
-        console.log("NO. Children = " + children.length);
 
         this.primitives = [];
 
@@ -688,7 +698,6 @@ class MySceneGraph {
                     return "unable to parse y2 of the primitive coordinates for ID = " + primitiveId;
 
                 var rect = new MyRectangle(this.scene, primitiveId, x1, x2, y1, y2);
-
                 this.primitives[primitiveId] = rect;
             } else if (primitiveType == 'triangle') {
                 // x1
@@ -739,7 +748,6 @@ class MySceneGraph {
                 //FIXME: May need some sort of verification z1 > x1
 
                 var triangle = new MyTriangle(this.scene, primitiveId, x1, x2, x3, y1, y2, y3, z1, z2, z3);
-
                 this.primitives[primitiveId] = triangle;
             } else if (primitiveType = 'cylinder') {
                 // base -> has to be positive
@@ -768,7 +776,6 @@ class MySceneGraph {
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
 
                 var cylinder = new MyCylinder(this.scene, primitiveId, base, top, height, slices, stacks);
-
                 this.primitives[primitiveId] = cylinder;
             } else if (primitiveType = 'sphere') {
                 // radius -> has to be positive
@@ -786,9 +793,8 @@ class MySceneGraph {
                 if (!(stacks != null && !isNaN(stacks) && stacks > 0)) //FIXME: change stacks according to tests
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
 
-                var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
-
-                this.primitives[primitiveId] = sphere;
+                // var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
+                // this.primitives[primitiveId] = sphere;
             } else if (primitiveType = 'torus') {
                 // inner -> has to be positive
                 var inner = this.reader.getFloat(grandChildren[0], 'inner');
@@ -810,10 +816,14 @@ class MySceneGraph {
                 if (!(stacks != null && !isNaN(stacks) && stacks > 0)) //FIXME: change stacks according to tests
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
 
-                var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, stacks);
-
-                this.primitives[primitiveId] = torus;
+                // var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, stacks);
+                // this.primitives[primitiveId] = torus;
             }
+        }
+
+        // Primitives is a map, so we have to guarantee that its size isn't zero
+        if(this.primitives.size == 0){
+            return "at least one primitive must be defined";
         }
 
         this.log("Parsed primitives");
@@ -992,6 +1002,6 @@ class MySceneGraph {
         //TODO: Create display loop for transversing the scene graph
 
         //To test the parsing/creation of the primitives, call the display function directly
-        this.primitives['demoTriangle'].display();
+        this.primitives['demoCylinder'].display();
     }
 }
