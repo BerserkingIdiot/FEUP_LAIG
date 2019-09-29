@@ -30,7 +30,7 @@ class MyCylinder extends CGFobject {
         // Radius of each circunference
         var radius = this.base;
         // Each iteration the base radius becomes closer to the top radius by a rate of (top - base)/stacks
-        var delta_r = (this.top - this.base) / this.stacks; //FIXME: different radius dont work
+        var delta_r = (this.top - this.base) / this.stacks;
         // Maximum number of vertices (used to display the last faces, which have to go from the end of the vertices array to the start)
         var max_vertices = this.slices * (this.stacks + 1);
 
@@ -43,9 +43,8 @@ class MyCylinder extends CGFobject {
             // N = [(x, y, z) - (0, 0, z)]; which still has to be normalized
             // When considering the inclination of the faces (due to different base and top radius)
             // N has to be rotated around the x axis, which means its z coordinate will change to
-            // Zn = tg(inclination) * |N| = (base - top) / height * |N|
+            // Nz = tg(inclination) * |N| = (base - top) / height * |N|
             var normal = [x, y, 0];
-            // Changing Zn
             normal[2] = (this.base - this.top) / this.height * this.vectorNorm(normal);
             // Normalizing the vector; this vector is the same for the current side 'edge'
             normal = this.vectorNormalize(normal);
@@ -72,6 +71,7 @@ class MyCylinder extends CGFobject {
             this.normals.push(...normal);
             
             z = 0;
+            radius = this.base;
             alpha += delta_alpha;
         }
 
