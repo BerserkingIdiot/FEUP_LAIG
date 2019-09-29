@@ -30,8 +30,9 @@ class MyCylinder extends CGFobject {
         // Radius of each circunference
         var radius = this.base;
         // Each iteration the base radius becomes closer to the top radius by a rate of (top - base)/stacks
-        var delta_r = (this.top - this.base) / this.stacks;
-        var coordX = 0;
+        var delta_r = (this.top - this.base) / this.stacks; //FIXME: different radius dont work
+        // Maximum number of vertices (used to display the last faces, which have to go from the end of the vertices array to the start)
+        var max_vertices = this.slices * (this.stacks + 1);
 
         for (var i = 0; i < this.slices; i++) {
             // X coordinate of current vertex
@@ -46,12 +47,18 @@ class MyCylinder extends CGFobject {
             var normal = [x, y, 0];
             // Changing Zn
             normal[2] = (this.base - this.top) / this.height * this.vectorNorm(normal);
-            // Normalizig the vector; this vector is the same for the current side 'edge'
+            // Normalizing the vector; this vector is the same for the current side 'edge'
             normal = this.vectorNormalize(normal);
 
             for (var j = 0; j < this.stacks; j++) {
                 this.vertices.push(x, y, z);
                 this.normals.push(...normal);
+                
+                //At each iteration we push indices relative to the face composed by the next vertices
+                this.indices.push (
+                    (this.stacks + 1) * i + 1 + j, (this.stacks + 1) * i + j, ((this.stacks + 1) * (i + 1) + j) % max_vertices,
+                    (this.stacks + 1) * i + 1 + j, ((this.stacks + 1) * (i + 1) + j) % max_vertices, ((this.stacks + 1) * (i + 1) + 1 + j) % max_vertices
+                )
 
                 // At each iteration we go up on the z axis and closer to top radius
                 z += delta_z;
@@ -60,85 +67,15 @@ class MyCylinder extends CGFobject {
                 y = Math.sin(alpha) * radius;
             }
 
-            //TODO: add indices
-
+            //By stopping at j = stacks we miss the last point (the one on the top circunference)
+            this.vertices.push(x, y, z);
+            this.normals.push(...normal);
+            
             z = 0;
             alpha += delta_alpha;
         }
 
-        // for (var i = 0; i < this.slices; i++) {
-        //     // All vertices have to be declared for a given face
-        //     // even if they are shared with others, as the normals 
-        //     // in each face will be different
-
-        //     var sa=this.base*Math.sin(ang);
-        //     var saa=this.base*Math.sin(ang+alphaAng);
-        //     var ca=this.base*Math.cos(ang);
-        //     var caa=this.base*Math.cos(ang+alphaAng);
-
-        //     this.vertices.push(ca, -sa, 0);
-        //     this.vertices.push(ca, -sa, this.height);
-        //     this.vertices.push(caa, -saa, 0);
-        //     this.vertices.push(caa, -saa, this.height);
-
-        //     var normal1 = [
-        //         ca,
-        //         0,
-        //         -sa
-        //     ];
-
-        //     var normal2 = [
-        //         caa,
-        //         0,
-        //         -saa
-        //     ];
-
-        //     // normalization
-        //     var nsize = Math.sqrt(
-        //         normal1[0] * normal1[0] +
-        //         normal1[1] * normal1[1] +
-        //         normal1[2] * normal1[2]
-        //     );
-
-        //     normal1[0] /= nsize;
-        //     normal1[1] /= nsize;
-        //     normal1[2] /= nsize;
-
-        //     nsize = Math.sqrt(
-        //         normal2[0] * normal2[0] +
-        //         normal2[1] * normal2[1] +
-        //         normal2[2] * normal2[2]
-        //     );
-
-        //     normal2[0] /= nsize;
-        //     normal2[1] /= nsize;
-        //     normal2[2] /= nsize;
-
-        //     this.normals.push(...normal1);
-        //     this.normals.push(...normal1);
-        //     this.normals.push(...normal2);
-        //     this.normals.push(...normal2);
-
-        //     //indices
-        //     this.indices.push(
-        //         4 * i, (4 * i + 1), (4 * i + 2),
-        //         (4 * i + 2), (4 * i + 1), 4 * i,
-        //         (4 * i + 1), (4 * i + 3), (4 * i + 2),
-        //         (4 * i + 2), (4 * i + 3), (4 * i + 1),
-        //     );
-
-        //     //texture coords
-        //     this.texCoords.push(
-        //         coordX, 1,
-        //         coordX, 0
-        //     );
-        //     coordX += 1 / this.slices;
-        //     this.texCoords.push(
-        //         coordX, 1,
-        //         coordX, 0
-        //     );
-        //     ang += alphaAng;
-        // }
+        //TODO: texture coords
 
         //Base drawing
         // ang = 0;
@@ -194,9 +131,9 @@ class MyCylinder extends CGFobject {
             return vec;
         } else {
             var norm = this.vectorNorm(vec);
-            vec.forEach(element => {
-                element /= norm; // Every coordinate is divided by the vector norm
-            });
+            vec[0] /= norm;
+            vec[1] /= norm;
+            vec[2] /= norm;
             return vec;
         }
     }
