@@ -533,6 +533,7 @@ class MySceneGraph {
         var children = texturesNode.children;
 
         this.textures = [];
+        var numTextures = 0;
 
         // Any number of textures.
         for (var i = 0; i < children.length; i++) {
@@ -563,16 +564,22 @@ class MySceneGraph {
                 return "invalid file extension for texture ID " + textureID;
             }
             // Checking if file exists
-            var reader = new FileReader();
-            reader.onerror = function(){
-                return "no such file for texture ID" + textureID;
-            };
-            reader.readAsDataURL(new File([""], file));
+            // var reader = new FileReader();
+            // reader.onerror = function(){
+            //     return "no such file for texture ID" + textureID;
+            // };
+            // reader.readAsDataURL(new File([""], file));
 
             var texture = new CGFtexture(this.scene, file);
             this.textures[textureID] = texture;
+
+            numTextures++;
         }
-        //TODO: Parse textures
+
+        if(numTextures == 0){
+            return "at least one texture must be defined";
+        }
+
         return null;
     }
 
