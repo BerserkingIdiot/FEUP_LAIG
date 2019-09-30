@@ -563,13 +563,13 @@ class MySceneGraph {
                 return "invalid file extension for texture ID " + textureID;
             }
             // Checking if file exists
-            // var fileObj = new File(file);
-            // if(!fileObj.exists()){
-            //     return "there is no such file as in texture ID " + textureID;
-            // }
+            var reader = new FileReader();
+            reader.onerror = function(){
+                return "no such file for texture ID" + textureID;
+            };
+            reader.readAsDataURL(new File([""], file));
 
             var texture = new CGFtexture(this.scene, file);
-            console.log("Texture: " + texture);
             this.textures[textureID] = texture;
         }
         //TODO: Parse textures
@@ -644,7 +644,7 @@ class MySceneGraph {
             grandChildren = children[i].children;
             // Specifications for the current transformation.
 
-            var transfMatrix = this.parseSingleTransformation(grandChildren);
+            var transfMatrix = this.parseSingleTransformation(grandChildren, transformationID);
             
             this.transformations[transformationID] = transfMatrix;
         }
@@ -661,6 +661,7 @@ class MySceneGraph {
         var children = primitivesNode.children;
 
         this.primitives = [];
+        var numPrimitives = 0;
 
         var grandChildren = [];
 
@@ -838,10 +839,12 @@ class MySceneGraph {
                 // var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, stacks);
                 // this.primitives[primitiveId] = torus;
             }
+
+            numPrimitives++;
         }
 
-        // Primitives is a map, so we have to guarantee that its size isn't zero
-        if(this.primitives.size == 0){
+        // Checking if at least one primitive was defined
+        if(numPrimitives == 0){
             return "at least one primitive must be defined";
         }
 
@@ -924,7 +927,7 @@ class MySceneGraph {
             var primChildren = [];
 
             grandgrandChildren = grandChildren[childrenIndex];
-            for(var j = 0; grandgrandChildren.length; j++){
+            for(var j = 0; j < grandgrandChildren.length; j++){
                 if(grandgrandChildren[j].nodeName == "componentref")
                     compChildren.push(this.reader.getString(grandgrandChildren[j], 'id'));
                 else if(grandgrandChildren[j].nodeName == "primitiveref")
@@ -1025,7 +1028,7 @@ class MySceneGraph {
         return color;
     }
 
-    parseSingleTransformation(stepList){
+    parseSingleTransformation(stepList, transformationID){
 
         var transfMatrix = mat4.create();
 
