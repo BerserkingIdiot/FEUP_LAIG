@@ -1,3 +1,18 @@
+/**
+ * MyRectangle
+ * @constructor
+ * @param scene - Reference to MyScene object
+ * @param id - ID of the primitive
+ * @param x1 - X coordinate of the first point
+ * @param x2 - X coordinate of the second point
+ * @param x3 - X coordinate of the third point
+ * @param y1 - Y coordinate of the first point
+ * @param y2 - Y coordinate of the second point
+ * @param y3 - Y coordinate of the third point
+ * @param z1 - Z coordinate of the first point
+ * @param z2 - Z coordinate of the second point
+ * @param z3 - Z coordinate of the third point
+ */
 class MyTriangle extends CGFobject {
     constructor(scene, id, x1, x2, x3, y1, y2, y3, z1, z2, z3) {
 		super(scene);
@@ -40,7 +55,7 @@ class MyTriangle extends CGFobject {
             ...norm
         ];
         
-        //TODO: Triangle texture coordinates
+        //TODO: texture coordinates
 		this.texCoords = [
 			0, 1,
 			1, 1,

@@ -1,11 +1,17 @@
 /**
  * MyCylinder
  * @constructor
+ * @param scene - Reference to MyScene object
+ * @param id - ID of the primitive
+ * @param base - Radius of the base (Z = 0)
+ * @param top - Radius of the top (Z = height)
+ * @param height - Size along the positive z axis
+ * @param slices - Number of sections around the circunferences
+ * @param stacks - Number of divisions along the z axis
  */
 class MyCylinder extends CGFobject {
     constructor(scene, id, base, top, height, slices, stacks) {
         super(scene);
-        this.id = id;
         this.base = base;
         this.top = top;
         this.height = height;
