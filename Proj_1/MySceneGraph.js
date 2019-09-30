@@ -953,7 +953,7 @@ class MySceneGraph {
             //this.onXMLMinorError("To do: Parse components."); //: Parse components
 
             // : Component Transformations
-            grandgrandChildren = grandChildren[transformationIndex];
+            grandgrandChildren = grandChildren[transformationIndex].children;
             if(grandgrandChildren.length == 0)
                 var transfMatrix = mat4.create();
             else if(grandgrandChildren[0].nodeName == "transformationref")
@@ -964,25 +964,26 @@ class MySceneGraph {
             // : Component Materials
 
             var materials = [];
-            grandgrandChildren = grandChildren[materialsIndex];
-            for(var j = 0; grandgrandChildren.length; j++) {
+            grandgrandChildren = grandChildren[materialsIndex].children;
+            for(var j = 0; j < grandgrandChildren.length; j++) {
                 materials.push(this.materials[this.reader.getString(grandgrandChildren[j], 'id')]);
             }
 
 
             // : Component Texture
 
-            grandgrandChildren = grandChildren[textureIndex];
-            var texture = this.textures[this.reader.getString(grandgrandChildren, 'id')];
-            var ls = this.reader.getFloat(grandgrandChildren, 'length_s');
-            var lt = this.reader.getFloat(grandgrandChildren, 'length_t');
+            var texture = this.textures[this.reader.getString(grandChildren[textureIndex], 'id')];
+            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s') || 1;
+            console.log("ls = " + ls);
+            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t') || 1;
+            console.log("lt = " + lt);
 
             // : Component Children
 
             var compChildren = [];
             var primChildren = [];
 
-            grandgrandChildren = grandChildren[childrenIndex];
+            grandgrandChildren = grandChildren[childrenIndex].children;
             for(var j = 0; j < grandgrandChildren.length; j++){
                 if(grandgrandChildren[j].nodeName == "componentref")
                     compChildren.push(this.reader.getString(grandgrandChildren[j], 'id'));
