@@ -240,7 +240,7 @@ class MySceneGraph {
             this.onXMLMinorError("unable to set default camera from <views> block; assuming first camera found as default");
             this.defaultCameraId = firstId;
         }
-        //TODO: understand how to activate a camera
+        
         this.views = [];
         var numViews = 0;
 
@@ -974,9 +974,7 @@ class MySceneGraph {
 
             var texture = this.textures[this.reader.getString(grandChildren[textureIndex], 'id')];
             var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s') || 1;
-            console.log("ls = " + ls);
             var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t') || 1;
-            console.log("lt = " + lt);
 
             // : Component Children
 
@@ -1085,6 +1083,7 @@ class MySceneGraph {
         return color;
     }
 
+    //TODO: add documentation to parseSingleTransf
     parseSingleTransformation(stepList, transformationID){
 
         var transfMatrix = mat4.create();
@@ -1161,10 +1160,25 @@ class MySceneGraph {
     }
 
     /**
+     * Processes a node of the scene graph and calls itself recursively on the node's children.
+     * Draws primitives and updates transformation matrices, textures and materials applied.
+     * @param {MyComponent object, which represents a node in the graph} component 
+     */
+    processNode(component) {
+        // Checking if component is a primitive
+        if(this.primitives[component.id] != null) {
+
+        }
+
+        //TODO: diferentiate primitive of component
+    }
+
+    /**
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
         //TODO: Create display loop for transversing the scene graph
+
 
         //To test the parsing/creation of the primitives, call the display function directly
         this.primitives['demoRectangle'].display();
