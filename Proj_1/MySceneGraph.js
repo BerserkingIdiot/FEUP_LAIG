@@ -228,9 +228,14 @@ class MySceneGraph {
      */
     parseView(viewsNode) {
         var children = viewsNode.children;
+        // Checking if there is at least one child
+        if(children.length == 0) {
+            return "at least one view must be defined";
+        }
+
         var firstId = this.reader.getString(children[0], 'id');
         this.defaultCameraId = this.reader.getString(viewsNode, 'default');
-        //checking if this.defaultCameraId is a valid string; otherwise it becomes firstId
+        //checking if defaultCameraId is a valid string; otherwise it becomes firstId
         if (this.defaultCameraId == null) {
             this.onXMLMinorError("unable to set default camera from <views> block; assuming first camera found as default");
             this.defaultCameraId = firstId;
@@ -307,6 +312,7 @@ class MySceneGraph {
                 }
 
                 var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]));
+                this.views[viewId] = perspective;
             } else { // Orthogonal cameras have more components and an optional <up> child
                 // Left bound of the frustrum
                 var left = this.reader.getFloat(children[i], 'left');
@@ -523,9 +529,50 @@ class MySceneGraph {
      * @param {textures block element} texturesNode
      */
     parseTextures(texturesNode) {
-
         //For each texture in textures block, check ID and file URL
-        this.onXMLMinorError("To do: Parse textures."); //TODO: Parse textures
+        var children = texturesNode.children;
+
+        this.textures = [];
+
+        // Any number of textures.
+        for (var i = 0; i < children.length; i++) {
+
+            if (children[i].nodeName != "texture") {
+                this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
+                continue;
+            }
+
+            // Get id of the current texture.
+            var textureID = this.reader.getString(children[i], 'id');
+            if (textureID == null)
+                return "no ID defined for texture";
+
+            // Checks for repeated IDs.
+            if (this.textures[textureID] != null)
+                return "ID must be unique for each texture (conflict: ID = " + textureID + ")";
+
+            // Retrieving file information and checking if it was successful
+            var file = this.reader.getString(children[i], 'file');
+            if(file == null) {
+                return "no file defined for texture ID " + textureID;
+            }
+            // Checking if the file extension is either png or jpg
+            var png = file.match(/\.png$/i);
+            var jpg = file.match(/\.jpg$/i);
+            if(jpg == null && png == null) {
+                return "invalid file extension for texture ID " + textureID;
+            }
+            // Checking if file exists
+            // var fileObj = new File(file);
+            // if(!fileObj.exists()){
+            //     return "there is no such file as in texture ID " + textureID;
+            // }
+
+            var texture = new CGFtexture(this.scene, file);
+            console.log("Texture: " + texture);
+            this.textures[textureID] = texture;
+        }
+        //TODO: Parse textures
         return null;
     }
 
@@ -556,7 +603,7 @@ class MySceneGraph {
 
             // Checks for repeated IDs.
             if (this.materials[materialID] != null)
-                return "ID must be unique for each light (conflict: ID = " + materialID + ")";
+                return "ID must be unique for each material (conflict: ID = " + materialID + ")";
 
             //Continue here
             this.onXMLMinorError("To do: Parse materials."); //TODO: Parse materials
@@ -614,7 +661,6 @@ class MySceneGraph {
                             return coordinates;
 
                         transfMatrix = mat4.scale(transfMatrix, transfMatrix, coordinates);
-                        //this.onXMLMinorError("To do: Parse scale transformations.");    //TODO: Parse scale transformations
                         break;
                     case 'rotate':
                         // axis
@@ -639,7 +685,6 @@ class MySceneGraph {
                                 break;
 
                         }
-                        //this.onXMLMinorError("To do: Parse rotate transformations.");   //TODO: Parse rotate transformations
                         break;
                 }
             }
