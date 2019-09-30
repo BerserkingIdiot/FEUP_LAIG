@@ -228,13 +228,16 @@ class MySceneGraph {
      */
     parseView(viewsNode) {
         var children = viewsNode.children;
-        var default_id = this.reader.getString(viewsNode, 'default');
-        //checking if default_id is a valid string
-        if (default_id == null || typeof default_id !== 'string') {
+        var firstId = this.reader.getString(children[0], 'id');
+        this.defaultCameraId = this.reader.getString(viewsNode, 'default');
+        //checking if this.defaultCameraId is a valid string; otherwise it becomes firstId
+        if (this.defaultCameraId == null) {
             this.onXMLMinorError("unable to set default camera from <views> block; assuming first camera found as default");
+            this.defaultCameraId = firstId;
         }
         //TODO: understand how to activate a camera
         this.views = [];
+        var numViews = 0;
 
         var grandChildren = [];
         var nodeNames = [];
@@ -274,15 +277,21 @@ class MySceneGraph {
             // Finding to and from properties
             var toIndex = nodeNames.indexOf("to");
             var fromIndex = nodeNames.indexOf("from");
-            if (!(toIndex != null && fromIndex != null)) {
+            if (!(toIndex != -1 && fromIndex != -1)) {
                 return "<to> and <from> must be defined as children of view with ID " + viewId;
             }
 
+            // <to> and <from> are accepted in any order
             // Camera's target vector coordinates
             var to = this.parseCoordinates3D(grandChildren[toIndex], "<to> for view ID " + viewId);
+            if(!Array.isArray(to)){
+                return to;
+            }
             // Camera's position vector coordinates
             var from = this.parseCoordinates3D(grandChildren[fromIndex], "<from> for view ID " + viewId);
-            // <to> and <from> are accepted in any order
+            if(!Array.isArray(from)){
+                return from;
+            }
 
             // Only perspectives have an angle component
             if (children[i].nodeName == 'perspective') {
@@ -328,11 +337,11 @@ class MySceneGraph {
                     this.onXMLMinorError("the number of children of view ID " + viewId + " is not correct; ignoring not recognized tags");
                 }
                 // Checking if the third property is 'up'. If it isn't a camera with default 'up' will be created
-                if (grandChildren.length == 3 && upIndex == null) {
+                if (grandChildren.length == 3 && upIndex == -1) {
                     this.onXMLMinorError("unknow tag on " + viewId + "'s children; assuming up = (0, 1, 0)");
                 }
                 // If there is an up component it is parsed
-                if (upIndex != null) {
+                if (upIndex != -1) {
                     up = this.parseCoordinates3D(upIndex, "up component of view with ID " + viewId);
                 }
 
@@ -340,11 +349,18 @@ class MySceneGraph {
                     vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]), vec3.fromValues(up[0], up[1], up[2]));
                 this.views[viewId] = ortho;
             }
+
+            numViews++;
         }
 
         // Views is a map, so we have to guarantee that its size isn't zero
-        if(this.views.size == 0){
+        if(numViews == 0){
             return "at least one view must be defined";
+        }
+        // Checking if default
+        if(this.views[this.defaultCameraId] == null) {
+            this.onXMLMinorError("default camera id does not exist in <views> block; assuming first camera found as default");
+            this.defaultCameraId = firstId;
         }
 
         this.log("Parsed views");
@@ -382,7 +398,7 @@ class MySceneGraph {
         else
             this.background = color;
 
-        this.log("Parsed ambient");
+        this.log("Parsed globals");
 
         return null;
     }
