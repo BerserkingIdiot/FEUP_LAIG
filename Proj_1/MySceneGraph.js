@@ -255,11 +255,6 @@ class MySceneGraph {
                 continue;
             }
 
-            grandChildren = children[i].children;
-            for (var j = 0; j < grandChildren.length; j++){
-                nodeNames.push(grandChildren[j].nodeName);
-            }
-
             // Get id of the current view.
             var viewId = this.reader.getString(children[i], 'id');
             if (viewId == null)
@@ -267,6 +262,11 @@ class MySceneGraph {
             // Checks for repeated IDs.
             if (this.views[viewId] != null)
                 return "ID must be unique for each view (conflict: ID = " + viewId + ")";
+
+            grandChildren = children[i].children;
+            for (var j = 0; j < grandChildren.length; j++){
+                nodeNames.push(grandChildren[j].nodeName);
+            }
 
             // Near clipping plane distance value
             var near = this.reader.getFloat(children[i], 'near');
@@ -311,7 +311,7 @@ class MySceneGraph {
                     this.onXMLMinorError("unknow tag on view ID " + viewId + "'s children");
                 }
 
-                var perspective = new CGFcamera(angle, near, far, vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]));
+                var perspective = new CGFcamera(angle, near, far, vec3.fromValues(...from), vec3.fromValues(...to));
                 this.views[viewId] = perspective;
             } else { // Orthogonal cameras have more components and an optional <up> child
                 // Left bound of the frustrum
@@ -351,8 +351,7 @@ class MySceneGraph {
                     up = this.parseCoordinates3D(upIndex, "up component of view with ID " + viewId);
                 }
 
-                var ortho = new CGFcameraOrtho(left, right, bottom, top, near, far,
-                    vec3.fromValues(from[0], from[1], from[2]), vec3.fromValues(to[0], to[1], to[2]), vec3.fromValues(up[0], up[1], up[2]));
+                var ortho = new CGFcameraOrtho(left, right, bottom, top, near, far, vec3.fromValues(...from), vec3.fromValues(...to), vec3.fromValues(...up));
                 this.views[viewId] = ortho;
             }
 
@@ -591,6 +590,7 @@ class MySceneGraph {
         var children = materialsNode.children;
 
         this.materials = [];
+        var numMaterials = 0;
 
         var grandChildren = [];
         var nodeNames = [];
@@ -612,11 +612,60 @@ class MySceneGraph {
             if (this.materials[materialID] != null)
                 return "ID must be unique for each material (conflict: ID = " + materialID + ")";
 
-            //Continue here
-            this.onXMLMinorError("To do: Parse materials."); //TODO: Parse materials
+            // Flag used to skip to the next iteration of the for loop when an invalid tag is found on this material children
+            var invalidTag = false;
+
+            grandChildren = children[i].children;
+            for(var j = 0; j < grandChildren.length; j++) {
+                var tag = grandChildren[j].nodeName;
+                nodeNames.push(tag);
+                if(tag != 'emission' && tag != 'ambient' && tag != 'diffuse' && tag != 'specular') {
+                    this.onXMLMinorError("unknown tag <" + tag + "> on material ID " + materialID + ";ignoring this material");
+                    invalidTag = true; //An invalid tag was found
+                    break;
+                }
+            }
+
+            if(invalidTag){
+                continue; //Skip this material
+            }
+
+            var shininess = this.reader.getFloat(children[i], 'shininess');
+            if (!(shininess != null && !isNaN(shininess) && shininess > 0))
+                return "unable to parse shininess component of material ID " + materialID;
+
+            // Searching for each component in the grandchildren array
+            var emissionIndex = nodeNames.indexOf('emission');
+            var ambientIndex = nodeNames.indexOf('ambient');
+            var diffuseIndex = nodeNames.indexOf('diffuse');
+            var specularIndex = nodeNames.indexOf('specular');
+            // Checking if all 4 components exist
+            if(emissionIndex == -1 || ambientIndex == -1 || diffuseIndex == -1 || specularIndex == -1) {
+                this.onXMLMinorError("four components (emission, ambient, diffuse, specular) must be defined on material ID " + materialID + ";ignoring this material");
+                continue;
+            }
+            // Getting the actual values of each component
+            var emission = this.parseColor(grandChildren[emissionIndex], "emission tag of material ID " + materialID);
+            var ambient = this.parseColor(grandChildren[ambientIndex], "ambient tag of material ID " + materialID);
+            var diffuse = this.parseColor(grandChildren[diffuseIndex], "diffuse tag of material ID " + materialID);
+            var specular = this.parseColor(grandChildren[specularIndex], "specular tag of material ID " + materialID);
+            // Setting up the new material
+            var material = new CGFappearance(this.scene);
+            material.setShininess(shininess);
+            material.setEmission(...emission);
+            material.setAmbient(...ambient);
+            material.setDiffuse(...diffuse);
+            material.setSpecular(...specular);
+
+            this.materials[materialID] = material;
+            numMaterials++;
         }
 
-        //this.log("Parsed materials");
+        if(numMaterials == 0) {
+            return "at least one material must be defined";
+        }
+
+        this.log("Parsed materials");
         return null;
     }
 
