@@ -1171,6 +1171,25 @@ class MySceneGraph {
         }
 
         //TODO: diferentiate primitive of component
+
+        this.scene.multMatrix(this.components[component].transfMat);
+
+        for(i = 0; i < this.components[component].compChildren.length; i++){
+            //apply material
+            //apply texture
+            this.scene.pushMatrix();
+            processNode(this.components[component].compChildren[i]);
+            this.scene.popMatrix();
+        }
+
+        for(i = 0; i < this.components[component].primChildren.length; i++){
+            //apply material
+            //apply texture
+            this.scene.pushMatrix();
+            this.primitives[this.components[component].primChildren[i]].display; //FIXME: make processNode do this to make it less confusing?
+            this.scene.popMatrix();
+        }
+
     }
 
     /**
@@ -1178,6 +1197,8 @@ class MySceneGraph {
      */
     displayScene() {
         //TODO: Create display loop for transversing the scene graph
+
+
 
         //To test the parsing/creation of the primitives, call the display function directly
         
