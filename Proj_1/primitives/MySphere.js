@@ -33,30 +33,34 @@ class MySphere extends CGFobject
 		var phi_angle = 2*Math.PI/this.slices;
 		var tet_angle = Math.PI/(2*this.stacks);
 
-		for(var phi_inc = 0; phi_inc <= this.slices; ++phi_inc) {
+		for (var phi_inc = 0; phi_inc <= this.slices; ++phi_inc) {
 
-			for(var tet_inc = 0; tet_inc < this.stacks; ++tet_inc) {
-				var x = this.radius*Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc);
-				var y = this.radius*Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc);
-				var z = this.radius*Math.sin(tet_angle*tet_inc);
+			for (var tet_inc = 0; tet_inc < this.stacks; ++tet_inc) {
+				// 3 cartesian coordinates defined using spherical coordinates
+				var x = this.radius * Math.cos(tet_angle * tet_inc) * Math.cos(phi_angle * phi_inc);
+				var y = this.radius * Math.cos(tet_angle * tet_inc) * Math.sin(phi_angle * phi_inc);
+				var z = this.radius * Math.sin(tet_angle * tet_inc);
 
-				this.vertices.push(
-                    this.radius*Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc),
-                    this.radius*Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc), 
-                    this.radius*Math.sin(tet_angle*tet_inc)
-				);
-				// console.log("point: (" + Math.round(x) + ", " + Math.round(y) + ", " + Math.round(z) + ")");
+				// Adding vertices with positive z coordinate
+				this.vertices.push(x,y,z);
 
-				this.normals.push(
-                    Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc), 
-                    Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc), 
-                    Math.sin(tet_angle*tet_inc)
-				);
+				// Positive Z normals
+				this.normals.push(x / this.radius,y / this.radius,z / this.radius);
 				
+				// When tet_inc = 0, the vertices are being placed on the equator, which is common to both +Z and -Z
+				// This way there is no duplication of vertices on the equator
+				if (tet_inc != 0) {
+					// Adding vertices with negative z coordinate (which corresponds to a simetry on xy plane)
+					this.vertices.push(x,y,-z);
+
+					// Negative Z normals
+					this.normals.push(x / this.radius,y / this.radius,- z / this.radius);
+				}
+
 				//TODO: Sphere tex coords
 				// this.texCoords.push(
-                //     ((Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc))+1)/2, 
-                //     1 - ((Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc))+1)/2
+				//     ((Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc))+1)/2, 
+				//     1 - ((Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc))+1)/2
 				// );
 
 				// this.texCoords.push(
@@ -64,34 +68,51 @@ class MySphere extends CGFobject
 				// );
 			}
 		}
+		//Adding poles. This way there is no duplication of vertices on the poles
+		//North pole coordinates and normal vector (before last vertex)
+		this.vertices.push(0, 0, this.radius);
+		this.normals.push(0, 0, 1);
+		//South pole coordinates and normal vector (last vertex)
+		this.vertices.push(0, 0, -this.radius);
+		this.normals.push(0, 0, -1);
 
-		//North pole coordinates and normal vector
-		this.vertices.push(0,0,this.radius);
-		this.normals.push(0,0,1);
-		// for(var i = 0; i < this.slices;)
-		console.log("Last: " + this.vertices[8*3] + "," + this.vertices[8*3+1] + "," + this.vertices[8*3+3]);
-
-		//South pole coordinates and normal vector
-
-		var max_vertices = this.stacks * this.slices + this.stacks;
+		//Calculation for the last vertex index; considers no repetition on equator and on poles
+		var last_vertex = this.stacks * this.slices * 2 - this.slices + this.stacks * 2;
 		for (var i = 0; i < this.slices; ++i) {
+			var line_offset = 2 * this.stacks - 1; //The amount of vertices between each slice start index
+			var north_pole_offset = this.stacks - 2; //Offset that north pole neighbour vertices have because of the lack of repetition on the equator
+
 			var j;
 			for(j = 0; j < this.stacks - 1; ++j) { //The last stack will be the one with a pole. That one is treated differently
+				//-----------------------------------------------------Positive Z indices
+
+				var upper_offset = 2 * j + 1; //Offset of the vertex between the current and the next stacks
+				var lower_offset = (j == 0) ? 0 : (2 * j - 1); //Offset of the vertex between the current and the previous stacks
+
 				this.indices.push(
-					this.stacks * i + j + 1, this.stacks * i + j, (this.stacks * (i + 1) + j),
-					this.stacks * i + j + 1, (this.stacks * (i + 1) + j), (this.stacks * (i + 1) + j + 1)
+					line_offset * i + upper_offset, line_offset * i + lower_offset, line_offset * (i + 1) + lower_offset,
+					line_offset * i + upper_offset, line_offset * (i + 1) + lower_offset, line_offset * (i + 1) + upper_offset
 				);
 
-				console.log("points: (" + (this.stacks * i + j + 1) + ", " + (this.stacks * i + j) + ", " +  (this.stacks * (i + 1) + j) + ")");
-				console.log("points: (" + (this.stacks * i + j + 1) + ", " + (this.stacks * (i + 1) + j) + ", " + (this.stacks * (i + 1) + j + 1) + ")");
+				//-----------------------------------------------------Negative Z indices
+				upper_offset = 2 * j + 2;
+				lower_offset = 2 * j;
+
+				this.indices.push(
+					line_offset * (i + 1) + lower_offset, line_offset * i + lower_offset, line_offset * i + upper_offset,
+					line_offset * (i + 1) + upper_offset, line_offset * (i + 1) + lower_offset, line_offset * i + upper_offset
+				);
 			}
 
-			// Near the pole we only display triangles
+			// Near the poles we only display triangles
+			// Positive Z pole (North pole)
 			this.indices.push(
-				max_vertices, this.stacks * i + j, (this.stacks * (i + 1) + j)
+				last_vertex - 1, line_offset * i + j + north_pole_offset, line_offset * (i + 1) + j + north_pole_offset
 			);
-
-			console.log("points: (" + (this.stacks * this.slices) + ", " + (this.stacks * i + j) + ", " + (this.stacks * (i + 1) + j) +")");
+			// Negative Z pole (South pole)
+			this.indices.push(
+				line_offset * (i + 1) + 2 * j, line_offset * i + 2 * j, last_vertex
+			);
 		}
 
 		this.primitiveType = this.scene.gl.TRIANGLES;
