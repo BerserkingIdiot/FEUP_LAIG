@@ -563,11 +563,10 @@ class MySceneGraph {
                 return "invalid file extension for texture ID " + textureID;
             }
             // Checking if file exists
-            // var reader = new FileReader();
-            // reader.onerror = function(){
-            //     return "no such file for texture ID" + textureID;
-            // };
-            // reader.readAsDataURL(new File([""], file));
+            var reader = new File([""], file);
+            if(reader.fileSize == undefined && reader.size == undefined) {
+                return "file does not exist for texture ID " + textureID;
+            }
 
             var texture = new CGFtexture(this.scene, file);
             this.textures[textureID] = texture;
