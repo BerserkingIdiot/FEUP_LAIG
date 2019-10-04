@@ -958,7 +958,7 @@ class MySceneGraph {
             else if(grandgrandChildren[0].nodeName == "transformationref")
                 var transfMatrix = this.transformations[this.reader.getString(grandgrandChildren[0], 'id')];
             else
-                var transfMatrix = this.parseSingleTransformation(grandgrandChildren);
+                var transfMatrix = this.parseSingleTransformation(grandgrandChildren, componentID);
 
             // : Component Materials
 

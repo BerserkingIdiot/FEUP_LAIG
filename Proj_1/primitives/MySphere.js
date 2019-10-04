@@ -78,9 +78,9 @@ class MySphere extends CGFobject
 
 		//Calculation for the last vertex index; considers no repetition on equator and on poles
 		var last_vertex = this.stacks * this.slices * 2 - this.slices + this.stacks * 2;
+		var line_offset = 2 * this.stacks - 1; //The amount of vertices between each slice start index
+		var north_pole_offset = this.stacks - 2; //Offset that north pole neighbour vertices have because of the lack of repetition on the equator
 		for (var i = 0; i < this.slices; ++i) {
-			var line_offset = 2 * this.stacks - 1; //The amount of vertices between each slice start index
-			var north_pole_offset = this.stacks - 2; //Offset that north pole neighbour vertices have because of the lack of repetition on the equator
 
 			var j;
 			for(j = 0; j < this.stacks - 1; ++j) { //The last stack will be the one with a pole. That one is treated differently
