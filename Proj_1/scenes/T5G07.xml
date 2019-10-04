@@ -178,8 +178,7 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-                <componentref id="mirrorCable" />
-                <componentref id="mirrorSphere" />
+                
             </children>
         </component>
         <component id="mirrorSphere">
@@ -192,8 +191,7 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-                <componentref id="mirrorCable" />
-                <componentref id="mirrorSphere" />
+                
             </children>
         </component>
         

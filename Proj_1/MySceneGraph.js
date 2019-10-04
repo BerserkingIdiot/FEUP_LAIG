@@ -28,6 +28,7 @@ class MySceneGraph {
         this.nodes = [];
 
         this.idRoot = null; // The id of the root element.
+        this.displayOk = null;
 
         this.axisCoords = [];
         this.axisCoords['x'] = [1, 0, 0];
@@ -61,6 +62,7 @@ class MySceneGraph {
         }
 
         this.loadedOk = true;
+        this.displayOk = true;
 
         // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
         this.scene.onGraphLoaded();
@@ -216,7 +218,7 @@ class MySceneGraph {
             this.onXMLMinorError("no axis_length defined for scene; assuming 'length = 1'");
 
         this.referenceLength = axis_length || 1;
-
+        
         this.log("Parsed scene");
 
         return null;
@@ -267,7 +269,6 @@ class MySceneGraph {
             grandChildren = children[i].children;
             for (var j = 0; j < grandChildren.length; j++){
                 nodeNames.push(grandChildren[j].nodeName);
-                console.log("NodeNames:" + grandChildren[j].nodeName);
             }
 
             // Near clipping plane distance value
@@ -346,7 +347,6 @@ class MySceneGraph {
                 // Up vector default coordinates
                 var up = [0, 1, 0];
                 var upIndex = nodeNames.indexOf("up");
-                console.log("UPINDEX :" + upIndex);
 
                 // Checking if there are aditional tags
                 if (grandChildren.length > 3) {
@@ -1235,11 +1235,12 @@ class MySceneGraph {
         }
 
         //If the component has been visited, then there is a loop on the scene graph
-        // if (this.components[component].visited){
-        //     this.onDisplayError("loop ");
-        // }
+        if (this.components[component].visited){
+            this.onDisplayError("loop on scene graph; component ID " + component + " was already visited");
+            return;
+        }
 
-        // this.components[component].visited = true;
+        this.components[component].visited = true;
 
         this.scene.multMatrix(this.components[component].transfMat);
 
@@ -1249,6 +1250,10 @@ class MySceneGraph {
             //apply texture
             this.scene.pushMatrix();
             this.processNode(this.components[component].compChildren[i]);
+            if(!this.displayOk){
+                this.onDisplayError("loop component stack: " + component);
+                return;
+            }
             this.scene.popMatrix();
         }
 
@@ -1261,17 +1266,13 @@ class MySceneGraph {
             this.scene.popMatrix();
         }
 
-        // this.components[component].visited = false;
+        this.components[component].visited = false;
     }
 
     /**
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        //TODO: Create display loop for transversing the scene graph
         this.processNode(this.idRoot);
-
-        //To test the parsing/creation of the primitives, call the display function directly
-        //this.primitives['demoSphere'].display();
     }
 }

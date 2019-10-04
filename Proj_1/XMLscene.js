@@ -132,8 +132,8 @@ class XMLscene extends CGFscene {
             this.lights[i].setVisible(true);
             this.lights[i].enable();
         }
-
-        if (this.sceneInited) {
+        
+        if (this.sceneInited && this.graph.displayOk) {
             // Draw axis
             this.setDefaultAppearance();
 
