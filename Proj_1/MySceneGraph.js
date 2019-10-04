@@ -263,9 +263,11 @@ class MySceneGraph {
             if (this.views[viewId] != null)
                 return "ID must be unique for each view (conflict: ID = " + viewId + ")";
 
+            nodeNames = [];
             grandChildren = children[i].children;
             for (var j = 0; j < grandChildren.length; j++){
                 nodeNames.push(grandChildren[j].nodeName);
+                console.log("NodeNames:" + grandChildren[j].nodeName);
             }
 
             // Near clipping plane distance value
@@ -308,6 +310,9 @@ class MySceneGraph {
                 if (angle >= 180) {
                     this.onXMLMinorError("angle on view ID " + viewId + " is too big; it might cause magical creatures to appear...");
                 }
+                if (angle <= 0) {
+                    this.onXMLMinorError("angle on view ID " + viewId + " is too low; it should be greater than 0...");
+                }
                 angle = angle * Math.PI / 180;
 
                 // Checking if there are aditional children
@@ -341,6 +346,7 @@ class MySceneGraph {
                 // Up vector default coordinates
                 var up = [0, 1, 0];
                 var upIndex = nodeNames.indexOf("up");
+                console.log("UPINDEX :" + upIndex);
 
                 // Checking if there are aditional tags
                 if (grandChildren.length > 3) {
@@ -352,7 +358,10 @@ class MySceneGraph {
                 }
                 // If there is an up component it is parsed
                 if (upIndex != -1) {
-                    up = this.parseCoordinates3D(upIndex, "up component of view with ID " + viewId);
+                    up = this.parseCoordinates3D(grandChildren[upIndex], "up component of view with ID " + viewId);
+                    if(!Array.isArray(up)){
+                        return up;
+                    }
                 }
 
                 var ortho = new CGFcameraOrtho(left, right, bottom, top, near, far, vec3.fromValues(...from), vec3.fromValues(...to), vec3.fromValues(...up));
@@ -882,7 +891,7 @@ class MySceneGraph {
 
                 // outer -> has to be positive and greater than inner radius
                 var outer = this.reader.getFloat(grandChildren[0], 'outer');
-                if (!(outer != null && !isNaN(outer) && outer > 0 && outer > inner))
+                if (!(outer != null && !isNaN(outer) && outer > 0 && outer >= inner))
                     return "unable to parse outer of the primitive properties for ID = " + primitiveId;
 
                 // slices -> has to be greater than 2, otherwise it is not a valid object
@@ -920,22 +929,34 @@ class MySceneGraph {
 
         this.components = [];
 
+        // All ids are put in this array to check if all referenced components do exist
+        var allIDs = [];
         var grandChildren = [];
         var grandgrandChildren = [];
         var nodeNames = [];
 
-        // Any number of components.
         for (var i = 0; i < children.length; i++) {
-
             if (children[i].nodeName != "component") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
 
             // Get id of the current component.
-            var componentID = this.reader.getString(children[i], 'id');
-            if (componentID == null)
+            var currentID = this.reader.getString(children[i], 'id');
+            if (currentID == null)
                 return "no ID defined for componentID";
+            allIDs[i] = currentID;
+        }
+
+        // Any number of components.
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].nodeName != "component") {
+                this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
+                continue;
+            }
+
+            // Get id from the auxiliar array.
+            var componentID = allIDs[i];
 
             // Checks for repeated IDs.
             if (this.components[componentID] != null)
@@ -953,58 +974,78 @@ class MySceneGraph {
             var textureIndex = nodeNames.indexOf("texture");
             var childrenIndex = nodeNames.indexOf("children");
 
-            //this.onXMLMinorError("To do: Parse components."); //: Parse components
-
             // : Component Transformations
+            var transfMatrix;
             grandgrandChildren = grandChildren[transformationIndex].children;
             if(grandgrandChildren.length == 0)
-                var transfMatrix = mat4.create();
+                transfMatrix = mat4.create();
             else if(grandgrandChildren[0].nodeName == "transformationref"){
                 var transRefID = this.reader.getString(grandgrandChildren[0], 'id');
                 if(transRefID == null)
                     return "unable to parse transformation id of component ID " + componentID;
-                var transfMatrix = this.transformations[transRefID];
+                transfMatrix = this.transformations[transRefID];
                 if(transfMatrix == null){
-                    return "no such transformation on transformation id of component ID " + componentID;
+                    return "no such transformation with ID " + transRefID + " for component ID " + componentID;
                 }
                 if(grandgrandChildren.length > 1)
                     this.onXMLMinorError("Multiple transformations declared and/or referred on " + componentID + "; defaulting to first referred transformation.");
             }
             else
-                var transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
+                transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
 
             // : Component Materials
-
             var materials = [];
             grandgrandChildren = grandChildren[materialsIndex].children;
             for(var j = 0; j < grandgrandChildren.length; j++) {
                 materials.push(this.materials[this.reader.getString(grandgrandChildren[j], 'id')]);
             }
 
-
             // : Component Texture
-
-            var texture = this.textures[this.reader.getString(grandChildren[textureIndex], 'id')];
+            var textureID = this.reader.getString(grandChildren[textureIndex], 'id');
+            if (textureID == null)
+                return "unable to parse texture id of component ID " + componentID;
+            var texture = this.textures[textureID]; //FIXME: shouldnt textures and transformations
+            if (texture == null) {
+                return "no such texture with ID " + textureID + " for component ID " + componentID;
+            }
             var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false) || 1;
             var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false) || 1;
 
             // : Component Children
-
             var compChildren = [];
             var primChildren = [];
 
             grandgrandChildren = grandChildren[childrenIndex].children;
             for(var j = 0; j < grandgrandChildren.length; j++){
-                if(grandgrandChildren[j].nodeName == "componentref")
-                    compChildren.push(this.reader.getString(grandgrandChildren[j], 'id'));
-                else if(grandgrandChildren[j].nodeName == "primitiveref")
-                    primChildren.push(this.reader.getString(grandgrandChildren[j], 'id'));
+                if(grandgrandChildren[j].nodeName == "componentref") {
+                    var compRef = this.reader.getString(grandgrandChildren[j], 'id');
+                    if(compRef == null) {
+                        return "unable to parse componentref id of component ID " + componentID;
+                    }
+                    if(allIDs.indexOf(compRef) == -1){
+                        return "no such component with ID " + compRef + " for component ID " + componentID;
+                    }
+                    compChildren.push(compRef);
+                }
+                else if(grandgrandChildren[j].nodeName == "primitiveref") {
+                    var primRef = this.reader.getString(grandgrandChildren[j], 'id');
+                    if(primRef == null) {
+                        return "unable to parse primitiveref id of component ID " + componentID;
+                    }
+                    if(this.primitives[primRef] == null){
+                        return "no such primitive with ID " + primRef + " for component ID " + componentID;
+                    }
+                    primChildren.push(primRef);
+                }
                 else
                     this.onXMLMinorError("component children must be componentref or primitiveref");
             }
 
             this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, texture, compChildren, primChildren, ls, lt);
+        }
 
+        if(this.components[this.idRoot] == null){
+            return "root component ID " + this.idRoot + " not defined";
         }
     }
 
@@ -1159,6 +1200,15 @@ class MySceneGraph {
     }
 
     /**
+     * Callback to be executed on any displaying error, showing an error on the console.
+     * @param {string} message
+     */
+    onDisplayError(message) {
+        console.error("Display Error: " + message);
+        this.displayOk = false;
+    }
+
+    /**
      * Callback to be executed on any minor error, showing a warning on the console.
      * @param {string} message
      */
@@ -1182,13 +1232,18 @@ class MySceneGraph {
     processNode(component) {
         // Checking if component is a primitive
         if(this.primitives[component.id] != null) {
-
         }
 
-        //TODO: diferentiate primitive of component
+        //If the component has been visited, then there is a loop on the scene graph
+        // if (this.components[component].visited){
+        //     this.onDisplayError("loop ");
+        // }
+
+        // this.components[component].visited = true;
 
         this.scene.multMatrix(this.components[component].transfMat);
 
+        //compChildren is a list of ID's
         for(var i = 0; i < this.components[component].compChildren.length; i++){
             //apply material
             //apply texture
@@ -1197,6 +1252,7 @@ class MySceneGraph {
             this.scene.popMatrix();
         }
 
+        //primChildren is a list of ID's
         for(var i = 0; i < this.components[component].primChildren.length; i++){
             //apply material
             //apply texture
@@ -1205,6 +1261,7 @@ class MySceneGraph {
             this.scene.popMatrix();
         }
 
+        // this.components[component].visited = false;
     }
 
     /**

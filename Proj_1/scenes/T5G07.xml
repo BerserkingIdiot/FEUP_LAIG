@@ -1,11 +1,16 @@
 <lxs>
-    <scene root="root" axis_length="5"/>
+    <scene root="scene" axis_length="5"/>
 
     <views default="startingCamera">
         <perspective id="startingCamera" near="0.1" far="50" angle="40">
             <from x="20" y="15" z="20" />
             <to x="0" y="0" z="0" />
         </perspective>
+        <ortho id="orthoCamera" near="0.1" far="500" left="50" right="50" top="50" bottom="50" >
+            <from x="30" y="30" z="30" />
+            <to x="0" y="0" z="0" />
+            <up x="0" y="1" z="0" />
+        </ortho>
     </views>
 
     <globals>
@@ -72,7 +77,7 @@
     </primitives>
 
     <components>
-        <component id="root">
+        <component id="scene">
             <transformation>
                 <!-- <translate x="0" y="0" z="1" />
                 <scale x="2" y="1" z="1" /> -->
@@ -173,7 +178,8 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-                
+                <componentref id="mirrorCable" />
+                <componentref id="mirrorSphere" />
             </children>
         </component>
         <component id="mirrorSphere">
@@ -186,7 +192,8 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-                
+                <componentref id="mirrorCable" />
+                <componentref id="mirrorSphere" />
             </children>
         </component>
         
