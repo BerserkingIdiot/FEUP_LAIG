@@ -1186,7 +1186,7 @@ class MySceneGraph {
             //apply material
             //apply texture
             this.scene.pushMatrix();
-            this.primitives[this.components[component].primChildren[i]].display; //FIXME: make processNode do this to make it less confusing?
+            this.primitives[this.components[component].primChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
             this.scene.popMatrix();
         }
 
