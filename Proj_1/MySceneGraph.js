@@ -305,6 +305,10 @@ class MySceneGraph {
                 if (!(angle != null && !isNaN(angle))) {
                     return "unable to parse angle component of the view with ID " + viewId;
                 }
+                if (angle >= 180) {
+                    this.onXMLMinorError("angle on view ID " + viewId + " is too big; it might cause magical creatures to appear...");
+                }
+                angle = angle * Math.PI / 180;
 
                 // Checking if there are aditional children
                 if (grandChildren.length != 2) {
@@ -956,12 +960,18 @@ class MySceneGraph {
             if(grandgrandChildren.length == 0)
                 var transfMatrix = mat4.create();
             else if(grandgrandChildren[0].nodeName == "transformationref"){
-                var transfMatrix = this.transformations[this.reader.getString(grandgrandChildren[0], 'id')];
+                var transRefID = this.reader.getString(grandgrandChildren[0], 'id');
+                if(transRefID == null)
+                    return "unable to parse transformation id of component ID " + componentID;
+                var transfMatrix = this.transformations[transRefID];
+                if(transfMatrix == null){
+                    return "no such transformation on transformation id of component ID " + componentID;
+                }
                 if(grandgrandChildren.length > 1)
                     this.onXMLMinorError("Multiple transformations declared and/or referred on " + componentID + "; defaulting to first referred transformation.");
             }
             else
-                var transfMatrix = this.parseSingleTransformation(grandgrandChildren, componentID);
+                var transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
 
             // : Component Materials
 
@@ -1104,6 +1114,9 @@ class MySceneGraph {
                     if (!Array.isArray(coordinates))
                         return coordinates;
 
+                    if(coordinates[0] == 0 || coordinates[1] == 0 || coordinates[2] == 0)
+                        this.onXMLMinorError("0 scale has been made on transformation ID " + transformationID + "; objects might disappear");
+            
                     transfMatrix = mat4.scale(transfMatrix, transfMatrix, coordinates);
                     break;
                 case 'rotate':
@@ -1180,7 +1193,7 @@ class MySceneGraph {
             //apply material
             //apply texture
             this.scene.pushMatrix();
-            processNode(this.components[component].compChildren[i]);
+            this.processNode(this.components[component].compChildren[i]);
             this.scene.popMatrix();
         }
 
@@ -1199,11 +1212,9 @@ class MySceneGraph {
      */
     displayScene() {
         //TODO: Create display loop for transversing the scene graph
-
         this.processNode(this.idRoot);
 
         //To test the parsing/creation of the primitives, call the display function directly
-        
         //this.primitives['demoSphere'].display();
     }
 }

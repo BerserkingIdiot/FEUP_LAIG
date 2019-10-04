@@ -1,10 +1,10 @@
 <lxs>
-    <scene root="demoRoot" axis_length="5"/>
+    <scene root="root" axis_length="5"/>
 
-    <views default="defaultCamera">
-        <perspective id="defaultCamera" near="0.1" far="500" angle="45">
-            <from x="30" y="15" z="30" />
-            <to x="0" y="-2" z="0" />
+    <views default="startingCamera">
+        <perspective id="startingCamera" near="0.1" far="50" angle="40">
+            <from x="20" y="15" z="20" />
+            <to x="0" y="0" z="0" />
         </perspective>
     </views>
 
@@ -41,11 +41,16 @@
             <rotate axis="x" angle="-45" />
             <rotate axis="z" angle="-45" />
         </transformation>
+        <transformation id="buoyTransf">
+            <translate x="0.2" y="7" z="5" />
+            <rotate axis="y" angle="90" />
+            <scale x="0.5" y="0.5" z="0.5" />
+        </transformation>
     </transformations>
 
     <primitives>
-        <primitive id="demoRectangle">
-            <rectangle x1="-0.5" y1="-1" x2="0.5" y2="1" />
+        <primitive id="bigSquare">
+            <rectangle x1="0" y1="0" x2="10" y2="10" />
         </primitive>
         <primitive id="demoCylinder">
             <cylinder base="2" top="1" height="3" slices="12" stacks="12" />
@@ -58,13 +63,16 @@
         <primitive id="demoSphere">
             <sphere radius="2" slices="40" stacks="40" />
         </primitive>
-        <primitive id="demoTorus">
-            <torus inner="2" outer="5" slices="40" loops="40" />
+        <primitive id="buoy">
+            <torus inner="1" outer="2" slices="40" loops="40" />
+        </primitive>
+        <primitive id="thinCylinder">
+            <cylinder base="0.1" top="0.1" height="2" slices="10" stacks="10" />
         </primitive>
     </primitives>
 
     <components>
-        <component id="demoRoot">
+        <component id="root">
             <transformation>
                 <!-- <translate x="0" y="0" z="1" />
                 <scale x="2" y="1" z="1" /> -->
@@ -74,8 +82,113 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-                <primitiveref id="demoTorus" />
+                <componentref id="roomBox" />
+                <componentref id="lifeguardBuoy" />
+                <componentref id="mirrorBall" />
             </children>
         </component>
+        <component id="roomBox">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="wallXY" />
+                <componentref id="wallYZ" />
+                <componentref id="floor" />
+            </children>
+        </component>
+        <component id="floor">
+            <transformation>
+                <translate x="0" y="0" z="10" />
+                <rotate axis="x" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="bigSquare" />
+            </children>
+        </component>
+        <component id="wallXY">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="bigSquare" />
+            </children>
+        </component>
+        <component id="wallYZ">
+            <transformation>
+                <translate x="0" y="0" z="10" />
+                <rotate axis="y" angle="90" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="bigSquare" />
+            </children>
+        </component>
+        <component id="lifeguardBuoy">
+            <transformation>
+                <transformationref id="buoyTransf" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="buoy" />
+            </children>
+        </component>
+        <component id="mirrorBall">
+            <transformation>
+                <translate x="5" y="8" z="5" />
+                <rotate axis="x" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="mirrorCable" />
+                <componentref id="mirrorSphere" />
+            </children>
+        </component>
+        <component id="mirrorCable">
+            <transformation>
+                <translate x="5" y="8" z="5" />
+                <rotate axis="x" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                
+            </children>
+        </component>
+        <component id="mirrorSphere">
+            <transformation>
+                <translate x="5" y="8" z="5" />
+                <rotate axis="x" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                
+            </children>
+        </component>
+        
     </components>
 </lxs>

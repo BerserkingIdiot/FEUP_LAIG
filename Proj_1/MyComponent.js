@@ -22,6 +22,7 @@ class MyComponent extends CGFobject{
         this.primChildren = primChildren;
         this.lengthS = ls;
         this.lengthT = lt;
+        this.visited = false;
     }
 
 }

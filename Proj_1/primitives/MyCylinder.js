@@ -65,8 +65,6 @@ class MyCylinder extends CGFobject {
                         lineOffset * i + 1 + j, lineOffset * i + j, lineOffset * (i + 1) + j,
                         lineOffset * i + 1 + j, lineOffset * (i + 1) + j, lineOffset * (i + 1) + 1 + j
                     );
-                    console.log("Inidice: (" +  (lineOffset * i + 1 + j) + "," + (lineOffset * i + j) + "," + (lineOffset * (i + 1) + j) + ")");
-                    console.log("Inidice: (" +  (lineOffset * i + 1 + j) + "," + (lineOffset * (i + 1) + j) + "," + (lineOffset * (i + 1) + 1 + j) + ")");
                 }
 
 
