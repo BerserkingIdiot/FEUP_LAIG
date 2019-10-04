@@ -38,9 +38,9 @@ class MyCylinder extends CGFobject {
         // Each iteration the base radius becomes closer to the top radius by a rate of (top - base)/stacks
         var delta_r = (this.top - this.base) / this.stacks;
         // Maximum number of vertices (used to display the last faces, which have to go from the end of the vertices array to the start)
-        var max_vertices = this.slices * (this.stacks + 1);
+        var lineOffset = (this.stacks + 1);
 
-        for (var i = 0; i < this.slices; i++) {
+        for (var i = 0; i <= this.slices; i++) {
             // X coordinate of current vertex
             var x = Math.cos(alpha) * radius;
             // Y coordinate of current vertex
@@ -60,10 +60,15 @@ class MyCylinder extends CGFobject {
                 this.normals.push(...normal);
                 
                 //At each iteration we push indices relative to the face composed by the next vertices
-                this.indices.push (
-                    (this.stacks + 1) * i + 1 + j, (this.stacks + 1) * i + j, ((this.stacks + 1) * (i + 1) + j) % max_vertices,
-                    (this.stacks + 1) * i + 1 + j, ((this.stacks + 1) * (i + 1) + j) % max_vertices, ((this.stacks + 1) * (i + 1) + 1 + j) % max_vertices
-                )
+                if(i != this.slices) {
+                    this.indices.push(
+                        lineOffset * i + 1 + j, lineOffset * i + j, lineOffset * (i + 1) + j,
+                        lineOffset * i + 1 + j, lineOffset * (i + 1) + j, lineOffset * (i + 1) + 1 + j
+                    );
+                    console.log("Inidice: (" +  (lineOffset * i + 1 + j) + "," + (lineOffset * i + j) + "," + (lineOffset * (i + 1) + j) + ")");
+                    console.log("Inidice: (" +  (lineOffset * i + 1 + j) + "," + (lineOffset * (i + 1) + j) + "," + (lineOffset * (i + 1) + 1 + j) + ")");
+                }
+
 
                 // At each iteration we go up on the z axis and closer to top radius
                 z += delta_z;
@@ -82,39 +87,6 @@ class MyCylinder extends CGFobject {
         }
 
         //TODO: texture coords
-
-        //Base drawing
-        // ang = 0;
-
-        // for(i = 0; i < this.slices; i++){
-        //     var sal=this.radius*Math.sin(ang);
-        //     var cal=this.radius*Math.cos(ang);
-
-        //     this.vertices.push(cal, -sal, 0);
-        //     this.vertices.push(cal, -sal, this.height);
-
-        //     this.normals.push(0,0,-1);
-        //     this.normals.push(0,0,1);
-
-        //     this.indices.push((2*i+2) % (2*this.slices) + 4*this.slices, 4*this.slices+(2*i), 6*this.slices);
-        //     this.indices.push(6*this.slices+1, 4*this.slices+(2*i+1), (2*i+3) % (2*this.slices) + 4*this.slices);
-
-        //     this.texCoords.push(
-        //         0,0,
-        //         0,0
-        //     );
-
-        //     ang+=alphaAng;
-        // }
-
-        // this.vertices.push(0,0,0);
-        // this.vertices.push(0,0,this.height);
-        // this.normals.push(0,0,-1);
-        // this.normals.push(0,0,1);
-        // this.texCoords.push(
-        //     0,0,
-        //     0,0
-        // );
 
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
