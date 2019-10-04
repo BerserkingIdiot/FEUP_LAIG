@@ -887,13 +887,13 @@ class MySceneGraph {
                 if (!(slices != null && !isNaN(slices) && slices >= 3)) //FIXME: change slices according to tests
                     return "unable to parse slices of the primitive properties for ID = " + primitiveId;
 
-                // stacks -> has to be positive
-                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
-                if (!(stacks != null && !isNaN(stacks) && stacks > 0)) //FIXME: change stacks according to tests
-                    return "unable to parse stacks of the primitive properties for ID = " + primitiveId;
+                // loops -> has to be positive
+                var loops = this.reader.getFloat(grandChildren[0], 'loops');
+                if (!(loops != null && !isNaN(loops) && loops > 0)) //FIXME: change loops according to tests
+                    return "unable to parse loops of the primitive properties for ID = " + primitiveId;
 
-                // var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, stacks);
-                // this.primitives[primitiveId] = torus;
+                 var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops);
+                 this.primitives[primitiveId] = torus;
             }
 
             numPrimitives++;
@@ -956,8 +956,11 @@ class MySceneGraph {
             grandgrandChildren = grandChildren[transformationIndex].children;
             if(grandgrandChildren.length == 0)
                 var transfMatrix = mat4.create();
-            else if(grandgrandChildren[0].nodeName == "transformationref")
+            else if(grandgrandChildren[0].nodeName == "transformationref"){
                 var transfMatrix = this.transformations[this.reader.getString(grandgrandChildren[0], 'id')];
+                if(grandgrandChildren.length > 1)
+                    this.onXMLMinorError("Multiple transformations declared and/or referred on " + componentID + "; defaulting to first referred transformation.");
+            }
             else
                 var transfMatrix = this.parseSingleTransformation(grandgrandChildren);
 
@@ -1162,7 +1165,7 @@ class MySceneGraph {
     /**
      * Processes a node of the scene graph and calls itself recursively on the node's children.
      * Draws primitives and updates transformation matrices, textures and materials applied.
-     * @param {MyComponent object, which represents a node in the graph} component 
+     * @param {string, which represents the id of a node in the graph} component 
      */
     processNode(component) {
         // Checking if component is a primitive
@@ -1174,7 +1177,7 @@ class MySceneGraph {
 
         this.scene.multMatrix(this.components[component].transfMat);
 
-        for(i = 0; i < this.components[component].compChildren.length; i++){
+        for(var i = 0; i < this.components[component].compChildren.length; i++){
             //apply material
             //apply texture
             this.scene.pushMatrix();
@@ -1182,7 +1185,7 @@ class MySceneGraph {
             this.scene.popMatrix();
         }
 
-        for(i = 0; i < this.components[component].primChildren.length; i++){
+        for(var i = 0; i < this.components[component].primChildren.length; i++){
             //apply material
             //apply texture
             this.scene.pushMatrix();
@@ -1198,10 +1201,10 @@ class MySceneGraph {
     displayScene() {
         //TODO: Create display loop for transversing the scene graph
 
-
+        this.processNode(this.idRoot);
 
         //To test the parsing/creation of the primitives, call the display function directly
         
-        this.primitives['demoSphere'].display();
+        //this.primitives['demoSphere'].display();
     }
 }

@@ -7,15 +7,15 @@
  * @param top - Radius of the top (Z = height)
  * @param height - Size along the positive z axis
  * @param slices - Number of sections around the circunferences
- * @param stacks - Number of divisions along the z axis
+ * @param loops - Number of divisions along the z axis
  */
-class MyCylinder extends CGFobject {
-    constructor(scene, id, inner, outer, slices, stacks) {
+class MyTorus extends CGFobject {
+    constructor(scene, id, inner, outer, slices, loops) {
         super(scene);
         this.inner = inner;
         this.outer = outer;
         this.slices = slices;
-        this.stacks = stacks;
+        this.loops = loops;
         this.initBuffers();
     }
     initBuffers() {
@@ -30,20 +30,20 @@ class MyCylinder extends CGFobject {
         var delta_theta = 2 * Math.PI / this.slices;
         // phi is the angle value of the outer circumference
         var phi = 0;
-        // Each iteration z will be incremented by height/stacks
-        var delta_phi = 2 * Math.PI / this.stacks;
+        // Each iteration z will be incremented by height/loops
+        var delta_phi = 2 * Math.PI / this.loops;
 
         
         // Maximum number of vertices (used to display the last faces, which have to go from the end of the vertices array to the start)
-        var max_vertices = this.slices * (this.stacks + 1);
+        var max_vertices = this.slices * (this.loops + 1);
 
         for (var i = 0; i < this.slices; i++) {
             // X coordinate of current vertex
-            var x = (outer + inner * Math.cos(theta)) * Math.cos(phi);
+            var x = (this.outer + this.inner * Math.cos(theta)) * Math.cos(phi);
             // Y coordinate of current vertex
-            var y = (outer + inner * Math.cos(theta)) * Math.sin(phi);
+            var y = (this.outer + this.inner * Math.cos(theta)) * Math.sin(phi);
             // Z coordinate of current vertex
-            var z = inner * Math.sin(theta);
+            var z = this.inner * Math.sin(theta);
             // The normal vector at each point of the circunference is:
             // N = [(x, y, z) - (0, 0, z)]; which still has to be normalized
             // When considering the inclination of the faces (due to different base and top radius)
@@ -53,7 +53,7 @@ class MyCylinder extends CGFobject {
             
             //normal = this.vectorNormalize(normal);
 
-            for (var j = 0; j < this.stacks; j++) {
+            for (var j = 0; j < this.loops; j++) {
                 this.vertices.push(x, y, z);
                 var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
             
@@ -62,17 +62,17 @@ class MyCylinder extends CGFobject {
                 
                 //At each iteration we push indices relative to the face composed by the next vertices
                 this.indices.push (
-                    (this.stacks + 1) * i + 1 + j, (this.stacks + 1) * i + j, ((this.stacks + 1) * (i + 1) + j) % max_vertices,
-                    (this.stacks + 1) * i + 1 + j, ((this.stacks + 1) * (i + 1) + j) % max_vertices, ((this.stacks + 1) * (i + 1) + 1 + j) % max_vertices
+                    ((this.loops + 1) * (i + 1) + j) % max_vertices, (this.loops + 1) * i + j, (this.loops + 1) * i + 1 + j,
+                    ((this.loops + 1) * (i + 1) + 1 + j) % max_vertices , ((this.loops + 1) * (i + 1) + j) % max_vertices, (this.loops + 1) * i + 1 + j
                 )
 
                 // At each iteration we go up on the z axis and closer to top radius
                 phi += delta_phi;
-                x = (outer + inner * Math.cos(theta)) * Math.cos(phi);
-                y = (outer + inner * Math.cos(theta)) * Math.sin(phi);
+                x = (this.outer + this.inner * Math.cos(theta)) * Math.cos(phi);
+                y = (this.outer + this.inner * Math.cos(theta)) * Math.sin(phi);
             }
 
-            //By stopping at j = stacks we miss the last point (the one on the top circunference)
+            //By stopping at j = loops we miss the last point (the one on the top circunference)
             this.vertices.push(x, y, z);
             var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
             
