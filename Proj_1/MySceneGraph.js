@@ -1137,6 +1137,11 @@ class MySceneGraph {
     }
 
     //TODO: add documentation to parseSingleTransf
+    /**
+     * Parse a block of translations, scalations and/or rotations and return the resulting transformation matrix
+     * @param {basic transformations applied to the matrix} stepList 
+     * @param {internal id of the transformation} transformationID 
+     */
     parseSingleTransformation(stepList, transformationID){
 
         var transfMatrix = mat4.create();

@@ -1,13 +1,12 @@
 /**
- * MyCylinder
+ * MyTorus
  * @constructor
  * @param scene - Reference to MyScene object
  * @param id - ID of the primitive
- * @param base - Radius of the base (Z = 0)
- * @param top - Radius of the top (Z = height)
- * @param height - Size along the positive z axis
- * @param slices - Number of sections around the circunferences
- * @param loops - Number of divisions along the z axis
+ * @param inner - radius of the inner circumference of the torus
+ * @param outer - Radius of the outer circumference of the torus
+ * @param slices - Number of sections around the inner circumference
+ * @param loops - Number of sections around the outer circumference
  */
 class MyTorus extends CGFobject {
     constructor(scene, id, inner, outer, slices, loops) {
@@ -66,13 +65,13 @@ class MyTorus extends CGFobject {
                     ((this.loops + 1) * (i + 1) + 1 + j) % max_vertices , ((this.loops + 1) * (i + 1) + j) % max_vertices, (this.loops + 1) * i + 1 + j
                 )
 
-                // At each iteration we go up on the z axis and closer to top radius
+                // At each iteration we go further on the outer circumference
                 phi += delta_phi;
                 x = (this.outer + this.inner * Math.cos(theta)) * Math.cos(phi);
                 y = (this.outer + this.inner * Math.cos(theta)) * Math.sin(phi);
             }
 
-            //By stopping at j = loops we miss the last point (the one on the top circunference)
+            //By stopping at j = loops we miss the last point
             this.vertices.push(x, y, z);
             var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
             
@@ -156,7 +155,7 @@ class MyTorus extends CGFobject {
 
     /**
      * @method updateTexCoords
-     * Updates the list of texture coordinates of the cylinder
+     * Updates the list of texture coordinates of the torus
      * @param {Array} coords - Array of texture coordinates
      */
     updateTexCoords(coords) {
