@@ -108,6 +108,24 @@
             <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
             <specular r="0.2" g="1.0" b="0.0" a="1.0" />
         </material>
+        <material id="basicLightGrey" shininess="5">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.6" g="0.6" b="0.6" a="1.0" />
+            <diffuse r="0.6" g="0.6" b="0.6" a="1.0" />
+            <specular r="0.6" g="0.6" b="0.6" a="1.0" />
+        </material>
+        <material id="basicBrown" shininess="5">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.6" g="0.4" b="0.0" a="1.0" />
+            <diffuse r="0.6" g="0.4" b="0.0" a="1.0" />
+            <specular r="0.6" g="0.4" b="0.0" a="1.0" />
+        </material>
+        <material id="diffuseOrange" shininess="1">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="1.0" g="0.5" b="0.0" a="1.0" />
+            <diffuse r="1.0" g="0.5" b="0.0" a="1.0" />
+            <specular r="0.5" g="0.5" b="0.5" a="1.0" />
+        </material>
     </materials>
 
     <transformations>
@@ -302,6 +320,7 @@
             </transformation>
             <materials>
                 <material id="inherit" />
+                <material id="diffuseOrange" />
             </materials>
             <texture id="none"/>
             <children>
@@ -353,7 +372,8 @@
                 <translate x="3" y="0" z="3"/>
             </transformation>
             <materials>
-                <material id="inherit" />
+                <material id="basicBrown" />
+                <material id="basicLightGrey" />
             </materials>
             <texture id="tableTexture"/>
             <children>
@@ -444,7 +464,7 @@
             <transformation>
             </transformation>
             <materials>
-                <material id="inherit" />
+                <material id="basicLightGrey" />
             </materials>
             <texture id="none"/>
             <children>
@@ -542,7 +562,7 @@
                 <translate x="1" y="0.2" z="0.5"/>
             </transformation>
             <materials>
-                <material id="inherit" />
+                <material id="specularBlack" />
             </materials>
             <texture id="none"/>
             <children>
@@ -580,6 +600,7 @@
             </transformation>
             <materials>
                 <material id="inherit" />
+                <material id="basicLightGrey" />
             </materials>
             <texture id="none"/>
             <children>
@@ -618,6 +639,7 @@
                 <transformationref id="spotlightCableTransf"/>
             </transformation>
             <materials>
+                <material id="specularBlack" />
                 <material id="inherit" />
             </materials>
             <texture id="none"/>
@@ -642,6 +664,7 @@
                 <transformationref id="spotlightCableTransf"/>
             </transformation>
             <materials>
+                <material id="specularBlack" />
                 <material id="inherit" />
             </materials>
             <texture id="none"/>
