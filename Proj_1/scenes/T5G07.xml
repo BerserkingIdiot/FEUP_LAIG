@@ -54,6 +54,7 @@
 
     <textures>
         <texture id="demoTexture" file="scenes/images/vidral.jpg" />
+        <texture id="demoTexture" file="scenes/images/walls.jpg" />
     </textures>
 
     <materials>
@@ -168,6 +169,7 @@
                 <componentref id="wallXY" />
                 <componentref id="wallYZ" />
                 <componentref id="floor" />
+                <componentref id="ceiling" />
             </children>
         </component>
         <component id="floor">
@@ -178,7 +180,20 @@
             <materials>
                 <material id="demoMaterial" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="bigSquare" />
+            </children>
+        </component>
+        <component id="ceiling">
+            <transformation>
+                <translate x="0" y="10" z="0" />
+                <rotate axis="x" angle="90" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="none"/>
             <children>
                 <primitiveref id="bigSquare" />
             </children>
