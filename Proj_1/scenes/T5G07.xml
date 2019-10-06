@@ -51,21 +51,38 @@
             <rotate axis="y" angle="90" />
             <scale x="0.5" y="0.5" z="0.5" />
         </transformation>
+        <transformation id ="discLeftTransf">
+            <translate x="-0.5" y="0" z="0"/>
+            <rotate axis="x" angle="-90"/>
+        </transformation>
+        <transformation id ="discRightTransf">
+            <translate x="0.5" y="0" z="0"/>
+            <rotate axis="x" angle="-90"/>
+        </transformation>
+        <transformation id="spotlightCableTransf">
+            <rotate axis="x" angle="-90"/>
+            <scale x="0.5" y="0.5" z="0.25"/>
+        </transformation>
+        <transformation id="spotlightLeftTransf">
+            <translate x="-0.1" y="0" z="-0.2"/>
+            <rotate axis="x" angle="40"/>
+            <rotate axis="y" angle="20"/>
+        </transformation>
+        <transformation id="spotlightRightTransf">
+            <translate x="0.1" y="0" z="-0.2"/>
+            <rotate axis="x" angle="40"/>
+            <rotate axis="y" angle="-20"/>
+        </transformation>
     </transformations>
 
     <primitives>
+        <primitive id="smallSquare">
+            <rectangle x1="0" y1="0" x2="1" y2="1" />
+        </primitive>
         <primitive id="bigSquare">
             <rectangle x1="0" y1="0" x2="10" y2="10" />
         </primitive>
-        <primitive id="demoCylinder">
-            <cylinder base="2" top="1" height="3" slices="12" stacks="12" />
-        </primitive>
-        <primitive id="demoTriangle">
-            <triangle x1="0" y1="0" z1="0"
-                      x2="1" y2="3" z2="-2"
-                      x3="2" y3="0" z3="0" />
-        </primitive>
-        <primitive id="demoSphere">
+        <primitive id="sphere">
             <sphere radius="2" slices="40" stacks="40" />
         </primitive>
         <primitive id="buoy">
@@ -90,13 +107,17 @@
         <primitive id="tableUnderRect">
             <rectangle x1="0" y1="0" x2="4" y2="4.24" />
         </primitive>
+        <primitive id="disc">
+            <cylinder base="0.4" top="0.4" height="0.1" slices="20" stacks="5" />
+        </primitive>
+        <primitive id="spotlight">
+            <cylinder base="0.1" top="0.3" height="0.7" slices="20" stacks="20" />
+        </primitive>
     </primitives>
 
     <components>
         <component id="scene">
             <transformation>
-                <!-- <translate x="0" y="0" z="1" />
-                <scale x="2" y="1" z="1" /> -->
             </transformation>
             <materials>
                 <material id="demoMaterial" />
@@ -107,6 +128,8 @@
                 <componentref id="lifeguardBuoy" />
                 <componentref id="mirrorBall" />
                 <componentref id="table" />
+                <componentref id="djMixer" />
+                <componentref id="spotlights" />
             </children>
         </component>
         <component id="roomBox">
@@ -206,12 +229,12 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-                <primitiveref id="demoSphere"/>
+                <primitiveref id="sphere"/>
             </children>
         </component>
         <component id="table">
             <transformation>
-                <translate x="3" y="0" z="4"/>
+                <translate x="3" y="0" z="3"/>
             </transformation>
             <materials>
                 <material id="demoMaterial" />
@@ -288,6 +311,239 @@
                 <primitiveref id="tableUnderRect"/>
             </children>
         </component>
-        
+        <component id="djMixer">
+            <transformation>
+                <translate x="4" y="3" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="mixerBase"/>
+                <componentref id="mixerDiscs"/>
+            </children>
+        </component>
+        <component id="mixerBase">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="mixerBaseLeft"/>
+                <componentref id="mixerBaseRight"/>
+                <componentref id="mixerBaseTop"/>
+                <componentref id="mixerBaseBottom"/>
+                <componentref id="mixerBaseFront"/>
+                <componentref id="mixerBaseBack"/>
+            </children>
+        </component>
+        <component id="mixerBaseLeft">
+            <transformation>
+                <rotate axis="y" angle="-90"/>
+                <scale x="1" y="0.2" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="mixerBaseRight">
+            <transformation>
+                <translate x="2" y="0" z="1"/>
+                <rotate axis="y" angle="90"/>
+                <scale x="1" y="0.2" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="mixerBaseTop">
+            <transformation>
+                <translate x="0" y="0.2" z="1"/>
+                <rotate axis="x" angle="-90"/>
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="mixerBaseBottom">
+            <transformation>
+                <rotate axis="x" angle="90"/>
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="mixerBaseFront">
+            <transformation>
+                <translate x="0" y="0" z="1"/>
+                <scale x="2" y="0.2" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="mixerBaseBack">
+            <transformation>
+                <scale x="2" y="0.2" z="1" />
+                <translate x="1" y="0" z="0"/>
+                <rotate axis="y" angle="180"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="mixerDiscs">
+            <transformation>
+                <translate x="1" y="0.2" z="0.5"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="discLeft"/>
+                <componentref id="discRight"/>
+            </children>
+        </component>
+        <component id="discLeft">
+            <transformation>
+                <transformationref id="discLeftTransf"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="disc"/>
+            </children>
+        </component>
+        <component id="discRight">
+            <transformation>
+                <transformationref id="discRightTransf"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="disc"/>
+            </children>
+        </component>
+        <component id="spotlights">
+            <transformation>
+                <translate x="5" y="9.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="spotlightLeft"/>
+                <componentref id="spotlightRight"/>
+            </children>
+        </component>
+        <component id="spotlightLeft">
+            <transformation>
+                <translate x="-4" y="0" z="0"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="spotlightLeftCable"/>
+                <componentref id="spotlightLeftCylinder"/>
+            </children>
+        </component>
+        <component id="spotlightRight">
+            <transformation>
+                <translate x="4" y="0" z="0"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="spotlightRightCable"/>
+                <componentref id="spotlightRightCylinder"/>
+            </children>
+        </component>
+        <component id="spotlightLeftCable">
+            <transformation>
+                <transformationref id="spotlightCableTransf"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="thinCylinder"/>
+            </children>
+        </component>
+        <component id="spotlightLeftCylinder">
+            <transformation>
+                <transformationref id="spotlightLeftTransf"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="spotlight"/>
+            </children>
+        </component>
+        <component id="spotlightRightCable">
+            <transformation>
+                <transformationref id="spotlightCableTransf"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="thinCylinder"/>
+            </children>
+        </component>
+        <component id="spotlightRightCylinder">
+            <transformation>
+                <transformationref id="spotlightRightTransf"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="spotlight"/>
+            </children>
+        </component>
     </components>
 </lxs>
