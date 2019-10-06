@@ -53,7 +53,6 @@
     </lights>
 
     <textures>
-        <texture id="demoTexture" file="scenes/images/vidral.jpg" />
         <texture id="wallsTexture" file="scenes/images/walls.jpg" />
         <texture id="clubTexture" file="scenes/images/beach_club.jpg" />
         <texture id="discoTexture" file="scenes/images/disco.png" />
@@ -61,29 +60,53 @@
     </textures>
 
     <materials>
-        <material id="demoMaterial" shininess="10">
-            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
-            <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
-            <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
-            <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+        <material id="sceneMaterial" shininess="10">
+            <emission r="1.0" g="1.0" b="1.0" a="1.0" />
+            <ambient r="1.0" g="1.0" b="1.0" a="1.0" />
+            <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
+            <specular r="1.0" g="1.0" b="1.0" a="1.0" />
         </material>
-        <material id="wallMaterialBlue" shininess="1">
+        <material id="diffuseBlue" shininess="1">
             <emission r="0.0" g="0.0" b="0.0" a="1.0" />
             <ambient r="0.1" g="0.18" b="0.38" a="1.0" />
             <diffuse r="0.1" g="0.18" b="0.38" a="1.0" />
             <specular r="0.0" g="0.0" b="0.0" a="1.0" />
         </material>
-        <material id="wallMaterialPurple" shininess="1">
+        <material id="diffusePurple" shininess="1">
             <emission r="0.0" g="0.0" b="0.0" a="1.0" />
             <ambient r="0.8" g="0.1" b="0.8" a="1.0" />
             <diffuse r="0.8" g="0.1" b="0.8" a="1.0" />
             <specular r="0.5" g="0.5" b="0.5" a="1.0" />
         </material>
-        <material id="wallMaterialGreen" shininess="1">
+        <material id="diffuseGreen" shininess="1">
             <emission r="0.0" g="0.0" b="0.0" a="1.0" />
             <ambient r="0.2" g="1.0" b="0.0" a="1.0" />
             <diffuse r="0.2" g="1.0" b="0.0" a="1.0" />
             <specular r="0.5" g="0.5" b="0.5" a="1.0" />
+        </material>
+        <material id="specularBlack" shininess="5">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.0" g="0.0" b="0.0" a="1.0" />
+            <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.2" g="0.2" b="0.2" a="1.0" />
+        </material>
+        <material id="specularBlue" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.1" g="0.18" b="0.38" a="1.0" />
+            <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.1" g="0.18" b="0.38" a="1.0" />
+        </material>
+        <material id="specularPurple" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.8" g="0.1" b="0.8" a="1.0" />
+            <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.8" g="0.1" b="0.8" a="1.0" />
+        </material>
+        <material id="specularGreen" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.2" g="1.0" b="0.0" a="1.0" />
+            <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.2" g="1.0" b="0.0" a="1.0" />
         </material>
     </materials>
 
@@ -167,9 +190,9 @@
             <transformation>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="sceneMaterial" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="roomBox" />
                 <componentref id="lifeguardBuoy" />
@@ -183,9 +206,9 @@
             <transformation>
             </transformation>
             <materials>
-                <material id="wallMaterialBlue" />
-                <material id="wallMaterialPurple" />
-                <material id="wallMaterialGreen" />
+                <material id="diffuseBlue" />
+                <material id="diffusePurple" />
+                <material id="diffuseGreen" />
             </materials>
             <texture id="wallsTexture"/>
             <children>
@@ -278,9 +301,9 @@
                 <transformationref id="buoyTransf" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="buoy" />
             </children>
@@ -291,9 +314,9 @@
                 <rotate axis="x" angle="-90" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="inherit"/>
             <children>
                 <componentref id="mirrorCable" />
                 <componentref id="mirrorSphere" />
@@ -304,9 +327,9 @@
                 <translate x="0" y="0" z="1" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="specularBlack" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="thinCylinder"/>
             </children>
@@ -316,9 +339,11 @@
                 <scale x="0.75" y="0.75" z="0.75"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="specularPurple" />
+                <material id="specularBlue" />
+                <material id="specularGreen" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="discoTexture"/>
             <children>
                 <primitiveref id="sphere"/>
             </children>
@@ -328,9 +353,9 @@
                 <translate x="3" y="0" z="3"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="tableTexture"/>
             <children>
                 <componentref id="tableTriangleLeft"/>
                 <componentref id="tableTriangleRight"/>
@@ -344,9 +369,9 @@
                 <translate x="4" y="0" z="0"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="tableTriangleL"/>
             </children>
@@ -356,9 +381,9 @@
                 
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="tableTriangleR"/>
             </children>
@@ -369,9 +394,9 @@
                 <rotate axis="x" angle="-90"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="tableTopRect"/>
             </children>
@@ -381,9 +406,9 @@
 
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="tableTopRect"/>
             </children>
@@ -395,9 +420,9 @@
                 <scale x="-1" y="1" z="-1"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="tableUnderRect"/>
             </children>
@@ -407,9 +432,9 @@
                 <translate x="4" y="3" z="1"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="mixerBase"/>
                 <componentref id="mixerDiscs"/>
@@ -419,9 +444,9 @@
             <transformation>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="mixerBaseLeft"/>
                 <componentref id="mixerBaseRight"/>
@@ -437,9 +462,9 @@
                 <scale x="1" y="0.2" z="1" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="smallSquare"/>
             </children>
@@ -451,9 +476,9 @@
                 <scale x="1" y="0.2" z="1" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="smallSquare"/>
             </children>
@@ -465,9 +490,9 @@
                 <scale x="2" y="1" z="1" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="smallSquare"/>
             </children>
@@ -478,9 +503,9 @@
                 <scale x="2" y="1" z="1" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="smallSquare"/>
             </children>
@@ -491,9 +516,9 @@
                 <scale x="2" y="0.2" z="1" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="smallSquare"/>
             </children>
@@ -505,9 +530,9 @@
                 <rotate axis="y" angle="180"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="smallSquare"/>
             </children>
@@ -517,9 +542,9 @@
                 <translate x="1" y="0.2" z="0.5"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="discLeft"/>
                 <componentref id="discRight"/>
@@ -530,9 +555,9 @@
                 <transformationref id="discLeftTransf"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="disc"/>
             </children>
@@ -542,9 +567,9 @@
                 <transformationref id="discRightTransf"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="disc"/>
             </children>
@@ -554,9 +579,9 @@
                 <translate x="5" y="9.5" z="1"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="spotlightLeft"/>
                 <componentref id="spotlightRight"/>
@@ -567,9 +592,9 @@
                 <translate x="-4" y="0" z="0"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="spotlightLeftCable"/>
                 <componentref id="spotlightLeftCylinder"/>
@@ -580,9 +605,9 @@
                 <translate x="4" y="0" z="0"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <componentref id="spotlightRightCable"/>
                 <componentref id="spotlightRightCylinder"/>
@@ -593,9 +618,9 @@
                 <transformationref id="spotlightCableTransf"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="thinCylinder"/>
             </children>
@@ -605,9 +630,9 @@
                 <transformationref id="spotlightLeftTransf"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="spotlight"/>
             </children>
@@ -617,9 +642,9 @@
                 <transformationref id="spotlightCableTransf"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="thinCylinder"/>
             </children>
@@ -629,9 +654,9 @@
                 <transformationref id="spotlightRightTransf"/>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="none"/>
             <children>
                 <primitiveref id="spotlight"/>
             </children>
