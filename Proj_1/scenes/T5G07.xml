@@ -54,7 +54,10 @@
 
     <textures>
         <texture id="demoTexture" file="scenes/images/vidral.jpg" />
-        <texture id="demoTexture" file="scenes/images/walls.jpg" />
+        <texture id="wallsTexture" file="scenes/images/walls.jpg" />
+        <texture id="clubTexture" file="scenes/images/beach_club.jpg" />
+        <texture id="discoTexture" file="scenes/images/disco.png" />
+        <texture id="tableTexture" file="scenes/images/rocks.png" />
     </textures>
 
     <materials>
@@ -63,6 +66,24 @@
             <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
             <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
             <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+        </material>
+        <material id="wallMaterialBlue" shininess="1">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.1" g="0.18" b="0.38" a="1.0" />
+            <diffuse r="0.1" g="0.18" b="0.38" a="1.0" />
+            <specular r="0.0" g="0.0" b="0.0" a="1.0" />
+        </material>
+        <material id="wallMaterialPurple" shininess="1">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.8" g="0.1" b="0.8" a="1.0" />
+            <diffuse r="0.8" g="0.1" b="0.8" a="1.0" />
+            <specular r="0.5" g="0.5" b="0.5" a="1.0" />
+        </material>
+        <material id="wallMaterialGreen" shininess="1">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.2" g="1.0" b="0.0" a="1.0" />
+            <diffuse r="0.2" g="1.0" b="0.0" a="1.0" />
+            <specular r="0.5" g="0.5" b="0.5" a="1.0" />
         </material>
     </materials>
 
@@ -162,12 +183,16 @@
             <transformation>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="wallMaterialBlue" />
+                <material id="wallMaterialPurple" />
+                <material id="wallMaterialGreen" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="wallsTexture"/>
             <children>
-                <componentref id="wallXY" />
-                <componentref id="wallYZ" />
+                <componentref id="wallFront" />
+                <componentref id="wallLeft" />
+                <componentref id="wallBack" />
+                <componentref id="wallRight" />
                 <componentref id="floor" />
                 <componentref id="ceiling" />
             </children>
@@ -178,7 +203,7 @@
                 <rotate axis="x" angle="-90" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
             <texture id="none"/>
             <children>
@@ -191,33 +216,59 @@
                 <rotate axis="x" angle="90" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
             <texture id="none"/>
             <children>
                 <primitiveref id="bigSquare" />
             </children>
         </component>
-        <component id="wallXY">
+        <component id="wallFront">
             <transformation>
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="clubTexture"/>
             <children>
                 <primitiveref id="bigSquare" />
             </children>
         </component>
-        <component id="wallYZ">
+        <component id="wallLeft">
             <transformation>
                 <translate x="0" y="0" z="10" />
                 <rotate axis="y" angle="90" />
             </transformation>
             <materials>
-                <material id="demoMaterial" />
+                <material id="inherit" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="bigSquare" />
+            </children>
+        </component>
+        <component id="wallBack">
+            <transformation>
+                <translate x="10" y="0" z="10" />
+                <rotate axis="y" angle="180" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="bigSquare" />
+            </children>
+        </component>
+        <component id="wallRight">
+            <transformation>
+                <translate x="10" y="0" z="0" />
+                <rotate axis="y" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="bigSquare" />
             </children>
