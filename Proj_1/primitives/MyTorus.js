@@ -43,19 +43,12 @@ class MyTorus extends CGFobject {
             var y = (this.outer + this.inner * Math.cos(theta)) * Math.sin(phi);
             // Z coordinate of current vertex
             var z = this.inner * Math.sin(theta);
-            // The normal vector at each point of the circunference is:
-            // N = [(x, y, z) - (0, 0, z)]; which still has to be normalized
-            // When considering the inclination of the faces (due to different base and top radius)
-            // N has to be rotated around the x axis, which means its z coordinate will change to
-            // Nz = tg(inclination) * |N| = (base - top) / height * |N|
-            //var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
-            
-            //normal = this.vectorNormalize(normal);
 
             for (var j = 0; j < this.loops; j++) {
                 this.vertices.push(x, y, z);
+                // Calculating the normal
                 var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
-            
+                // Normalizing th enormal vector
                 normal = this.vectorNormalize(normal);
                 this.normals.push(...normal);
                 
@@ -82,45 +75,15 @@ class MyTorus extends CGFobject {
             theta += delta_theta;
         }
 
-        //TODO: texture coords
-
-        //Base drawing
-        // ang = 0;
-
-        // for(i = 0; i < this.slices; i++){
-        //     var sal=this.radius*Math.sin(ang);
-        //     var cal=this.radius*Math.cos(ang);
-
-        //     this.vertices.push(cal, -sal, 0);
-        //     this.vertices.push(cal, -sal, this.height);
-
-        //     this.normals.push(0,0,-1);
-        //     this.normals.push(0,0,1);
-
-        //     this.indices.push((2*i+2) % (2*this.slices) + 4*this.slices, 4*this.slices+(2*i), 6*this.slices);
-        //     this.indices.push(6*this.slices+1, 4*this.slices+(2*i+1), (2*i+3) % (2*this.slices) + 4*this.slices);
-
-        //     this.texCoords.push(
-        //         0,0,
-        //         0,0
-        //     );
-
-        //     ang+=alphaAng;
-        // }
-
-        // this.vertices.push(0,0,0);
-        // this.vertices.push(0,0,this.height);
-        // this.normals.push(0,0,-1);
-        // this.normals.push(0,0,1);
-        // this.texCoords.push(
-        //     0,0,
-        //     0,0
-        // );
-
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
     }
 
+    /**
+	 * @method vectorNorm
+     * Calculates the norm of a vector.
+     * @param {array containing the coordinates} vec 
+     */
     vectorNorm(vec) {
         if (!Array.isArray(vec)) {
             return vec;
@@ -133,6 +96,11 @@ class MyTorus extends CGFobject {
         }
     }
 
+    /**
+	 * @method vectorNormalize
+     * Normalizes a vector. Depends on vectorNorm().
+     * @param {array containing the coordinates} vec 
+     */
     vectorNormalize(vec) {
         if (!Array.isArray(vec)) {
             return vec;
@@ -143,23 +111,5 @@ class MyTorus extends CGFobject {
             vec[2] /= norm;
             return vec;
         }
-    }
-
-    updateBuffers(complexity) {
-        this.slices = 3 + Math.round(9 * complexity); //complexity varies 0-1, so slices varies 3-12
-
-        // reinitialize buffers
-        this.initBuffers();
-        this.initNormalVizBuffers();
-    }
-
-    /**
-     * @method updateTexCoords
-     * Updates the list of texture coordinates of the torus
-     * @param {Array} coords - Array of texture coordinates
-     */
-    updateTexCoords(coords) {
-        this.texCoords = [...coords];
-        this.updateTexCoordsGLBuffers();
     }
 }
