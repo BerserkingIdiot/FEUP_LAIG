@@ -23,6 +23,17 @@ class MyComponent extends CGFobject{
         this.lengthS = ls;
         this.lengthT = lt;
         this.visited = false;
+        this.materialIndex = 0;
+    }
+
+    updateMaterialIndex(){
+        this.materialIndex += 1;
+        if(this.materialIndex < this.materials.length)
+            this.materialIndex = 0;
+    }
+
+    getCurrentMaterialID(){
+        return this.materials[this.materialIndex];
     }
 
 }

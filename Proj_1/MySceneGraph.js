@@ -996,22 +996,29 @@ class MySceneGraph {
             var materials = [];
             grandgrandChildren = grandChildren[materialsIndex].children;
             for (var j = 0; j < grandgrandChildren.length; j++) {
-                materials.push(this.materials[this.reader.getString(grandgrandChildren[j], 'id')]);
+                var materialID = this.reader.getString(grandgrandChildren[j], 'id');
+                if (materialID == null)
+                    return "unable to parse texture id of component ID " + componentID;
+                if (!(materialID == "inherit") && this.materials[materialID] == null) {
+                    return "no such material with ID " + materialID + " for component ID " + componentID;
+                }
+                if(componentID == this.idRoot && materialID == "inherit"){
+                    return "Root component ID " + componentID + " cannot inherit materials";
+                }
+                materials.push(materialID);
             }
 
             // : Component Texture
             var textureID = this.reader.getString(grandChildren[textureIndex], 'id');
             if (textureID == null)
                 return "unable to parse texture id of component ID " + componentID;
-            if (textureID == "none" || textureID == "inherit") {
-                var texture = textureID; //FIXME: maybe we need another way to do this
+            if (this.textures[textureID] == null && !(textureID == "none") && !(textureID == "inherit")) {
+                return "no such texture with ID " + textureID + " for component ID " + componentID;
             }
-            else {
-                var texture = this.textures[textureID]; //FIXME: shouldnt textures and transformations
-                if (texture == null) {
-                    return "no such texture with ID " + textureID + " for component ID " + componentID;
-                }
+            if(componentID == this.idRoot && textureID == "inherit"){
+                return "Root component ID " + componentID + " cannot inherit texture";
             }
+            
             var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false) || 1;
             var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false) || 1;
 
@@ -1045,7 +1052,7 @@ class MySceneGraph {
                     this.onXMLMinorError("component children must be componentref or primitiveref");
             }
 
-            this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, texture, compChildren, primChildren, ls, lt);
+            this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, textureID, compChildren, primChildren, ls, lt);
         }
 
         if (this.components[this.idRoot] == null) {
@@ -1238,7 +1245,7 @@ class MySceneGraph {
      * Draws primitives and updates transformation matrices, textures and materials applied.
      * @param {string, which represents the id of a node in the graph} component 
      */
-    processNode(component) {
+    processNode(component, previousMaterialID) {
         // Checking if component is a primitive
         if (this.primitives[component.id] != null) {
         }
@@ -1253,12 +1260,19 @@ class MySceneGraph {
 
         this.scene.multMatrix(this.components[component].transfMat);
 
+        if(this.components[component].getCurrentMaterialID() == "inherit")
+            var currentMaterialID = previousMaterialID;
+        else{
+            var currentMaterialID =   this.components[component].getCurrentMaterialID(); 
+        }
+
         //compChildren is a list of ID's
         for (var i = 0; i < this.components[component].compChildren.length; i++) {
             //apply material
+            this.materials[currentMaterialID].apply();
             //apply texture
             this.scene.pushMatrix();
-            this.processNode(this.components[component].compChildren[i]);
+            this.processNode(this.components[component].compChildren[i], currentMaterialID);
             if (!this.displayOk) {
                 this.onDisplayError("loop component stack: " + component);
                 return;
@@ -1268,7 +1282,9 @@ class MySceneGraph {
 
         //primChildren is a list of ID's
         for (var i = 0; i < this.components[component].primChildren.length; i++) {
+            
             //apply material
+            this.materials[currentMaterialID].apply();
             //apply texture
             this.scene.pushMatrix();
             this.primitives[this.components[component].primChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
