@@ -64,16 +64,6 @@ class MySphere extends CGFobject
 					// Negative Z normals
 					this.normals.push(x / this.radius,y / this.radius,- z / this.radius);
 				}
-
-				//TODO: Sphere tex coords
-				// this.texCoords.push(
-				//     ((Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc))+1)/2, 
-				//     1 - ((Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc))+1)/2
-				// );
-
-				// this.texCoords.push(
-				// 	1/this.slices * phi_inc, Math.abs(tet_inc-1)
-				// );
 			}
 		}
 		//Adding poles. This way there is no duplication of vertices on the poles
