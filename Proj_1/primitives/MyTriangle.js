@@ -80,7 +80,7 @@ class MyTriangle extends CGFobject {
 		this.t1 = [0, 0];
 		this.t2 = [a, 0];
 		this.t3 = [c*cos_alpha, c*sin_alpha];
-        //TODO: texture coordinates
+        
 		this.texCoords = [
 			...this.t1,
 			...this.t2,

@@ -39,6 +39,10 @@ class MyCylinder extends CGFobject {
         var delta_r = (this.top - this.base) / this.stacks;
         // Maximum number of vertices (used to display the last faces, which have to go from the end of the vertices array to the start)
         var lineOffset = (this.stacks + 1);
+        // Texture S axis increment
+        var delta_s = 1 / this.slices;
+        // Texture T axis increment
+        var delta_t = 1 / this.stacks;
 
         for (var i = 0; i <= this.slices; i++) {
             // X coordinate of current vertex
@@ -59,7 +63,8 @@ class MyCylinder extends CGFobject {
                 this.vertices.push(x, y, z);
                 this.normals.push(...normal);
                 
-                //At each iteration we push indices relative to the face composed by the next vertices
+                //At each iteration we push indices relative to the face composed by the next vertices.
+                //When i == slices, we would be considering points that do not exist.
                 if(i != this.slices) {
                     this.indices.push(
                         lineOffset * i + 1 + j, lineOffset * i + j, lineOffset * (i + 1) + j,
@@ -67,6 +72,11 @@ class MyCylinder extends CGFobject {
                     );
                 }
 
+                this.texCoords.push(
+                    delta_s * i, delta_t * j
+                );
+
+                console.log("TexCoords: (" + delta_s * i + ", " + delta_t * j + ")");
 
                 // At each iteration we go up on the z axis and closer to top radius
                 z += delta_z;
@@ -78,13 +88,12 @@ class MyCylinder extends CGFobject {
             //By stopping at j = stacks we miss the last point (the one on the top circunference)
             this.vertices.push(x, y, z);
             this.normals.push(...normal);
+            this.texCoords.push(delta_s * i, 1);
             
             z = 0;
             radius = this.base;
             alpha += delta_alpha;
         }
-
-        //TODO: texture coords
 
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
