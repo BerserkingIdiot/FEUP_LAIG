@@ -27,8 +27,8 @@ class MyComponent extends CGFobject{
     }
 
     updateMaterialIndex(){
-        this.materialIndex += 1;
-        if(this.materialIndex < this.materials.length)
+        this.materialIndex = this.materialIndex + 1;
+        if(this.materialIndex >= this.materials.length)
             this.materialIndex = 0;
     }
 

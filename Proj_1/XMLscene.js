@@ -108,6 +108,14 @@ class XMLscene extends CGFscene {
         this.sceneInited = true;
     }
 
+    
+    update(t){
+        if(this.interface.isKeyPressed('KeyM')){           
+            this.graph.updateMaterialIndexes();
+        }
+    }
+    
+
     /**
      * Displays the scene.
      */
@@ -126,6 +134,7 @@ class XMLscene extends CGFscene {
         this.applyViewMatrix();
 
         this.pushMatrix();
+        this.setDefaultAppearance();
         this.axis.display();
 
         for (var i = 0; i < this.lights.length; i++) {

@@ -929,7 +929,7 @@ class MySceneGraph {
         this.components = [];
 
         // All ids are put in this array to check if all referenced components do exist
-        var allIDs = [];
+        this.componentIDs = [];
         var grandChildren = [];
         var grandgrandChildren = [];
         var nodeNames = [];
@@ -944,7 +944,7 @@ class MySceneGraph {
             var currentID = this.reader.getString(children[i], 'id');
             if (currentID == null)
                 return "no ID defined for componentID";
-            allIDs[i] = currentID;
+            this.componentIDs[i] = currentID;
         }
 
         // Any number of components.
@@ -955,7 +955,7 @@ class MySceneGraph {
             }
 
             // Get id from the auxiliar array.
-            var componentID = allIDs[i];
+            var componentID = this.componentIDs[i];
 
             // Checks for repeated IDs.
             if (this.components[componentID] != null)
@@ -1033,7 +1033,7 @@ class MySceneGraph {
                     if (compRef == null) {
                         return "unable to parse componentref id of component ID " + componentID;
                     }
-                    if (allIDs.indexOf(compRef) == -1) {
+                    if (this.componentIDs.indexOf(compRef) == -1) {
                         return "no such component with ID " + compRef + " for component ID " + componentID;
                     }
                     compChildren.push(compRef);
@@ -1240,15 +1240,20 @@ class MySceneGraph {
         console.log("   " + message);
     }
 
+    
+    updateMaterialIndexes(){
+        this.componentIDs.forEach(element => {
+            this.components[element].updateMaterialIndex();
+        });
+    }
+    
+
     /**
      * Processes a node of the scene graph and calls itself recursively on the node's children.
      * Draws primitives and updates transformation matrices, textures and materials applied.
      * @param {string, which represents the id of a node in the graph} component 
      */
-    processNode(component, previousMaterialID) {
-        // Checking if component is a primitive
-        if (this.primitives[component.id] != null) {
-        }
+    processNode(component, previousMaterialID) {        
 
         //If the component has been visited, then there is a loop on the scene graph
         if (this.components[component].visited) {
@@ -1298,6 +1303,6 @@ class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        this.processNode(this.idRoot);
+        this.processNode(this.idRoot,0);
     }
 }
