@@ -90,6 +90,11 @@ class MyCylinder extends CGFobject {
         this.initGLBuffers();
     }
 
+    /**
+	 * @method vectorNorm
+     * Calculates the norm of a vector.
+     * @param {array containing the coordinates} vec 
+     */
     vectorNorm(vec) {
         if (!Array.isArray(vec)) {
             return vec;
@@ -102,6 +107,11 @@ class MyCylinder extends CGFobject {
         }
     }
 
+    /**
+	 * @method vectorNormalize
+     * Normalizes a vector. Depends on vectorNorm().
+     * @param {array containing the coordinates} vec 
+     */
     vectorNormalize(vec) {
         if (!Array.isArray(vec)) {
             return vec;
@@ -112,23 +122,5 @@ class MyCylinder extends CGFobject {
             vec[2] /= norm;
             return vec;
         }
-    }
-
-    updateBuffers(complexity) {
-        this.slices = 3 + Math.round(9 * complexity); //complexity varies 0-1, so slices varies 3-12
-
-        // reinitialize buffers
-        this.initBuffers();
-        this.initNormalVizBuffers();
-    }
-
-    /**
-     * @method updateTexCoords
-     * Updates the list of texture coordinates of the cylinder
-     * @param {Array} coords - Array of texture coordinates
-     */
-    updateTexCoords(coords) {
-        this.texCoords = [...coords];
-        this.updateTexCoordsGLBuffers();
     }
 }

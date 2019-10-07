@@ -40,39 +40,103 @@ class MyTriangle extends CGFobject {
             0, 2, 1
         ];
         
-        /*In order to determine the normal we need the define 2 vectors and calculate their cross product
-            */
-
+        //In order to determine the normal we need the define 2 vectors and calculate their cross product
         var norm = [
             (this.y3-this.y1)*(this.z2-this.z1)-(this.z3-this.z1)*(this.y2-this.y1),
             (this.z3-this.z1)*(this.x2-this.x1)-(this.x3-this.x1)*(this.z2-this.z1),
             (this.x3-this.x1)*(this.y2-this.y1)-(this.y3-this.y1)*(this.x2-this.x1)
-        ];
+		];
+		//Normalizing the normal vector
+		this.vectorNormalize(norm);
 
 		this.normals = [
             ...norm,
             ...norm,
             ...norm
-        ];
-        
+		];
+		
+        /*
+		Texture coords (s,t)
+		+----------> s
+        |
+        |
+		|
+		v
+        t
+        */
+
+		//Auxiliary calculations to determine internal angles
+		var vecA = [x2-x1, y2-y1, z2-z1];
+		var vecB = [x3-x2, y3-y2, z3-z2];
+		var vecC = [x1-x3, y1-y3, z1-z3];
+		var a = this.vectorNorm(vecA);
+		var b = this.vectorNorm(vecB);
+		var c = this.vectorNorm(vecC);
+		//Alpha angle (angle on V1)
+		var cos_alpha = cos( (a*a - c*c + b*b)/ (2*a*c) );
+		var sin_alpha = Math.sqrt(1 - cos_alpha * cos_alpha);
+		//Each vertex texCoords (aka default values) without texture scaling factors
+		//These are global variables because we will need thenm to apply scaling on updateTexCoords()
+		this.t1 = [0, 0];
+		this.t2 = [a, 0];
+		this.t3 = [c*cos_alpha, c*sin_alpha];
         //TODO: texture coordinates
 		this.texCoords = [
-			0, 1,
-			1, 1,
-			0, 0,
-			1, 0
-		]
+			...this.t1,
+			...this.t2,
+			...this.t3
+		];
 		this.primitiveType = this.scene.gl.TRIANGLES;
 		this.initGLBuffers();
+	}
+	
+	/**
+	 * @method vectorNorm
+     * Calculates the norm of a vector.
+     * @param {array containing the coordinates} vec 
+     */
+    vectorNorm(vec) {
+        if (!Array.isArray(vec)) {
+            return vec;
+        } else {
+            var sum = 0;
+            vec.forEach(element => {
+                sum += element * element; // Acumulates the square of each coordinate
+            });
+            return Math.sqrt(sum); // The square root of the sum of the squares
+        }
+    }
+
+    /**
+	 * @method vectorNormalize
+     * Normalizes a vector. Depends on vectorNorm().
+     * @param {array containing the coordinates} vec 
+     */
+    vectorNormalize(vec) {
+        if (!Array.isArray(vec)) {
+            return vec;
+        } else {
+            var norm = this.vectorNorm(vec);
+            vec[0] /= norm;
+            vec[1] /= norm;
+            vec[2] /= norm;
+            return vec;
+        }
     }
 
     /**
 	 * @method updateTexCoords
-	 * Updates the list of texture coordinates of the rectangle
-	 * @param {Array} coords - Array of texture coordinates
+	 * Updates the list of texture coordinates of the triangle
+	 * @param {Int} length_s - Scaling factor on texture's s axis
+	 * @param {Int} length_t - Scaling factor on texture's s axis
 	 */
-	updateTexCoords(coords) {
-		this.texCoords = [...coords];
+	updateTexCoords(length_s, length_t) {
+		//Updating the texture coordinates based on the default values
+		this.texCoords = [
+			...this.t1,
+			this.t2[0] / length_s, this.t2[1],
+			this.t3[0] / length_s, this.t3[1] / length_t
+		];
 		this.updateTexCoordsGLBuffers();
 	}
 }
