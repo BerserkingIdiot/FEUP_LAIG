@@ -31,6 +31,10 @@ class MyTorus extends CGFobject {
         var phi = 0;
         // Each iteration z will be incremented by height/loops
         var delta_phi = 2 * Math.PI / this.loops;
+        // Texture S axis increment
+        var delta_s = 1 / this.slices;
+        // Texture T axis increment
+        var delta_t = 1 / this.loops;
 
         
         // Maximum number of vertices (used to display the last faces, which have to go from the end of the vertices array to the start)
@@ -57,6 +61,9 @@ class MyTorus extends CGFobject {
                     ((this.loops + 1) * (i + 1) + j) % max_vertices, (this.loops + 1) * i + j, (this.loops + 1) * i + 1 + j,
                     ((this.loops + 1) * (i + 1) + 1 + j) % max_vertices , ((this.loops + 1) * (i + 1) + j) % max_vertices, (this.loops + 1) * i + 1 + j
                 )
+                
+                //S axis is mapped on the slices and T axis on the loops
+                this.texCoords.push(delta_s * i, delta_t * j);
 
                 // At each iteration we go further on the outer circumference
                 phi += delta_phi;
@@ -66,8 +73,9 @@ class MyTorus extends CGFobject {
 
             //By stopping at j = loops we miss the last point
             this.vertices.push(x, y, z);
+            this.texCoords.push(delta_s * i, 1);
+            //Last point normal
             var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
-            
             normal = this.vectorNormalize(normal);
             this.normals.push(...normal);
             
