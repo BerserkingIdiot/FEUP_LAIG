@@ -32,6 +32,10 @@ class MySphere extends CGFobject
 		// tet -> angle around the x-axis (around the yz plane circunference/meridians)
 		var phi_angle = 2*Math.PI/this.slices;
 		var tet_angle = Math.PI/(2*this.stacks);
+		// Texture S axis increment
+        var delta_s = 1 / this.slices;
+        // Texture T axis increment
+        var delta_t = 1 / (this.stacks * 2);
 
 		for (var phi_inc = 0; phi_inc <= this.slices; ++phi_inc) {
 
@@ -43,7 +47,9 @@ class MySphere extends CGFobject
 
 				// Adding vertices with positive z coordinate
 				this.vertices.push(x,y,z);
-
+				// Texture coordinates on +Z,
+				// which means t value is counted upwards from the middle of the texture
+				this.texCoords.push(delta_s * phi_inc, 0.5 + delta_t * tet_inc);
 				// Positive Z normals
 				this.normals.push(x / this.radius,y / this.radius,z / this.radius);
 				
@@ -52,29 +58,23 @@ class MySphere extends CGFobject
 				if (tet_inc != 0) {
 					// Adding vertices with negative z coordinate (which corresponds to a simetry on xy plane)
 					this.vertices.push(x,y,-z);
-
+					// Texture coordinates on -Z,
+					// which means t value is counted downwards from the middle of the texture
+					this.texCoords.push(delta_s * phi_inc, 0.5 - delta_t * tet_inc);
 					// Negative Z normals
 					this.normals.push(x / this.radius,y / this.radius,- z / this.radius);
 				}
-
-				//TODO: Sphere tex coords
-				// this.texCoords.push(
-				//     ((Math.cos(tet_angle*tet_inc)*Math.cos(phi_angle*phi_inc))+1)/2, 
-				//     1 - ((Math.cos(tet_angle*tet_inc)*Math.sin(phi_angle*phi_inc))+1)/2
-				// );
-
-				// this.texCoords.push(
-				// 	1/this.slices * phi_inc, Math.abs(tet_inc-1)
-				// );
 			}
 		}
 		//Adding poles. This way there is no duplication of vertices on the poles
 		//North pole coordinates and normal vector (before last vertex)
 		this.vertices.push(0, 0, this.radius);
 		this.normals.push(0, 0, 1);
+		this.texCoords.push(0.5, 1);
 		//South pole coordinates and normal vector (last vertex)
 		this.vertices.push(0, 0, -this.radius);
 		this.normals.push(0, 0, -1);
+		this.texCoords.push(0.5, 0);
 
 		//Calculation for the last vertex index; considers no repetition on equator and on poles
 		var last_vertex = this.stacks * this.slices * 2 - this.slices + this.stacks * 2;
