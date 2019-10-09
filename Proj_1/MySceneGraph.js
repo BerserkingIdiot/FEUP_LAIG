@@ -929,7 +929,7 @@ class MySceneGraph {
         this.components = [];
 
         // All ids are put in this array to check if all referenced components do exist
-        var allIDs = [];
+        this.componentIDs = [];
         var grandChildren = [];
         var grandgrandChildren = [];
         var nodeNames = [];
@@ -944,7 +944,7 @@ class MySceneGraph {
             var currentID = this.reader.getString(children[i], 'id');
             if (currentID == null)
                 return "no ID defined for componentID";
-            allIDs[i] = currentID;
+            this.componentIDs[i] = currentID;
         }
 
         // Any number of components.
@@ -955,7 +955,7 @@ class MySceneGraph {
             }
 
             // Get id from the auxiliar array.
-            var componentID = allIDs[i];
+            var componentID = this.componentIDs[i];
 
             // Checks for repeated IDs.
             if (this.components[componentID] != null)
@@ -996,22 +996,29 @@ class MySceneGraph {
             var materials = [];
             grandgrandChildren = grandChildren[materialsIndex].children;
             for (var j = 0; j < grandgrandChildren.length; j++) {
-                materials.push(this.materials[this.reader.getString(grandgrandChildren[j], 'id')]);
+                var materialID = this.reader.getString(grandgrandChildren[j], 'id');
+                if (materialID == null)
+                    return "unable to parse texture id of component ID " + componentID;
+                if (!(materialID == "inherit") && this.materials[materialID] == null) {
+                    return "no such material with ID " + materialID + " for component ID " + componentID;
+                }
+                if(componentID == this.idRoot && materialID == "inherit"){
+                    return "Root component ID " + componentID + " cannot inherit materials";
+                }
+                materials.push(materialID);
             }
 
             // : Component Texture
             var textureID = this.reader.getString(grandChildren[textureIndex], 'id');
             if (textureID == null)
                 return "unable to parse texture id of component ID " + componentID;
-            if (textureID == "none" || textureID == "inherit") {
-                var texture = textureID; //FIXME: maybe we need another way to do this
+            if (this.textures[textureID] == null && !(textureID == "none") && !(textureID == "inherit")) {
+                return "no such texture with ID " + textureID + " for component ID " + componentID;
             }
-            else {
-                var texture = this.textures[textureID]; //FIXME: shouldnt textures and transformations
-                if (texture == null) {
-                    return "no such texture with ID " + textureID + " for component ID " + componentID;
-                }
+            if(componentID == this.idRoot && textureID == "inherit"){
+                return "Root component ID " + componentID + " cannot inherit texture";
             }
+            
             var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false) || 1;
             var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false) || 1;
 
@@ -1026,7 +1033,7 @@ class MySceneGraph {
                     if (compRef == null) {
                         return "unable to parse componentref id of component ID " + componentID;
                     }
-                    if (allIDs.indexOf(compRef) == -1) {
+                    if (this.componentIDs.indexOf(compRef) == -1) {
                         return "no such component with ID " + compRef + " for component ID " + componentID;
                     }
                     compChildren.push(compRef);
@@ -1045,7 +1052,7 @@ class MySceneGraph {
                     this.onXMLMinorError("component children must be componentref or primitiveref");
             }
 
-            this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, texture, compChildren, primChildren, ls, lt);
+            this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, textureID, compChildren, primChildren, ls, lt);
         }
 
         if (this.components[this.idRoot] == null) {
@@ -1233,15 +1240,20 @@ class MySceneGraph {
         console.log("   " + message);
     }
 
+    
+    updateMaterialIndexes(){
+        this.componentIDs.forEach(element => {
+            this.components[element].updateMaterialIndex();
+        });
+    }
+    
+
     /**
      * Processes a node of the scene graph and calls itself recursively on the node's children.
      * Draws primitives and updates transformation matrices, textures and materials applied.
      * @param {string, which represents the id of a node in the graph} component 
      */
-    processNode(component) {
-        // Checking if component is a primitive
-        if (this.primitives[component.id] != null) {
-        }
+    processNode(component, previousMaterialID) {        
 
         //If the component has been visited, then there is a loop on the scene graph
         if (this.components[component].visited) {
@@ -1253,12 +1265,19 @@ class MySceneGraph {
 
         this.scene.multMatrix(this.components[component].transfMat);
 
+        if(this.components[component].getCurrentMaterialID() == "inherit")
+            var currentMaterialID = previousMaterialID;
+        else{
+            var currentMaterialID =   this.components[component].getCurrentMaterialID(); 
+        }
+
         //compChildren is a list of ID's
         for (var i = 0; i < this.components[component].compChildren.length; i++) {
             //apply material
+            this.materials[currentMaterialID].apply();
             //apply texture
             this.scene.pushMatrix();
-            this.processNode(this.components[component].compChildren[i]);
+            this.processNode(this.components[component].compChildren[i], currentMaterialID);
             if (!this.displayOk) {
                 this.onDisplayError("loop component stack: " + component);
                 return;
@@ -1268,7 +1287,9 @@ class MySceneGraph {
 
         //primChildren is a list of ID's
         for (var i = 0; i < this.components[component].primChildren.length; i++) {
+            
             //apply material
+            this.materials[currentMaterialID].apply();
             //apply texture
             this.scene.pushMatrix();
             this.primitives[this.components[component].primChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
@@ -1282,6 +1303,6 @@ class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        this.processNode(this.idRoot);
+        this.processNode(this.idRoot,0);
     }
 }
