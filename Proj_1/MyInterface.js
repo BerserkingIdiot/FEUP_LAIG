@@ -20,15 +20,42 @@ class MyInterface extends CGFinterface {
 
         this.gui = new dat.GUI();
 
-        // add a group of controls (and open/expand by defult)
-
         this.initKeys();
 
         return true;
     }
 
     /**
-     * initKeys
+     *  Handler to be called after scene has been inited to configure the interface
+     */
+    initInterface() {
+        // Dropdown to control the active camera
+        this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected View').onChange(this.scene.changeCamera.bind(this.scene));
+        
+        this.folder = null;
+        // Dropdown to select the light to be controled
+        this.gui.add(this.scene, 'selectedLight', this.scene.lightIDs).name('Selected Light').onChange(this.updateFolders.bind(this));
+
+        // a folder for grouping parameters for one of the lights
+        // var f0 = this.gui.addFolder('Light 0 ');
+        // f0.add(this.scene.lights[0], 'enabled').name("Enabled");
+        // // a subfolder for grouping only the three coordinates of the light
+        // var sf0 = f0.addFolder('Light 0 Position');
+        // sf0.add(this.scene.lights[0].position, '0', -5.0, 5.0).name("X Position");
+        // sf0.add(this.scene.lights[0].position, '1', -5.0, 5.0).name("Y Position");
+        // sf0.add(this.scene.lights[0].position, '2', -5.0, 5.0).name("Z Position");
+    }
+
+    updateFolders() {
+        if(this.folder != null)
+            this.gui.removeFolder(this.folder);
+
+        this.folder = this.gui.addFolder('Light ');
+        this.folder.add(this.scene.lights[this.scene.selectedLight], 'enabled').name("Enabled");
+    }
+
+    /**
+     * Initializes the keyboard handlers
      */
     initKeys() {
         this.scene.gui=this;
