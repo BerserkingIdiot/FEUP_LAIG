@@ -66,14 +66,14 @@ class MyTriangle extends CGFobject {
         */
 
 		//Auxiliary calculations to determine internal angles
-		var vecA = [x2-x1, y2-y1, z2-z1];
-		var vecB = [x3-x2, y3-y2, z3-z2];
-		var vecC = [x1-x3, y1-y3, z1-z3];
+		var vecA = [this.x2-this.x1, this.y2-this.y1, this.z2-this.z1];
+		var vecB = [this.x3-this.x2, this.y3-this.y2, this.z3-this.z2];
+		var vecC = [this.x1-this.x3, this.y1-this.y3, this.z1-this.z3];
 		var a = this.vectorNorm(vecA);
 		var b = this.vectorNorm(vecB);
 		var c = this.vectorNorm(vecC);
 		//Alpha angle (angle on V1)
-		var cos_alpha = cos( (a*a - c*c + b*b)/ (2*a*c) );
+		var cos_alpha = Math.cos( (a*a - c*c + b*b)/ (2*a*c) );
 		var sin_alpha = Math.sqrt(1 - cos_alpha * cos_alpha);
 		//Each vertex texCoords (aka default values) without texture scaling factors
 		//These are global variables because we will need thenm to apply scaling on updateTexCoords()

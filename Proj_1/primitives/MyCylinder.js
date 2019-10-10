@@ -76,8 +76,6 @@ class MyCylinder extends CGFobject {
                     delta_s * i, delta_t * j
                 );
 
-                console.log("TexCoords: (" + delta_s * i + ", " + delta_t * j + ")");
-
                 // At each iteration we go up on the z axis and closer to top radius
                 z += delta_z;
                 radius += delta_r;
