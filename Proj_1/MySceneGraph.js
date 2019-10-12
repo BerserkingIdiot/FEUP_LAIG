@@ -1253,7 +1253,7 @@ class MySceneGraph {
      * Draws primitives and updates transformation matrices, textures and materials applied.
      * @param {string, which represents the id of a node in the graph} component 
      */
-    processNode(component, previousMaterialID) {        
+    processNode(component, previousMaterialID, previousTextureID) {        
 
         //If the component has been visited, then there is a loop on the scene graph
         if (this.components[component].visited) {
@@ -1271,18 +1271,28 @@ class MySceneGraph {
             var currentMaterialID =   this.components[component].getCurrentMaterialID(); 
         }
 
+        if(this.components[component].texture == "inherit")
+            var currentTextureID = previousTextureID;
+        else{
+            var currentTextureID =   this.components[component].texture; 
+        }
+
         //compChildren is a list of ID's
         for (var i = 0; i < this.components[component].compChildren.length; i++) {
             //apply material
             this.materials[currentMaterialID].apply();
             //apply texture
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].bind();
             this.scene.pushMatrix();
-            this.processNode(this.components[component].compChildren[i], currentMaterialID);
+            this.processNode(this.components[component].compChildren[i], currentMaterialID, currentTextureID);
             if (!this.displayOk) {
                 this.onDisplayError("loop component stack: " + component);
                 return;
             }
             this.scene.popMatrix();
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].unbind();
         }
 
         //primChildren is a list of ID's
@@ -1291,9 +1301,13 @@ class MySceneGraph {
             //apply material
             this.materials[currentMaterialID].apply();
             //apply texture
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].bind();
             this.scene.pushMatrix();
             this.primitives[this.components[component].primChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
             this.scene.popMatrix();
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].unbind();
         }
 
         this.components[component].visited = false;
