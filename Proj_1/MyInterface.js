@@ -31,10 +31,14 @@ class MyInterface extends CGFinterface {
     initInterface() {
         // Dropdown to control the active camera
         this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected View').onChange(this.scene.changeCamera.bind(this.scene));
-        
-        this.folder = null;
+
         // Dropdown to select the light to be controled
         this.gui.add(this.scene, 'selectedLight', this.scene.lightIDs).name('Selected Light').onChange(this.updateFolders.bind(this));
+
+        // Lights' names
+        this.lightNames = Object.keys(this.scene.lightIDs);
+        this.folder = this.gui.addFolder(this.lightNames[this.scene.selectedLight] + ' Properties');
+        this.folder.add(this.scene.lights[this.scene.selectedLight], 'enabled').name("Enabled");
 
         // a folder for grouping parameters for one of the lights
         // var f0 = this.gui.addFolder('Light 0 ');
@@ -46,11 +50,13 @@ class MyInterface extends CGFinterface {
         // sf0.add(this.scene.lights[0].position, '2', -5.0, 5.0).name("Z Position");
     }
 
+    /**
+     *  Updates the name of the folder with the selected light properties
+     */
     updateFolders() {
-        if(this.folder != null)
-            this.gui.removeFolder(this.folder);
+        this.gui.removeFolder(this.folder);
 
-        this.folder = this.gui.addFolder('Light ');
+        this.folder = this.gui.addFolder(this.lightNames[this.scene.selectedLight] + ' Properties');
         this.folder.add(this.scene.lights[this.scene.selectedLight], 'enabled').name("Enabled");
     }
 

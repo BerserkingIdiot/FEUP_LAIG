@@ -82,6 +82,7 @@ class XMLscene extends CGFscene {
             if (i >= 8)
                 break;              // Only eight lights allowed by WebGL.
 
+            // Adds the light id and index to an object to be manipulated by the interface
             this.lightIDs[key] = i;
 
             if (this.graph.lights.hasOwnProperty(key)) {
@@ -98,7 +99,8 @@ class XMLscene extends CGFscene {
                     this.lights[i].setSpotDirection(light[8][0], light[8][1], light[8][2]);
                 }
 
-                this.lights[i].setVisible(true);
+                //Uncomment following line to see the light sources in the scene
+                // this.lights[i].setVisible(true);
                 if (light[0])
                     this.lights[i].enable();
                 else
@@ -110,13 +112,7 @@ class XMLscene extends CGFscene {
             }
         }
     }
-    /**
-     * Changes selectedLight enabled property. To be called by the interface.
-     */
-    changeLight(enable) {
-        var light = this.lights[this.selectedLight];
-        enable ? light.enable() : light.disable();
-    }
+
     setDefaultAppearance() {
         this.setAmbient(0.2, 0.4, 0.8, 1.0);
         this.setDiffuse(0.2, 0.4, 0.8, 1.0);
@@ -142,14 +138,16 @@ class XMLscene extends CGFscene {
         this.sceneInited = true;
     }
 
-    
+    /**
+     * Update's the materials if key M has been pressed
+     * @param {update period set on scene's initialization} t 
+     */
     update(t){
         if(this.interface.isKeyPressed('KeyM')){           
             this.graph.updateMaterialIndexes();
         }
     }
     
-
     /**
      * Displays the scene.
      */
@@ -171,9 +169,9 @@ class XMLscene extends CGFscene {
         this.setDefaultAppearance();
         this.axis.display();
 
+        // Updating lights to enable and disable them
         for (var i = 0; i < this.lights.length; i++) {
-            this.lights[i].setVisible(true);
-            this.lights[i].enable();
+            this.lights[i].update();
         }
         
         if (this.sceneInited && this.graph.displayOk) {
