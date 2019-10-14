@@ -63,7 +63,7 @@ class MyTorus extends CGFobject {
                 )
                 
                 //S axis is mapped on the slices and T axis on the loops
-                this.texCoords.push(delta_s * i, delta_t * j);
+                this.texCoords.push(delta_s * i, 1 - delta_t * j);
 
                 // At each iteration we go further on the outer circumference
                 phi += delta_phi;
@@ -73,7 +73,7 @@ class MyTorus extends CGFobject {
 
             //By stopping at j = loops we miss the last point
             this.vertices.push(x, y, z);
-            this.texCoords.push(delta_s * i, 1);
+            this.texCoords.push(delta_s * i, 0);
             //Last point normal
             var normal = [Math.cos(theta) * Math.cos(phi), Math.cos(theta) * Math.sin(phi), Math.sin(theta)];
             normal = this.vectorNormalize(normal);
