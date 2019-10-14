@@ -34,17 +34,40 @@ class XMLscene extends CGFscene {
 
         this.axis = new CGFaxis(this);
         this.setUpdatePeriod(100);
+
+        //Camera interface related variables
+        this.cameraIDs = [];
+        this.selectedCamera = null;
+        //Light interface variable. Holds key value pairs as light_id -> index
+        this.lightIDs = new Object();
     }
 
     /**
-     * Initializes the scene cameras.
+     * Initializes the scene camera
      */
     initCameras() {
-        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0)); 
     }
-    
-    initDefaultCamera() {
-        this.camera = this.graph.views[this.graph.defaultCameraId];
+
+    /**
+     * Initializes the scene cameras according to graph information.
+     */
+    initGraphCameras() {
+        //Every id is saved so cameras can be manipulated on the interface
+        for (var key in this.graph.views) {
+            this.cameraIDs.push(key);
+        }
+
+        //Currently active camera is set to the default camera
+        this.selectedCamera = this.graph.defaultCameraId;
+        this.changeCamera();
+    }
+    /**
+     * Changes current active camera. It is meant to be called by the interface
+     */
+    changeCamera() {
+        this.camera = this.graph.views[this.selectedCamera];
+        // The following line enables camera movement and zoom on the scene
         this.interface.setActiveCamera(this.camera);
     }
     /**
@@ -58,6 +81,9 @@ class XMLscene extends CGFscene {
         for (var key in this.graph.lights) {
             if (i >= 8)
                 break;              // Only eight lights allowed by WebGL.
+
+            // Adds the light id and index to an object to be manipulated by the interface
+            this.lightIDs[key] = i;
 
             if (this.graph.lights.hasOwnProperty(key)) {
                 var light = this.graph.lights[key];
@@ -73,7 +99,8 @@ class XMLscene extends CGFscene {
                     this.lights[i].setSpotDirection(light[8][0], light[8][1], light[8][2]);
                 }
 
-                this.lights[i].setVisible(true);
+                //Uncomment following line to see the light sources in the scene
+                // this.lights[i].setVisible(true);
                 if (light[0])
                     this.lights[i].enable();
                 else
@@ -102,20 +129,25 @@ class XMLscene extends CGFscene {
 
         this.setGlobalAmbientLight(this.graph.ambient[0], this.graph.ambient[1], this.graph.ambient[2], this.graph.ambient[3]);
 
+        this.initGraphCameras();
         this.initLights();
-        this.initDefaultCamera();
+
+        //Updating the interface with the new options
+        this.interface.initInterface();
 
         this.sceneInited = true;
     }
 
-    
+    /**
+     * Update's the materials if key M has been pressed
+     * @param {update period set on scene's initialization} t 
+     */
     update(t){
         if(this.interface.isKeyPressed('KeyM')){           
             this.graph.updateMaterialIndexes();
         }
     }
     
-
     /**
      * Displays the scene.
      */
@@ -137,9 +169,9 @@ class XMLscene extends CGFscene {
         this.setDefaultAppearance();
         this.axis.display();
 
+        // Updating lights to enable and disable them
         for (var i = 0; i < this.lights.length; i++) {
-            this.lights[i].setVisible(true);
-            this.lights[i].enable();
+            this.lights[i].update();
         }
         
         if (this.sceneInited && this.graph.displayOk) {
