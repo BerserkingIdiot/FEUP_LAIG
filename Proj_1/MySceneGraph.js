@@ -1019,8 +1019,18 @@ class MySceneGraph {
                 return "Root component ID " + componentID + " cannot inherit texture";
             }
             
-            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false) || 1;
-            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false) || 1;
+            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false); //|| 1;
+            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false); //|| 1;
+
+        if((textureID == "none" || textureID == "inherit") && (ls != null || lt != null)){
+            return "texture ID " + textureID + " does not accept length_s and length_t values (component " + componentID + ")";
+        }   
+        else if(textureID != "none" && textureID != "inherit") {
+            if(ls == null)
+                ls = 1;
+            if(lt == null)
+                lt = 1;
+        }
 
             // : Component Children
             var compChildren = [];
