@@ -73,7 +73,7 @@ class MyCylinder extends CGFobject {
                 }
 
                 this.texCoords.push(
-                    delta_s * i, delta_t * j
+                    delta_s * i, 1 - delta_t * j
                 );
 
                 // At each iteration we go up on the z axis and closer to top radius
@@ -86,7 +86,7 @@ class MyCylinder extends CGFobject {
             //By stopping at j = stacks we miss the last point (the one on the top circunference)
             this.vertices.push(x, y, z);
             this.normals.push(...normal);
-            this.texCoords.push(delta_s * i, 1);
+            this.texCoords.push(delta_s * i, 0);
             
             z = 0;
             radius = this.base;
