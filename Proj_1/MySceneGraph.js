@@ -1019,8 +1019,18 @@ class MySceneGraph {
                 return "Root component ID " + componentID + " cannot inherit texture";
             }
             
-            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false) || 1;
-            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false) || 1;
+            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false); //|| 1;
+            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false); //|| 1;
+
+        if((textureID == "none" || textureID == "inherit") && (ls != null || lt != null)){
+            return "texture ID " + textureID + " does not accept length_s and length_t values (component " + componentID + ")";
+        }   
+        else if(textureID != "none" && textureID != "inherit") {
+            if(ls == null)
+                ls = 1;
+            if(lt == null)
+                lt = 1;
+        }
 
             // : Component Children
             var compChildren = [];
@@ -1253,7 +1263,7 @@ class MySceneGraph {
      * Draws primitives and updates transformation matrices, textures and materials applied.
      * @param {string, which represents the id of a node in the graph} component 
      */
-    processNode(component, previousMaterialID) {        
+    processNode(component, previousMaterialID, previousTextureID, previousLS, previousLT) {        
 
         //If the component has been visited, then there is a loop on the scene graph
         if (this.components[component].visited) {
@@ -1263,6 +1273,9 @@ class MySceneGraph {
 
         this.components[component].visited = true;
 
+        var componentChildren = this.components[component].compChildren;
+        var primitiveChildren = this.components[component].primChildren;
+
         this.scene.multMatrix(this.components[component].transfMat);
 
         if(this.components[component].getCurrentMaterialID() == "inherit")
@@ -1271,29 +1284,56 @@ class MySceneGraph {
             var currentMaterialID =   this.components[component].getCurrentMaterialID(); 
         }
 
+        if(this.components[component].texture == "inherit"){
+            var currentTextureID = previousTextureID;
+            var currentLS = previousLS;
+            var currentLT = previousLT;
+        }
+        else{
+            var currentTextureID =   this.components[component].texture; 
+            var currentLS = this.components[component].lengthS;
+            var currentLT = this.components[component].lengthT;
+        }
+
         //compChildren is a list of ID's
-        for (var i = 0; i < this.components[component].compChildren.length; i++) {
+        for (var i = 0; i < componentChildren.length; i++) {
             //apply material
             this.materials[currentMaterialID].apply();
             //apply texture
+            /*
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].bind();
+                */
             this.scene.pushMatrix();
-            this.processNode(this.components[component].compChildren[i], currentMaterialID);
+            this.processNode(componentChildren[i], currentMaterialID, currentTextureID, currentLS, currentLT);
             if (!this.displayOk) {
                 this.onDisplayError("loop component stack: " + component);
                 return;
             }
             this.scene.popMatrix();
+            /*
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].unbind();
+                */
         }
 
         //primChildren is a list of ID's
-        for (var i = 0; i < this.components[component].primChildren.length; i++) {
+        for (var i = 0; i < primitiveChildren.length; i++) {
             
             //apply material
             this.materials[currentMaterialID].apply();
             //apply texture
+            if(currentTextureID!= "none") {
+                this.textures[currentTextureID].bind();
+                if(this.primitives[primitiveChildren[i]] instanceof MyRectangle ||
+                    this.primitives[primitiveChildren[i]] instanceof MyTriangle)
+                    this.primitives[primitiveChildren[i]].updateTexCoords(currentLS, currentLT);
+            }
             this.scene.pushMatrix();
-            this.primitives[this.components[component].primChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
+            this.primitives[primitiveChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
             this.scene.popMatrix();
+            if(currentTextureID!= "none")
+                this.textures[currentTextureID].unbind();
         }
 
         this.components[component].visited = false;
