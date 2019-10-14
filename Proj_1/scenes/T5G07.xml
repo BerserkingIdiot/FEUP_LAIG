@@ -56,7 +56,8 @@
         <texture id="wallsTexture" file="scenes/images/walls.jpg" />
         <texture id="clubTexture" file="scenes/images/beach_club.jpg" />
         <texture id="discoTexture" file="scenes/images/disco.png" />
-        <texture id="tableTexture" file="scenes/images/rocks.png" />
+        <texture id="tableTexture" file="scenes/images/rocks.jpg" />
+        <texture id="buoyTexture" file="scenes/images/buoy.png" />
     </textures>
 
     <materials>
@@ -322,10 +323,10 @@
                 <material id="inherit" />
                 <material id="diffuseOrange" />
             </materials>
-            <texture id="none"/>
+            <texture id="buoyTexture"/>
             <children>
                 <primitiveref id="buoy" />
-            </children>
+            </children>none
         </component>
         <component id="mirrorBall">
             <transformation>
@@ -375,7 +376,7 @@
                 <material id="basicBrown" />
                 <material id="basicLightGrey" />
             </materials>
-            <texture id="tableTexture"/>
+            <texture id="tableTexture" length_s="0.25" length_t="0.33" />
             <children>
                 <componentref id="tableTriangleLeft"/>
                 <componentref id="tableTriangleRight"/>
