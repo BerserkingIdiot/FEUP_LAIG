@@ -38,9 +38,8 @@ class XMLscene extends CGFscene {
         //Camera interface related variables
         this.cameraIDs = [];
         this.selectedCamera = null;
-        //Light interface variables
+        //Light interface variable. Holds key value pairs as light_id -> index
         this.lightIDs = new Object();
-        this.selectedLight = 0;
     }
 
     /**
