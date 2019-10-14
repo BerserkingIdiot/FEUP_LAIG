@@ -168,6 +168,9 @@
         <primitive id="smallSquare">
             <rectangle x1="0" y1="0" x2="1" y2="1" />
         </primitive>
+        <primitive id="mediumSquare">
+            <rectangle x1="0" y1="0" x2="2.5" y2="2.5" />
+        </primitive>
         <primitive id="bigSquare">
             <rectangle x1="0" y1="0" x2="10" y2="10" />
         </primitive>
@@ -235,11 +238,11 @@
                 <componentref id="wallLeft" />
                 <componentref id="wallBack" />
                 <componentref id="wallRight" />
-                <componentref id="floor" />
+                <componentref id="floorMesh" />
                 <componentref id="ceiling" />
             </children>
         </component>
-        <component id="floor">
+        <component id="floorMesh">
             <transformation>
                 <translate x="0" y="0" z="10" />
                 <rotate axis="x" angle="-90" />
@@ -249,7 +252,214 @@
             </materials>
             <texture id="none"/>
             <children>
-                <primitiveref id="bigSquare" />
+                <componentref id="floor1" />
+                <componentref id="floor2" />
+                <componentref id="floor3" />
+                <componentref id="floor4" />
+                <componentref id="floor5" />
+                <componentref id="floor6" />
+                <componentref id="floor7" />
+                <componentref id="floor8" />
+                <componentref id="floor9" />
+                <componentref id="floor10" />
+                <componentref id="floor11" />
+                <componentref id="floor12" />
+                <componentref id="floor13" />
+                <componentref id="floor14" />
+                <componentref id="floor15" />
+                <componentref id="floor16" />
+            </children>
+        </component>
+        <component id="floor1">
+            <transformation>
+                <translate x="0" y="0" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor2">
+            <transformation>
+                <translate x="2.5" y="0" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor3">
+            <transformation>
+                <translate x="5" y="0" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor4">
+            <transformation>
+                <translate x="7.5" y="0" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor5">
+            <transformation>
+                <translate x="0" y="2.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor6">
+            <transformation>
+                <translate x="2.5" y="2.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor7">
+            <transformation>
+                <translate x="5" y="2.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor8">
+            <transformation>
+                <translate x="7.5" y="2.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor9">
+            <transformation>
+                <translate x="0" y="5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor10">
+            <transformation>
+                <translate x="2.5" y="5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor11">
+            <transformation>
+                <translate x="5" y="5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor12">
+            <transformation>
+                <translate x="7.5" y="5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor13">
+            <transformation>
+                <translate x="0" y="7.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor14">
+            <transformation>
+                <translate x="2.5" y="7.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor15">
+            <transformation>
+                <translate x="5" y="7.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
+            </children>
+        </component>
+        <component id="floor16">
+            <transformation>
+                <translate x="7.5" y="7.5" z="0" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <primitiveref id="mediumSquare" />
             </children>
         </component>
         <component id="ceiling">
