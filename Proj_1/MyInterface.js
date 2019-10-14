@@ -35,27 +35,19 @@ class MyInterface extends CGFinterface {
         // Dropdown to select the light to be controled
         this.gui.add(this.scene, 'selectedLight', this.scene.lightIDs).name('Selected Light').onChange(this.updateFolders.bind(this));
 
-        // Lights' names
+        // Retrieves the lights ids from the scene object to show as description in the interface
         this.lightNames = Object.keys(this.scene.lightIDs);
         this.folder = this.gui.addFolder(this.lightNames[this.scene.selectedLight] + ' Properties');
         this.folder.add(this.scene.lights[this.scene.selectedLight], 'enabled').name("Enabled");
-
-        // a folder for grouping parameters for one of the lights
-        // var f0 = this.gui.addFolder('Light 0 ');
-        // f0.add(this.scene.lights[0], 'enabled').name("Enabled");
-        // // a subfolder for grouping only the three coordinates of the light
-        // var sf0 = f0.addFolder('Light 0 Position');
-        // sf0.add(this.scene.lights[0].position, '0', -5.0, 5.0).name("X Position");
-        // sf0.add(this.scene.lights[0].position, '1', -5.0, 5.0).name("Y Position");
-        // sf0.add(this.scene.lights[0].position, '2', -5.0, 5.0).name("Z Position");
     }
 
     /**
      *  Updates the name of the folder with the selected light properties
      */
     updateFolders() {
+        // The old folder is removed
         this.gui.removeFolder(this.folder);
-
+        // A new one is created with the 'enabled' property of the selected light
         this.folder = this.gui.addFolder(this.lightNames[this.scene.selectedLight] + ' Properties');
         this.folder.add(this.scene.lights[this.scene.selectedLight], 'enabled').name("Enabled");
     }

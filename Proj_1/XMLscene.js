@@ -64,10 +64,11 @@ class XMLscene extends CGFscene {
         this.changeCamera();
     }
     /**
-     * Changes current active camera according to this.selectedCamera id
+     * Changes current active camera. It is meant to be called by the interface
      */
     changeCamera() {
         this.camera = this.graph.views[this.selectedCamera];
+        // The following line enables camera movement and zoom on the scene
         this.interface.setActiveCamera(this.camera);
     }
     /**
