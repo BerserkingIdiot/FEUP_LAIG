@@ -3,8 +3,8 @@
 
     <views default="defaultCamera">
         <perspective id="defaultCamera" near="0.1" far="500" angle="45">
-            <from x="30" y="15" z="30" />
-            <to x="0" y="-2" z="0" />
+            <from x="5" y="5" z="5" />
+            <to x="1" y="0" z="0" />
         </perspective>
     </views>
 
@@ -23,15 +23,15 @@
     </lights>
 
     <textures>
-        <texture id="demoTexture" file="scenes/images/vidral.jpg" />
+        <texture id="demoTexture" file="scenes/images/beach_club.jpg" />
     </textures>
 
     <materials>
         <material id="demoMaterial" shininess="10">
-            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
-            <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
-            <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
-            <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+            <emission r="1.0" g="1.0" b="1.0" a="1.0" />
+            <ambient r="1.0" g="1.0" b="1.0" a="1.0" />
+            <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.0" g="0.0" b="0.0" a="1.0" />
         </material>
     </materials>
 
@@ -44,24 +44,23 @@
     </transformations>
 
     <primitives>
-        <primitive id="demoRectangle">
-            <rectangle x1="0" y1="0" x2="10" y2="10" />
+        <primitive id="triangle">
+            <triangle x1="0" y1="0" z1="0" 
+                x2="1" y2="0" z2="0"
+                x3="0.5" y3="1" z3="0" />
         </primitive>
     </primitives>
 
     <components>
         <component id="demoRoot">
             <transformation>
-                <transformationref id="demoTransform"/>
-                <translate x="0" y="0" z="1" />
-                <scale x="1" y="1" z="1" />
             </transformation>
             <materials>
                 <material id="demoMaterial" />
             </materials>
-            <texture id="demoTexture"/>
+            <texture id="demoTexture" length_s="0.5" length_t="1"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="triangle"/>
             </children>
         </component>
     </components>
