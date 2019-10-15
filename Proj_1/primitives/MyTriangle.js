@@ -40,7 +40,7 @@ class MyTriangle extends CGFobject {
             0, 1, 2
         ];
 		
-		//Vectors defined by the three points. A = [P1, P2]; B = [P2, P3]; C = [P3, P1]
+		//Vectors defined by the three points. A = [V1, V2]; B = [V2, V3]; C = [V3, V1]
 		var vecA = [this.x2-this.x1, this.y2-this.y1, this.z2-this.z1];
 		var vecB = [this.x3-this.x2, this.y3-this.y2, this.z3-this.z2];
 		var vecC = [this.x1-this.x3, this.y1-this.y3, this.z1-this.z3];
@@ -48,9 +48,9 @@ class MyTriangle extends CGFobject {
 		//In order to determine the normals we take two vectors and calculate their cross product
 		//cross(A, B) = [ a2 * b3 - a3 * b2, a3 * b1 - a1 * b3, a1 * b2 - a2 * b1 ]
         var norm = [
-            vecA[1]*vecB[2]-vecA[2]*vec[1],
+            vecA[1]*vecB[2]-vecA[2]*vecB[1],
             vecA[2]*vecB[0]-vecA[0]*vecB[2],
-            vecA[0]*vec[1]-vecA[1]*vecB[0]
+            vecA[0]*vecB[1]-vecA[1]*vecB[0]
 		];
 		//Normalizing the normal vector
 		this.vectorNormalize(norm);
@@ -76,7 +76,7 @@ class MyTriangle extends CGFobject {
 		var b = this.vectorNorm(vecB);
 		var c = this.vectorNorm(vecC);
 		//Alpha angle (angle on V1)
-		var cos_alpha = Math.cos( (a*a - c*c + b*b)/ (2*a*c) );
+		var cos_alpha = (a*a - b*b + c*c)/ (2*a*c);
 		var sin_alpha = Math.sqrt(1 - cos_alpha * cos_alpha);
 		//Each vertex texCoords (aka default values) without texture scaling factors
 		//These are global variables because we will need thenm to apply scaling on updateTexCoords()
