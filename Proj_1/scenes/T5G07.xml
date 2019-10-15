@@ -199,6 +199,9 @@
         <primitive id="tableUnderRect">
             <rectangle x1="0" y1="0" x2="4" y2="4.24" />
         </primitive>
+        <primitive id="tableLegCylinder">
+            <cylinder base="0.25" top="0.25" height="3" slices="20" stacks="20" />
+        </primitive>
         <primitive id="disc">
             <cylinder base="0.4" top="0.4" height="0.1" slices="20" stacks="5" />
         </primitive>
@@ -593,6 +596,8 @@
                 <componentref id="tableRectangleTop"/>
                 <componentref id="tableRectangleFront"/>
                 <componentref id="tableRectangleUnder"/>
+                <componentref id="tableLegLeft"/>
+                <componentref id="tableLegRight"/>
             </children>
         </component>
         <component id="tableTriangleLeft">
@@ -656,6 +661,32 @@
             <texture id="inherit"/>
             <children>
                 <primitiveref id="tableUnderRect"/>
+            </children>
+        </component>
+        <component id="tableLegLeft">
+            <transformation>
+                <translate x="3.75" y="0" z="-2.75"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="tableLegCylinder"/>
+            </children>
+        </component>
+        <component id="tableLegRight">
+            <transformation>
+                <translate x="0.25" y="0" z="-2.75"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="tableLegCylinder"/>
             </children>
         </component>
         <component id="djMixer">
