@@ -1001,7 +1001,7 @@ class MySceneGraph {
                 if (!(materialID == "inherit") && this.materials[materialID] == null) {
                     return "no such material with ID " + materialID + " for component ID " + componentID;
                 }
-                if(componentID == this.idRoot && materialID == "inherit"){
+                if (componentID == this.idRoot && materialID == "inherit") {
                     return "Root component ID " + componentID + " cannot inherit materials";
                 }
                 materials.push(materialID);
@@ -1014,22 +1014,26 @@ class MySceneGraph {
             if (this.textures[textureID] == null && !(textureID == "none") && !(textureID == "inherit")) {
                 return "no such texture with ID " + textureID + " for component ID " + componentID;
             }
-            if(componentID == this.idRoot && textureID == "inherit"){
+            if (componentID == this.idRoot && textureID == "inherit") {
                 return "Root component ID " + componentID + " cannot inherit texture";
             }
-            
-            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false); //|| 1;
-            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false); //|| 1;
 
-        if((textureID == "none" || textureID == "inherit") && (ls != null || lt != null)){
-            return "texture ID " + textureID + " does not accept length_s and length_t values (component " + componentID + ")";
-        }   
-        else if(textureID != "none" && textureID != "inherit") {
-            if(ls == null)
-                ls = 1;
-            if(lt == null)
-                lt = 1;
-        }
+            var ls = this.reader.getFloat(grandChildren[textureIndex], 'length_s', false);
+            var lt = this.reader.getFloat(grandChildren[textureIndex], 'length_t', false);
+
+            if ((textureID == "none" || textureID == "inherit") && (ls != null || lt != null)) {
+                return "texture ID " + textureID + " does not accept length_s and length_t values (component " + componentID + ")";
+            }
+            else if (textureID != "none" && textureID != "inherit") {
+                if (ls == null) {
+                    this.onXMLMinorError("length_s not defined for component ID " + componentID + "; assuming length_s = 1.");
+                    ls = 1;
+                }
+                if (lt == null) {
+                    this.onXMLMinorError("length_t not defined for component ID " + componentID + "; assuming length_t = 1.");
+                    lt = 1;
+                }
+            }
 
             // : Component Children
             var compChildren = [];
@@ -1251,12 +1255,12 @@ class MySceneGraph {
     /**
      * Updates the chosen material for each component of the graph
      */
-    updateMaterialIndexes(){
+    updateMaterialIndexes() {
         this.componentIDs.forEach(element => {
             this.components[element].updateMaterialIndex();
         });
     }
-    
+
 
     /**
      * Processes a node of the scene graph and calls itself recursively on the node's children.
@@ -1267,7 +1271,7 @@ class MySceneGraph {
      * @param {float, length_s value used on textures, passed down by parent component} previousLS
      * @param {float, length_t value used on textures, passed down by parent component} previousLT
      */
-    processNode(component, previousMaterialID, previousTextureID, previousLS, previousLT) {        
+    processNode(component, previousMaterialID, previousTextureID, previousLS, previousLT) {
 
         //If the component has been visited, then there is a loop on the scene graph
         if (this.components[component].visited) {
@@ -1282,19 +1286,19 @@ class MySceneGraph {
 
         this.scene.multMatrix(this.components[component].transfMat);
 
-        if(this.components[component].getCurrentMaterialID() == "inherit")
+        if (this.components[component].getCurrentMaterialID() == "inherit")
             var currentMaterialID = previousMaterialID;
-        else{
-            var currentMaterialID =   this.components[component].getCurrentMaterialID(); 
+        else {
+            var currentMaterialID = this.components[component].getCurrentMaterialID();
         }
 
-        if(this.components[component].texture == "inherit"){
+        if (this.components[component].texture == "inherit") {
             var currentTextureID = previousTextureID;
             var currentLS = previousLS;
             var currentLT = previousLT;
         }
-        else{
-            var currentTextureID =   this.components[component].texture; 
+        else {
+            var currentTextureID = this.components[component].texture;
             var currentLS = this.components[component].lengthS;
             var currentLT = this.components[component].lengthT;
         }
@@ -1303,11 +1307,6 @@ class MySceneGraph {
         for (var i = 0; i < componentChildren.length; i++) {
             //apply material
             this.materials[currentMaterialID].apply();
-            //apply texture
-            /*
-            if(currentTextureID!= "none")
-                this.textures[currentTextureID].bind();
-                */
             this.scene.pushMatrix();
             this.processNode(componentChildren[i], currentMaterialID, currentTextureID, currentLS, currentLT);
             if (!this.displayOk) {
@@ -1315,29 +1314,25 @@ class MySceneGraph {
                 return;
             }
             this.scene.popMatrix();
-            /*
-            if(currentTextureID!= "none")
-                this.textures[currentTextureID].unbind();
-                */
         }
 
         //primitiveChildren is a list of ID's
         for (var i = 0; i < primitiveChildren.length; i++) {
-            
             //apply material
             this.materials[currentMaterialID].apply();
             //apply texture
-            if(currentTextureID!= "none") {
+            if (currentTextureID != "none") {
                 this.textures[currentTextureID].bind();
                 //length_s and length_t are only used on triangles and rectangles
-                if(this.primitives[primitiveChildren[i]] instanceof MyRectangle ||
+                if (this.primitives[primitiveChildren[i]] instanceof MyRectangle ||
                     this.primitives[primitiveChildren[i]] instanceof MyTriangle)
                     this.primitives[primitiveChildren[i]].updateTexCoords(currentLS, currentLT);
             }
             this.scene.pushMatrix();
             this.primitives[primitiveChildren[i]].display();
             this.scene.popMatrix();
-            if(currentTextureID!= "none")
+            //texture is unbound to ensure that a node with 'none' has no texture bound on scene
+            if (currentTextureID != "none")
                 this.textures[currentTextureID].unbind();
         }
 
