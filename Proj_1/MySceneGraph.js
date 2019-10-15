@@ -1157,7 +1157,6 @@ class MySceneGraph {
         return color;
     }
 
-    //TODO: add documentation to parseSingleTransf
     /**
      * Parse a block of translations, scalations and/or rotations and return the resulting transformation matrix
      * @param {basic transformations applied to the matrix} stepList 
@@ -1250,7 +1249,9 @@ class MySceneGraph {
         console.log("   " + message);
     }
 
-    
+    /**
+     * Updates the chosen material for each component of the graph
+     */
     updateMaterialIndexes(){
         this.componentIDs.forEach(element => {
             this.components[element].updateMaterialIndex();
@@ -1262,6 +1263,10 @@ class MySceneGraph {
      * Processes a node of the scene graph and calls itself recursively on the node's children.
      * Draws primitives and updates transformation matrices, textures and materials applied.
      * @param {string, which represents the id of a node in the graph} component 
+     * @param {string, represents the id of the material passed down by the parent component} previousMaterialID
+     * @param {string, represents the id of the texture passed down by the parent component} previousTextureID
+     * @param {float, length_s value used on textures, passed down by parent component} previousLS
+     * @param {float, length_t value used on textures, passed down by parent component} previousLT
      */
     processNode(component, previousMaterialID, previousTextureID, previousLS, previousLT) {        
 
@@ -1295,7 +1300,7 @@ class MySceneGraph {
             var currentLT = this.components[component].lengthT;
         }
 
-        //compChildren is a list of ID's
+        //componentChildren is a list of ID's
         for (var i = 0; i < componentChildren.length; i++) {
             //apply material
             this.materials[currentMaterialID].apply();
@@ -1317,7 +1322,7 @@ class MySceneGraph {
                 */
         }
 
-        //primChildren is a list of ID's
+        //primitiveChildren is a list of ID's
         for (var i = 0; i < primitiveChildren.length; i++) {
             
             //apply material
@@ -1325,12 +1330,13 @@ class MySceneGraph {
             //apply texture
             if(currentTextureID!= "none") {
                 this.textures[currentTextureID].bind();
+                //length_s and length_t are only used on triangles and rectangles
                 if(this.primitives[primitiveChildren[i]] instanceof MyRectangle ||
                     this.primitives[primitiveChildren[i]] instanceof MyTriangle)
                     this.primitives[primitiveChildren[i]].updateTexCoords(currentLS, currentLT);
             }
             this.scene.pushMatrix();
-            this.primitives[primitiveChildren[i]].display(); //FIXME: make processNode do this to make it less confusing?
+            this.primitives[primitiveChildren[i]].display();
             this.scene.popMatrix();
             if(currentTextureID!= "none")
                 this.textures[currentTextureID].unbind();
@@ -1343,6 +1349,6 @@ class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        this.processNode(this.idRoot,0);
+        this.processNode(this.idRoot);
     }
 }
