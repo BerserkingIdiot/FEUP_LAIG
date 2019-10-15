@@ -35,8 +35,8 @@
             <specular r="0.1" g="1.0" b="0.1" a="1.0" />
         </omni>
         <spot id="rightSpot" enabled="0" angle="40" exponent="3">
-            <location x="8.8" y="8.3" z="1.1" w="1.0" />
-            <target x="5" y="0" z="5" />
+            <location x="8.77" y="8.3" z="1.1" w="1.0" />
+            <target x="0" y="0" z="10" />
             <ambient r="0.1" g="0.1" b="0.1" a="1.0" />
             <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
             <specular r="0.2" g="0.0" b="1.0" a="1.0" />
@@ -44,7 +44,7 @@
         </spot>
         <spot id="leftSpot" enabled="0" angle="40" exponent="3">
             <location x="1.23" y="8.3" z="1.1" w="1.0" />
-            <target x="5" y="0" z="5" />
+            <target x="10" y="0" z="10" />
             <ambient r="0.1" g="0.1" b="0.1" a="1.0" />
             <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
             <specular r="0.2" g="1.0" b="0.0" a="1.0" />
@@ -607,7 +607,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="tableTriangleL"/>
             </children>
@@ -619,7 +619,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="tableTriangleR"/>
             </children>
