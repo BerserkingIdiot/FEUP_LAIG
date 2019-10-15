@@ -577,8 +577,6 @@ class MySceneGraph {
             if (jpg == null && png == null) {
                 return "invalid file extension for texture ID " + textureID;
             }
-            // Checking if file exists
-            var reader = new File([""], file);
 
             var texture = new CGFtexture(this.scene, file);
             this.textures[textureID] = texture;
@@ -667,6 +665,7 @@ class MySceneGraph {
             material.setAmbient(...ambient);
             material.setDiffuse(...diffuse);
             material.setSpecular(...specular);
+            material.setTextureWrap('REPEAT', 'REPEAT');
 
             this.materials[materialID] = material;
             numMaterials++;
