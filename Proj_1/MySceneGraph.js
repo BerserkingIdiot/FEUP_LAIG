@@ -501,22 +501,22 @@ class MySceneGraph {
 
             // The original code provided by the teachers missed the attenuation parsing
             var attenuationIndex = nodeNames.indexOf('attenuation');
-            if( attenuationIndex == -1 ) {
+            if (attenuationIndex == -1) {
                 return "no attenuation defined for light with ID = " + lightId;
             }
             // Each attenuation value is read from the node
             var constantAtt = this.reader.getFloat(grandChildren[attenuationIndex], 'constant');
-            if (!(constantAtt!= null && !isNaN(constantAtt) && constantAtt >= 0 && constantAtt <= 1))
+            if (!(constantAtt != null && !isNaN(constantAtt) && constantAtt >= 0 && constantAtt <= 1))
                 return "unable to parse constant attenuation of the light for ID = " + lightId;
             var linearAtt = this.reader.getFloat(grandChildren[attenuationIndex], 'linear');
-            if (!(linearAtt!= null && !isNaN(linearAtt) && linearAtt >= 0 && linearAtt <= 1))
+            if (!(linearAtt != null && !isNaN(linearAtt) && linearAtt >= 0 && linearAtt <= 1))
                 return "unable to parse linear attenuation of the light for ID = " + lightId;
             var quadraticAtt = this.reader.getFloat(grandChildren[attenuationIndex], 'quadratic');
-            if (!(quadraticAtt!= null && !isNaN(quadraticAtt) && quadraticAtt >= 0 && quadraticAtt <= 1))
+            if (!(quadraticAtt != null && !isNaN(quadraticAtt) && quadraticAtt >= 0 && quadraticAtt <= 1))
                 return "unable to parse quadratic attenuation of the light for ID = " + lightId;
 
             global.push(...[constantAtt, linearAtt, quadraticAtt]);
-            
+
             // Gets the additional attributes of the spot light
             if (children[i].nodeName == "spot") {
                 var angle = this.reader.getFloat(children[i], 'angle');

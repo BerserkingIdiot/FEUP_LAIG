@@ -46,7 +46,7 @@ class XMLscene extends CGFscene {
      * Initializes the scene camera
      */
     initCameras() {
-        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0)); 
+        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
     }
 
     /**
@@ -145,12 +145,12 @@ class XMLscene extends CGFscene {
      * Update's the materials if key M has been pressed
      * @param {update period set on scene's initialization} t 
      */
-    update(t){
-        if(this.interface.isKeyPressed('KeyM')){           
+    update(t) {
+        if (this.interface.isKeyPressed('KeyM')) {
             this.graph.updateMaterialIndexes();
         }
     }
-    
+
     /**
      * Displays the scene.
      */
@@ -176,7 +176,7 @@ class XMLscene extends CGFscene {
         for (var i = 0; i < this.lights.length; i++) {
             this.lights[i].update();
         }
-        
+
         if (this.sceneInited && this.graph.displayOk) {
             // Draw axis
             this.setDefaultAppearance();

@@ -7,10 +7,8 @@
  * @param slices - Number of divisions around the axis (in our case, z-axis)
  * @param stacks - number of division between poles
  */
-class MySphere extends CGFobject
-{
-	constructor(scene, id, radius, slices, stacks)
-	{
+class MySphere extends CGFobject {
+	constructor(scene, id, radius, slices, stacks) {
 		super(scene);
 
 		this.radius = radius;
@@ -20,8 +18,7 @@ class MySphere extends CGFobject
 		this.initBuffers();
 	};
 
-	initBuffers()
-	{
+	initBuffers() {
 		this.vertices = [];
 		this.indices = [];
 		this.normals = [];
@@ -30,12 +27,12 @@ class MySphere extends CGFobject
 		//Spherical coordinates:
 		// phi -> angle around the z-axis (around the xy plane circunference/equator)
 		// tet -> angle around the x-axis (around the yz plane circunference/meridians)
-		var phi_angle = 2*Math.PI/this.slices;
-		var tet_angle = Math.PI/(2*this.stacks);
+		var phi_angle = 2 * Math.PI / this.slices;
+		var tet_angle = Math.PI / (2 * this.stacks);
 		// Texture S axis increment
-        var delta_s = 1 / this.slices;
-        // Texture T axis increment
-        var delta_t = 1 / (this.stacks * 2);
+		var delta_s = 1 / this.slices;
+		// Texture T axis increment
+		var delta_t = 1 / (this.stacks * 2);
 
 		for (var phi_inc = 0; phi_inc <= this.slices; ++phi_inc) {
 
@@ -46,23 +43,23 @@ class MySphere extends CGFobject
 				var z = this.radius * Math.sin(tet_angle * tet_inc);
 
 				// Adding vertices with positive z coordinate
-				this.vertices.push(x,y,z);
+				this.vertices.push(x, y, z);
 				// Texture coordinates on +Z,
 				// which means t value is counted upwards from the middle of the texture
 				this.texCoords.push(delta_s * phi_inc, 0.5 - delta_t * tet_inc);
 				// Positive Z normals
-				this.normals.push(x / this.radius,y / this.radius,z / this.radius);
-				
+				this.normals.push(x / this.radius, y / this.radius, z / this.radius);
+
 				// When tet_inc = 0, the vertices are being placed on the equator, which is common to both +Z and -Z
 				// This way there is no duplication of vertices on the equator
 				if (tet_inc != 0) {
 					// Adding vertices with negative z coordinate (which corresponds to a simetry on xy plane)
-					this.vertices.push(x,y,-z);
+					this.vertices.push(x, y, -z);
 					// Texture coordinates on -Z,
 					// which means t value is counted downwards from the middle of the texture
 					this.texCoords.push(delta_s * phi_inc, 0.5 + delta_t * tet_inc);
 					// Negative Z normals
-					this.normals.push(x / this.radius,y / this.radius,- z / this.radius);
+					this.normals.push(x / this.radius, y / this.radius, - z / this.radius);
 				}
 			}
 		}
@@ -83,7 +80,7 @@ class MySphere extends CGFobject
 		for (var i = 0; i < this.slices; ++i) {
 
 			var j;
-			for(j = 0; j < this.stacks - 1; ++j) { //The last stack will be the one with a pole. That one is treated differently
+			for (j = 0; j < this.stacks - 1; ++j) { //The last stack will be the one with a pole. That one is treated differently
 				//-----------------------------------------------------Positive Z indices
 
 				var upper_offset = 2 * j + 1; //Offset of the vertex between the current and the next stacks

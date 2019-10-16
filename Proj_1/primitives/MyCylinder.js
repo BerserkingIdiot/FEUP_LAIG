@@ -62,10 +62,10 @@ class MyCylinder extends CGFobject {
             for (var j = 0; j < this.stacks; j++) {
                 this.vertices.push(x, y, z);
                 this.normals.push(...normal);
-                
+
                 //At each iteration we push indices relative to the face composed by the next vertices.
                 //When i == slices, we would be considering points that do not exist.
-                if(i != this.slices) {
+                if (i != this.slices) {
                     this.indices.push(
                         lineOffset * i + 1 + j, lineOffset * i + j, lineOffset * (i + 1) + j,
                         lineOffset * i + 1 + j, lineOffset * (i + 1) + j, lineOffset * (i + 1) + 1 + j
@@ -87,7 +87,7 @@ class MyCylinder extends CGFobject {
             this.vertices.push(x, y, z);
             this.normals.push(...normal);
             this.texCoords.push(delta_s * i, 0);
-            
+
             z = 0;
             radius = this.base;
             alpha += delta_alpha;

@@ -11,7 +11,7 @@
  * @param ls - scale of the s parameter of the texture
  * @param lt - scale of the t parameter of the texture
  */
-class MyComponent extends CGFobject{
+class MyComponent extends CGFobject {
     constructor(scene, id, matrix, materials, texture, compChildren, primChildren, ls, lt) {
         super(scene);
         this.id = id;
@@ -26,13 +26,13 @@ class MyComponent extends CGFobject{
         this.materialIndex = 0;
     }
 
-    updateMaterialIndex(){
+    updateMaterialIndex() {
         this.materialIndex = this.materialIndex + 1;
-        if(this.materialIndex >= this.materials.length)
+        if (this.materialIndex >= this.materials.length)
             this.materialIndex = 0;
     }
 
-    getCurrentMaterialID(){
+    getCurrentMaterialID() {
         return this.materials[this.materialIndex];
     }
 
