@@ -499,6 +499,24 @@ class MySceneGraph {
                     return "light " + attributeNames[i] + " undefined for ID = " + lightId;
             }
 
+            // The original code provided by the teachers missed the attenuation parsing
+            var attenuationIndex = nodeNames.indexOf('attenuation');
+            if( attenuationIndex == -1 ) {
+                return "no attenuation defined for light with ID = " + lightId;
+            }
+            // Each attenuation value is read from the node
+            var constantAtt = this.reader.getFloat(grandChildren[attenuationIndex], 'constant');
+            if (!(constantAtt!= null && !isNaN(constantAtt) && constantAtt >= 0 && constantAtt <= 1))
+                return "unable to parse constant attenuation of the light for ID = " + lightId;
+            var linearAtt = this.reader.getFloat(grandChildren[attenuationIndex], 'linear');
+            if (!(linearAtt!= null && !isNaN(linearAtt) && linearAtt >= 0 && linearAtt <= 1))
+                return "unable to parse linear attenuation of the light for ID = " + lightId;
+            var quadraticAtt = this.reader.getFloat(grandChildren[attenuationIndex], 'quadratic');
+            if (!(quadraticAtt!= null && !isNaN(quadraticAtt) && quadraticAtt >= 0 && quadraticAtt <= 1))
+                return "unable to parse quadratic attenuation of the light for ID = " + lightId;
+
+            global.push(...[constantAtt, linearAtt, quadraticAtt]);
+            
             // Gets the additional attributes of the spot light
             if (children[i].nodeName == "spot") {
                 var angle = this.reader.getFloat(children[i], 'angle');
@@ -522,7 +540,7 @@ class MySceneGraph {
                 } else
                     return "light target undefined for ID = " + lightId;
 
-                global.push(...[angle, exponent, targetLight])
+                global.push(...[angle, exponent, targetLight]);
             }
 
             this.lights[lightId] = global;
@@ -1272,7 +1290,6 @@ class MySceneGraph {
      * @param {float, length_t value used on textures, passed down by parent component} previousLT
      */
     processNode(component, previousMaterialID, previousTextureID, previousLS, previousLT) {
-
         //If the component has been visited, then there is a loop on the scene graph
         if (this.components[component].visited) {
             this.onDisplayError("loop on scene graph; component ID " + component + " was already visited");
@@ -1305,10 +1322,12 @@ class MySceneGraph {
 
         //componentChildren is a list of ID's
         for (var i = 0; i < componentChildren.length; i++) {
-            //apply material
             this.materials[currentMaterialID].apply();
             this.scene.pushMatrix();
+            // Recursively calls itself to display all the nodes
             this.processNode(componentChildren[i], currentMaterialID, currentTextureID, currentLS, currentLT);
+            // If there has been an display error, this method logs a call stack on the console.
+            // This way the user can understand where the loop is located on the graph
             if (!this.displayOk) {
                 this.onDisplayError("loop component stack: " + component);
                 return;
@@ -1318,11 +1337,11 @@ class MySceneGraph {
 
         //primitiveChildren is a list of ID's
         for (var i = 0; i < primitiveChildren.length; i++) {
-            //apply material
-            //apply texture
+            // The material's bound texture is unbound to ensure there are no missaplied textures
             this.materials[currentMaterialID].setTexture(null);
+
             if (currentTextureID != "none") {
-                //this.textures[currentTextureID].bind();
+                // When there's actually a texture to apply it is bound to the current material
                 this.materials[currentMaterialID].setTexture(this.textures[currentTextureID]);
                 //length_s and length_t are only used on triangles and rectangles
                 if (this.primitives[primitiveChildren[i]] instanceof MyRectangle ||
@@ -1330,19 +1349,15 @@ class MySceneGraph {
                     this.primitives[primitiveChildren[i]].updateTexCoords(currentLS, currentLT);
             }
 
+            // Apply the material (which may or may not have a texture set)
             this.materials[currentMaterialID].apply();
-
 
             this.scene.pushMatrix();
             this.primitives[primitiveChildren[i]].display();
             this.scene.popMatrix();
-            //texture is unbound to ensure that a node with 'none' has no texture bound on scene
-            if (currentTextureID != "none"){
-                //this.textures[currentTextureID].unbind();
-                //this.materials[currentMaterialID].setTexture(null);
-            }
         }
 
+        // The node is no longer being visited at this point
         this.components[component].visited = false;
     }
 
