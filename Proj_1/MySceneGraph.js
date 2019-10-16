@@ -1319,21 +1319,28 @@ class MySceneGraph {
         //primitiveChildren is a list of ID's
         for (var i = 0; i < primitiveChildren.length; i++) {
             //apply material
-            this.materials[currentMaterialID].apply();
             //apply texture
+            this.materials[currentMaterialID].setTexture(null);
             if (currentTextureID != "none") {
-                this.textures[currentTextureID].bind();
+                //this.textures[currentTextureID].bind();
+                this.materials[currentMaterialID].setTexture(this.textures[currentTextureID]);
                 //length_s and length_t are only used on triangles and rectangles
                 if (this.primitives[primitiveChildren[i]] instanceof MyRectangle ||
                     this.primitives[primitiveChildren[i]] instanceof MyTriangle)
                     this.primitives[primitiveChildren[i]].updateTexCoords(currentLS, currentLT);
             }
+
+            this.materials[currentMaterialID].apply();
+
+
             this.scene.pushMatrix();
             this.primitives[primitiveChildren[i]].display();
             this.scene.popMatrix();
             //texture is unbound to ensure that a node with 'none' has no texture bound on scene
-            if (currentTextureID != "none")
-                this.textures[currentTextureID].unbind();
+            if (currentTextureID != "none"){
+                //this.textures[currentTextureID].unbind();
+                //this.materials[currentMaterialID].setTexture(null);
+            }
         }
 
         this.components[component].visited = false;
