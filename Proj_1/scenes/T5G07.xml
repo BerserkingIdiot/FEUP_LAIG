@@ -237,7 +237,7 @@
                 <material id="diffusePurple" />
                 <material id="diffuseGreen" />
             </materials>
-            <texture id="wallsTexture"/>
+            <texture id="wallsTexture" length_s="10" length_t="10"/>
             <children>
                 <componentref id="wallFront" />
                 <componentref id="wallLeft" />
@@ -486,7 +486,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="clubTexture"/>
+            <texture id="clubTexture" length_s="10" length_t="10"/>
             <children>
                 <primitiveref id="bigSquare" />
             </children>
@@ -591,7 +591,7 @@
                 <material id="basicBrown" />
                 <material id="basicLightGrey" />
             </materials>
-            <texture id="tableTexture" length_s="0.25" length_t="0.33" />
+            <texture id="tableTexture" length_s="1" length_t="1" />
             <children>
                 <componentref id="tableTriangleLeft"/>
                 <componentref id="tableTriangleRight"/>

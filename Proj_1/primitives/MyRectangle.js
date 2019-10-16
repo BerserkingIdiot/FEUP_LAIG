@@ -13,9 +13,12 @@ class MyRectangle extends CGFobject {
 		this.y1 = y1;
 		this.y2 = y2;
 
+		this.dx = this.x2 - this.x1;
+		this.dy = this.y2 - this.y1;
+
 		this.initBuffers();
 	}
-	
+
 	initBuffers() {
 		this.vertices = [
 			this.x1, this.y1, 0,	//0
@@ -37,7 +40,7 @@ class MyRectangle extends CGFobject {
 			0, 0, 1,
 			0, 0, 1
 		];
-		
+
 		/*
 		Texture coords (s,t)
 		+----------> s
@@ -49,10 +52,10 @@ class MyRectangle extends CGFobject {
         */
 
 		this.texCoords = [
-			0, 1,
-			1, 1,
+			0, this.dy,
+			this.dx, this.dy,
 			0, 0,
-			1, 0
+			this.dx, 0
 		]
 		this.primitiveType = this.scene.gl.TRIANGLES;
 		this.initGLBuffers();
@@ -66,10 +69,10 @@ class MyRectangle extends CGFobject {
 	 */
 	updateTexCoords(length_s, length_t) {
 		this.texCoords = [
-			0, 1 / length_t,
-			1 / length_s, 1 / length_t,
+			0, this.dy / length_t,
+			this.dx / length_s, this.dy / length_t,
 			0, 0,
-			1 / length_s, 0
+			this.dx / length_s, 0
 		];
 		this.updateTexCoordsGLBuffers();
 	}
