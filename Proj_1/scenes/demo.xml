@@ -34,6 +34,18 @@
             <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
             <specular r="0.0" g="0.0" b="0.0" a="1.0" />
         </material>
+        <material id="darkGrey" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.3" g="0.3" b="0.3" a="1.0" />
+            <diffuse r="0.3" g="0.3" b="0.3" a="1.0" />
+            <specular r="0.3" g="0.3" b="0.3" a="1.0" />
+        </material>
+        <material id="cupRed" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.6" g="0.0" b="0.0" a="1.0" />
+            <diffuse r="0.7" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.9" g="0.0" b="0.0" a="1.0" />
+        </material>
     </materials>
 
     <transformations>
@@ -51,7 +63,19 @@
                 x3="3" y3="3" z3="1" />
         </primitive>
         <primitive id="smallSquare">
-            <rectangle x1="0" y1="0" x2="3" y2="1" />
+            <rectangle x1="0" y1="0" x2="1" y2="1" />
+        </primitive>
+        <primitive id="speakerRectangle">
+            <rectangle x1="0" y1="0" x2="1" y2="2" />
+        </primitive>
+        <primitive id="speakerTorus">
+            <torus inner="0.25" outer="0.5" slices="20" loops="20" />
+        </primitive>
+        <primitive id="speakerSquare">
+            <rectangle x1="0" y1="0" x2="1" y2="1" />
+        </primitive>
+        <primitive id="cup">
+            <cylinder base="0.08" top="0.1" height="0.2" slices="20" stacks="20" />
         </primitive>
     </primitives>
 
@@ -64,8 +88,196 @@
             </materials>
             <texture id="demoTexture" length_s="0.5" length_t="1"/>
             <children>
+                <componentref id="speaker" />
+            </children>
+        </component>
+        <component id="textureApplicTesting">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit" />
+            <children>
                 <primitiveref id="triangle"/>
                 <primitiveref id="smallSquare"/>
+            </children>
+        </component>
+        <component id="speaker">
+            <transformation>
+                <scale x="1.5" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="darkGrey" />
+            </materials>
+            <texture id="none"/>
+            <children>
+                <componentref id="speakerSideLeft" />
+                <componentref id="speakerSideRight" />
+                <componentref id="speakerFront" />
+                <componentref id="speakerBack" />
+                <componentref id="speakerTop" />
+                <componentref id="speakerBottom" />
+                <componentref id="speakerUpper" />
+                <componentref id="speakerLower" />
+                <componentref id="speakerCups" />
+            </children>
+        </component>
+        <component id="speakerSideLeft">
+            <transformation>
+                <translate x="0.5" y="0" z="0.5" />            
+                <rotate axis="y" angle="90" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerRectangle" />
+            </children>
+        </component>
+        <component id="speakerSideRight">
+            <transformation>
+                <translate x="-0.5" y="0" z="-0.5" />            
+                <rotate axis="y" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerRectangle" />
+            </children>
+        </component>
+        <component id="speakerFront">
+            <transformation>
+                <translate x="-0.5" y="0" z="0.5" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerRectangle" />                
+            </children>
+        </component>
+        <component id="speakerBack">
+            <transformation>
+                <translate x="0.5" y="0" z="-0.5" />            
+                <rotate axis="y" angle="180" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerRectangle" />
+            </children>
+        </component>
+        <component id="speakerTop">
+            <transformation>
+                <translate x="-0.5" y="2" z="0.5" />
+                <rotate axis="x" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerSquare" />
+            </children>
+        </component>
+        <component id="speakerBottom">
+            <transformation>
+                <translate x="-0.5" y="0" z="-0.5" />
+                <rotate axis="x" angle="90" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerSquare" />
+            </children>
+        </component>
+        <component id="speakerUpper">
+            <transformation>
+                <translate x="0" y="1.65" z="0.5"/>
+                <scale x="0.5" y="0.3" z="0.25" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerTorus" />
+            </children>
+        </component>
+        <component id="speakerLower">
+            <transformation>
+                <translate x="0" y="0.75" z="0.5" />
+                <scale x="0.5" y="0.8" z="0.25" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="speakerTorus" />
+            </children>
+        </component>
+        <component id="speakerCups">
+            <transformation>
+                <translate x="0.2" y="2" z="0.2" />
+                <rotate axis="x" angle="-90" />
+            </transformation>
+            <materials>
+                <material id="cupRed" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <componentref id="cup1" />
+                <componentref id="cup2" />
+                <componentref id="cup3" />
+            </children>
+        </component>
+        <component id="cup1">
+            <transformation>
+                <translate x="0.1" y="-0.08" z="0" />
+                <scale x="1" y="1.5" z="1.5" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="cup" />
+            </children>
+        </component>
+        <component id="cup2">
+            <transformation>
+                <translate x="-0.15" y="-0.02" z="0" />
+                <scale x="1" y="1.5" z="1.5" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="cup" />
+            </children>
+        </component>
+        <component id="cup3">
+            <transformation>
+                <translate x="0.10" y="0.25" z="0" />
+                <scale x="1" y="1.5" z="1.5" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="cup" />
             </children>
         </component>
     </components>
