@@ -16,7 +16,7 @@ class MyComponent extends CGFobject {
         super(scene);
         this.id = id;
         this.transfMat = matrix;
-        this.materials = materials; //TODO: cycle materials
+        this.materials = materials;
         this.texture = texture;
         this.compChildren = compChildren;
         this.primChildren = primChildren;

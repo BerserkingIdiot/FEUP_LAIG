@@ -729,6 +729,8 @@ class MySceneGraph {
             // Specifications for the current transformation.
 
             var transfMatrix = this.parseSingleTransformation(grandChildren, transformationID);
+            // if(mat4.determinant(transfMatrix) == undefined) //TODO: check for errors
+            //     return transfMatrix;
 
             this.transformations[transformationID] = transfMatrix;
         }
@@ -849,8 +851,6 @@ class MySceneGraph {
                 if (!(z3 != null && !isNaN(z3)))
                     return "unable to parse z3 of the primitive coordinates for ID = " + primitiveId;
 
-                //FIXME: May need some sort of verification z1 > x1
-
                 var triangle = new MyTriangle(this.scene, primitiveId, x1, x2, x3, y1, y2, y3, z1, z2, z3);
                 this.primitives[primitiveId] = triangle;
             } else if (primitiveType == 'cylinder') {
@@ -889,12 +889,12 @@ class MySceneGraph {
 
                 // slices -> has to be greater than 2, otherwise it is not a valid object
                 var slices = this.reader.getFloat(grandChildren[0], 'slices');
-                if (!(slices != null && !isNaN(slices) && slices >= 3)) //FIXME: change slices according to tests
+                if (!(slices != null && !isNaN(slices) && slices >= 3))
                     return "unable to parse slices of the primitive properties for ID = " + primitiveId;
 
                 // stacks -> has to be positive
                 var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
-                if (!(stacks != null && !isNaN(stacks) && stacks > 0)) //FIXME: change stacks according to tests
+                if (!(stacks != null && !isNaN(stacks) && stacks > 0))
                     return "unable to parse stacks of the primitive properties for ID = " + primitiveId;
 
                 var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
@@ -912,12 +912,12 @@ class MySceneGraph {
 
                 // slices -> has to be greater than 2, otherwise it is not a valid object
                 var slices = this.reader.getFloat(grandChildren[0], 'slices');
-                if (!(slices != null && !isNaN(slices) && slices >= 3)) //FIXME: change slices according to tests
+                if (!(slices != null && !isNaN(slices) && slices >= 3))
                     return "unable to parse slices of the primitive properties for ID = " + primitiveId;
 
                 // loops -> has to be positive
                 var loops = this.reader.getFloat(grandChildren[0], 'loops');
-                if (!(loops != null && !isNaN(loops) && loops > 0)) //FIXME: change loops according to tests
+                if (!(loops != null && !isNaN(loops) && loops > 0))
                     return "unable to parse loops of the primitive properties for ID = " + primitiveId;
 
                 var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops);
@@ -1006,8 +1006,11 @@ class MySceneGraph {
                 if (grandgrandChildren.length > 1)
                     this.onXMLMinorError("Multiple transformations declared and/or referred on " + componentID + "; defaulting to first referred transformation.");
             }
-            else
+            else{
                 transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
+                // if(transfMatrix[0] == null)
+                //     return transfMatrix;
+            }
 
             // : Component Materials
             var materials = [];
@@ -1047,9 +1050,17 @@ class MySceneGraph {
                     this.onXMLMinorError("length_s not defined for component ID " + componentID + "; assuming length_s = 1.");
                     ls = 1;
                 }
+                else if (ls == 0) {
+                    this.onXMLMinorError("length_s is 0 for component ID " + componentID + "; assuming length_s = 1 to avoid weird textures.");
+                    ls = 1;
+                }
                 if (lt == null) {
                     this.onXMLMinorError("length_t not defined for component ID " + componentID + "; assuming length_t = 1.");
                     lt = 1;
+                }
+                else if (ls == 0) {
+                    this.onXMLMinorError("length_t is 0 for component ID " + componentID + "; assuming length_t = 1 to avoid weird textures.");
+                    ls = 1;
                 }
             }
 
