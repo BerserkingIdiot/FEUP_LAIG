@@ -563,7 +563,7 @@
                 <material id="inherit" />
                 <material id="diffuseOrange" />
             </materials>
-            <texture id="buoyTexture"/>
+            <texture id="buoyTexture" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="buoy" />
             </children>
@@ -603,7 +603,7 @@
                 <material id="specularBlue" />
                 <material id="specularGreen" />
             </materials>
-            <texture id="discoTexture"/>
+            <texture id="discoTexture" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="sphere"/>
             </children>
@@ -995,7 +995,10 @@
                 <scale x="1.5" y="1" z="1" />
             </transformation>
             <materials>
-                <material id="darkGrey" />
+                <!-- <material id="darkGrey" /> -->
+                <material id="diffuseBlue" />
+                <material id="diffusePurple" />
+                <material id="diffuseGreen" />
             </materials>
             <texture id="none"/>
             <children>
