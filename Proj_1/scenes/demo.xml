@@ -50,7 +50,7 @@
 
     <transformations>
         <transformation id="demoTransform">
-            <scale x="5" y="1" />
+            <scale x="5" y="1" z="0"/>
             <rotate axis="x" angle="-45" />
             <rotate axis="z" angle="-45" />
         </transformation>
@@ -67,6 +67,9 @@
         </primitive>
         <primitive id="mediumCylinder">
             <cylinder base="0.2" top="0.2" height="2" slices="20" stacks="20" />
+        </primitive>
+        <primitive id="bigCylinder">
+            <cylinder base="0.5" top="0.5" height="3.5" slices="20" stacks="20" />
         </primitive>
     </primitives>
 
@@ -92,14 +95,14 @@
             <children>
                 <componentref id="head" />
                 <componentref id="arms" />
-                <!-- <componentref id="legs" />
-                <componentref id="body" /> -->
+                <componentref id="legs" />
+                <componentref id="body" />
             </children>
         </component>
         <component id="head">
             <transformation>
                 <translate x="0" y="6" z="0"/>
-                <scale x="0.3" y="0.3" z="0.3"/>
+                <scale x="0.5" y="0.5" z="0.5"/>
             </transformation>
             <materials>
                 <material id="inherit" />
@@ -124,6 +127,7 @@
         </component>
         <component id="leftArm">
             <transformation>
+                <translate x="-0.35" y="0" z="0"/>
                 <rotate axis="z" angle="40"/>
                 <rotate axis="x" angle="-90"/>
             </transformation>
@@ -137,6 +141,7 @@
         </component>
         <component id="rightArm">
             <transformation>
+                <translate x="0.35" y="0" z="0"/>
                 <rotate axis="z" angle="-40"/>
                 <rotate axis="x" angle="-90"/>
             </transformation>
@@ -148,8 +153,9 @@
                 <primitiveref id="mediumCylinder"/>
             </children>
         </component>
-        <!-- <component id="legs">
+        <component id="legs">
             <transformation>
+                <translate x="0" y="1.8" z="0"/>
             </transformation>
             <materials>
                 <material id="inherit" />
@@ -160,16 +166,46 @@
                 <componentref id="rightLeg"/>
             </children>
         </component>
-        <component id="body">
+        <component id="leftLeg">
             <transformation>
+                <translate x="-0.3" y="0" z="0"/>
+                <rotate axis="z" angle="-10"/>
+                <rotate axis="x" angle="90"/>
             </transformation>
             <materials>
                 <material id="inherit" />
             </materials>
             <texture id="inherit"/>
             <children>
-                <primitiveref id=""/>
+                <primitiveref id="mediumCylinder"/>
             </children>
-        </component> -->
+        </component>
+        <component id="rightLeg">
+            <transformation>
+                <translate x="0.3" y="0" z="0"/>
+                <rotate axis="z" angle="10"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="mediumCylinder"/>
+            </children>
+        </component>
+        <component id="body">
+            <transformation>
+                <translate x="0" y="1.7" z="0"/>
+                <rotate axis="x" angle="-90"/>
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="bigCylinder"/>
+            </children>
+        </component>
     </components>
 </lxs>
