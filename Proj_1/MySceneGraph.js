@@ -727,8 +727,8 @@ class MySceneGraph {
 
             grandChildren = children[i].children;
             // Specifications for the current transformation.
-
             var transfMatrix = this.parseSingleTransformation(grandChildren, transformationID);
+            // Checking if an error was returned
             if(typeof transfMatrix === 'string')
                     return transfMatrix;
 
@@ -1008,6 +1008,7 @@ class MySceneGraph {
             }
             else{
                 transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
+                // Checking if an error was returned
                 if(typeof transfMatrix === 'string')
                     return transfMatrix;
             }
@@ -1213,7 +1214,7 @@ class MySceneGraph {
                         return coordinates;
 
                     if (coordinates[0] == 0 || coordinates[1] == 0 || coordinates[2] == 0)
-                        this.onXMLMinorError("0 scale has been made on transformation ID " + transformationID + "; objects might disappear");
+                        this.onXMLMinorError("0 scale has been made on transformation ID " + transformationID + "; objects may look weird");
 
                     transfMatrix = mat4.scale(transfMatrix, transfMatrix, coordinates);
                     break;
