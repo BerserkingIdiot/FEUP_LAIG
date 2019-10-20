@@ -856,17 +856,17 @@ class MySceneGraph {
             } else if (primitiveType == 'cylinder') {
                 // base -> has to be positive
                 var base = this.reader.getFloat(grandChildren[0], 'base');
-                if (!(base != null && !isNaN(base) && base > 0))
+                if (!(base != null && !isNaN(base) && base >= 0))
                     return "unable to parse base of the primitive properties for ID = " + primitiveId;
 
                 // top -> has to be positive
                 var top = this.reader.getFloat(grandChildren[0], 'top');
-                if (!(top != null && !isNaN(top) && top > 0))
+                if (!(top != null && !isNaN(top) && top >= 0))
                     return "unable to parse top of the primitive properties for ID = " + primitiveId;
 
                 // height -> has to be positive
                 var height = this.reader.getFloat(grandChildren[0], 'height');
-                if (!(height != null && !isNaN(height) && height > 0))
+                if (!(height != null && !isNaN(height) && height >= 0))
                     return "unable to parse height of the primitive properties for ID = " + primitiveId;
 
                 // slices -> has to be greater than 2, otherwise it is not a valid object
