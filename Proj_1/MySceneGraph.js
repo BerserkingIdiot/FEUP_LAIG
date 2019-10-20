@@ -854,12 +854,12 @@ class MySceneGraph {
                 var triangle = new MyTriangle(this.scene, primitiveId, x1, x2, x3, y1, y2, y3, z1, z2, z3);
                 this.primitives[primitiveId] = triangle;
             } else if (primitiveType == 'cylinder') {
-                // base -> has to be positive
+                // base -> has to be positive or 0
                 var base = this.reader.getFloat(grandChildren[0], 'base');
                 if (!(base != null && !isNaN(base) && base >= 0))
                     return "unable to parse base of the primitive properties for ID = " + primitiveId;
 
-                // top -> has to be positive
+                // top -> has to be positive or 0
                 var top = this.reader.getFloat(grandChildren[0], 'top');
                 if (!(top != null && !isNaN(top) && top >= 0))
                     return "unable to parse top of the primitive properties for ID = " + primitiveId;
@@ -878,6 +878,10 @@ class MySceneGraph {
                 var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
                 if (!(stacks != null && !isNaN(stacks) && stacks > 0))
                     return "unable to parse stacks of the primitive properties for ID = " + primitiveId;
+
+                //only one of base and top may be 0 on a single primitive
+                if(base == 0 && top == 0)
+                    return "atleast one of the ends of the cylinder must have radius greater than zero for ID = " + primitiveId;
 
                 var cylinder = new MyCylinder(this.scene, primitiveId, base, top, height, slices, stacks);
                 this.primitives[primitiveId] = cylinder;
