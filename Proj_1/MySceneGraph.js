@@ -911,7 +911,7 @@ class MySceneGraph {
 
                 // outer -> has to be positive and greater than inner radius
                 var outer = this.reader.getFloat(grandChildren[0], 'outer');
-                if (!(outer != null && !isNaN(outer) && outer > 0 && outer >= inner))
+                if (!(outer != null && !isNaN(outer) && outer > 0))
                     return "unable to parse outer of the primitive properties for ID = " + primitiveId;
 
                 // slices -> has to be greater than 2, otherwise it is not a valid object
