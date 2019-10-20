@@ -729,8 +729,8 @@ class MySceneGraph {
             // Specifications for the current transformation.
 
             var transfMatrix = this.parseSingleTransformation(grandChildren, transformationID);
-            // if(mat4.determinant(transfMatrix) == undefined) //TODO: check for errors
-            //     return transfMatrix;
+            if(typeof transfMatrix === 'string')
+                    return transfMatrix;
 
             this.transformations[transformationID] = transfMatrix;
         }
@@ -1008,8 +1008,8 @@ class MySceneGraph {
             }
             else{
                 transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
-                // if(transfMatrix[0] == null)
-                //     return transfMatrix;
+                if(typeof transfMatrix === 'string')
+                    return transfMatrix;
             }
 
             // : Component Materials
