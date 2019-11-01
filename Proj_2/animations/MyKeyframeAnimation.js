@@ -47,7 +47,8 @@ class MyKeyframeAnimation extends MyAnimation {
         var translation = [];
 
         for(var i = 0; i < 3; i++){
-            translation[i] = (this.keyframes[this.rightKF].translation[i] - this.keyframes[this.leftKF].translation[i]) / (t - this.keyframes[this.leftKF].instant);
+            translation[i] = (this.keyframes[this.rightKF].translation[i] - this.keyframes[this.leftKF].translation[i]) /
+                (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].instant;
         }
         
         return translation;
@@ -56,7 +57,8 @@ class MyKeyframeAnimation extends MyAnimation {
         var rotation = [];
 
         for(var i = 0; i < 3; i++){
-            rotation[i] = (this.keyframes[this.rightKF].rotation[i] - this.keyframes[this.leftKF].rotation[i]) / (t - this.keyframes[this.leftKF].instant);
+            rotation[i] = (this.keyframes[this.rightKF].rotation[i] - this.keyframes[this.leftKF].rotation[i]) /
+                (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].instant;
         }
         
         return rotation;
