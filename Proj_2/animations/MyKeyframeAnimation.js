@@ -34,11 +34,11 @@ class MyKeyframeAnimation extends MyAnimation {
         var rotation = interpolateRotation(t);
         var scale = interpolateScale(t);
 
-        this.transfMatrix = mat4.translate(transfMatrix, transfMatrix, translation);
         this.transfMatrix = mat4.scale(transfMatrix, transfMatrix, scale);
         this.transfMatrix = mat4.rotateX(transfMatrix, transfMatrix, rotation[0]);
         this.transfMatrix = mat4.rotateY(transfMatrix, transfMatrix, rotation[1]);
         this.transfMatrix = mat4.rotateZ(transfMatrix, transfMatrix, rotation[2]);
+        this.transfMatrix = mat4.translate(transfMatrix, transfMatrix, translation);
     }
     apply() {
         this.scene.multMatrix(this.transfMatrix);
