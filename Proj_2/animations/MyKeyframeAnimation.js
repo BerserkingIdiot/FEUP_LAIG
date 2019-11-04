@@ -34,6 +34,7 @@ class MyKeyframeAnimation extends MyAnimation {
         var rotation = interpolateRotation(t);
         var scale = interpolateScale(t);
 
+        this.transfMatrix = mat4.create();
         this.transfMatrix = mat4.scale(transfMatrix, transfMatrix, scale);
         this.transfMatrix = mat4.rotateX(transfMatrix, transfMatrix, rotation[0]);
         this.transfMatrix = mat4.rotateY(transfMatrix, transfMatrix, rotation[1]);
