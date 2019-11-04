@@ -1,4 +1,5 @@
 var DEGREE_TO_RAD = Math.PI / 180;
+var FPS_60 = 1000 / 60;
 
 /**
  * XMLscene class, representing the scene that is to be rendered.
@@ -33,7 +34,7 @@ class XMLscene extends CGFscene {
         this.gl.depthFunc(this.gl.LEQUAL);
 
         this.axis = new CGFaxis(this);
-        this.setUpdatePeriod(100);
+        this.setUpdatePeriod(FPS_60);
 
         //Camera interface related variables
         this.cameraIDs = [];
@@ -146,9 +147,14 @@ class XMLscene extends CGFscene {
      * @param {update period set on scene's initialization} t 
      */
     update(t) {
-        if (this.interface.isKeyPressed('KeyM')) {
-            this.graph.updateMaterialIndexes();
+        if(this.sceneInited){
+            if (this.interface.isKeyPressed('KeyM')) {
+                this.graph.updateMaterialIndexes();
+            }
+            this.graph.updateKeyframeAnimations(t - this.startTime);
         }
+        else
+            this.startTime = t;
     }
 
     /**

@@ -1340,20 +1340,29 @@ class MySceneGraph {
      */
     parseKeyframe(keyframe, num, id) {
         var children = keyframe.children;
+        
         var translation = this.parseCoordinates3D(children[0], "keyframe " + num + " for animation ID " + id);
+
         var rotation = [];
+
         var angle_x = this.reader.getFloat(children[1], 'angle_x');
         if (!(angle_x != null && !isNaN(angle_x)))
             return "unable to parse angle_x of the keyframe " + num + " for animation ID " + id;
-        rotation.push(angle_x);
+
+        rotation.push(angle_x * DEGREE_TO_RAD);
+
         var angle_y = this.reader.getFloat(children[1], 'angle_y');
         if (!(angle_y != null && !isNaN(angle_y)))
             return "unable to parse angle_y of the keyframe " + num + " for animation ID " + id;
-        rotation.push(angle_y);
+
+        rotation.push(angle_y * DEGREE_TO_RAD);
+
         var angle_z = this.reader.getFloat(children[1], 'angle_z');
         if (!(angle_z != null && !isNaN(angle_z)))
             return "unable to parse angle_z of the keyframe " + num + " for animation ID " + id;
-        rotation.push(angle_z);
+
+        rotation.push(angle_z * DEGREE_TO_RAD);
+
         var scalation = this.parseCoordinates3D(children[2], "keyframe " + num + " for animation ID " + id);
 
         var instant = this.reader.getFloat(keyframe, 'instant');
@@ -1412,6 +1421,7 @@ class MySceneGraph {
      * @param {update period set on scene's initialization} t
      */
     updateKeyframeAnimations(t) {
+
         this.animationIDs.forEach(element => {
             this.animations[element].update(t);
         });

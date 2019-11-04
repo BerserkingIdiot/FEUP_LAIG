@@ -24,23 +24,41 @@ class MyKeyframeAnimation extends MyAnimation {
     update(t) {
         // This first section adjusts the previous and next keyframes
         // according to the instant passed as argument.
-        if(t > this.keyframes[this.rightKF].instant){
-            do{
-                this.leftKF++;
-                this.rightKF++;
-            }while(t > this.keyframes[this.rightKF].instant);
+        while(this.rightKF < this.numKF && t > this.keyframes[this.rightKF].instant){
+            this.leftKF++;
+            this.rightKF++;
         }
 
-        var translation = interpolateTranslation(t);
-        var rotation = interpolateRotation(t);
-        var scale = interpolateScale(t);
+        var translation;
+        var rotation;
+        var scale;
+
+        if(t >= this.keyframes[this.numKF].instant){
+            translation = this.keyframes[this.numKF].translation;
+            rotation = this.keyframes[this.numKF].rotation;
+            scale = this.keyframes[this.numKF].scale;
+        }
+        else if(t == 0){
+            translation = this.keyframes[0].translation;
+            rotation = this.keyframes[0].rotation;
+            scale = this.keyframes[0].scale;
+        }
+        else {
+            translation = this.interpolateTranslation(t);
+            rotation = this.interpolateRotation(t);
+            scale = this.interpolateScale(t);
+        }
+
+        console.log("Translation Vector: " + translation);
+        console.log("Rotation Vector: " + rotation);
+        console.log("Scale Vector: " + scale);
 
         this.transfMatrix = mat4.create();
-        this.transfMatrix = mat4.scale(transfMatrix, transfMatrix, scale);
-        this.transfMatrix = mat4.rotateX(transfMatrix, transfMatrix, rotation[0]);
-        this.transfMatrix = mat4.rotateY(transfMatrix, transfMatrix, rotation[1]);
-        this.transfMatrix = mat4.rotateZ(transfMatrix, transfMatrix, rotation[2]);
-        this.transfMatrix = mat4.translate(transfMatrix, transfMatrix, translation);
+        this.transfMatrix = mat4.translate(this.transfMatrix, this.transfMatrix, translation);
+        this.transfMatrix = mat4.rotateX(this.transfMatrix, this.transfMatrix, rotation[0]);
+        this.transfMatrix = mat4.rotateY(this.transfMatrix, this.transfMatrix, rotation[1]);
+        this.transfMatrix = mat4.rotateZ(this.transfMatrix, this.transfMatrix, rotation[2]);
+        this.transfMatrix = mat4.scale(this.transfMatrix, this.transfMatrix, scale);
     }
     apply() {
         this.scene.multMatrix(this.transfMatrix);
@@ -50,7 +68,7 @@ class MyKeyframeAnimation extends MyAnimation {
 
         for(var i = 0; i < 3; i++){
             translation[i] = (this.keyframes[this.rightKF].translation[i] - this.keyframes[this.leftKF].translation[i]) /
-                (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].instant;
+                (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].translation[i];
         }
         
         return translation;
@@ -60,7 +78,7 @@ class MyKeyframeAnimation extends MyAnimation {
 
         for(var i = 0; i < 3; i++){
             rotation[i] = (this.keyframes[this.rightKF].rotation[i] - this.keyframes[this.leftKF].rotation[i]) /
-                (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].instant;
+                (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].rotation[i];
         }
         
         return rotation;
@@ -69,8 +87,8 @@ class MyKeyframeAnimation extends MyAnimation {
         var scale = [];
 
         for(var i = 0; i < 3; i++){
-            var r = Math.pow(this.keyframes[this.rightKF].scale[i] / this.keyframes[this.leftKF].scale[i], 1/this.keyframes[this.rightKF].instant);
-            scale[i] = Math.pow(r, t); //FIXME: this does not seem right
+            var r = Math.pow(this.keyframes[this.rightKF].scale[i] / this.keyframes[this.leftKF].scale[i], 1/(this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant));
+            scale[i] = Math.pow(r, t - this.keyframes[this.leftKF].instant) * this.keyframes[this.leftKF].scale[i]; //FIXME: this does not seem right
         }
 
         return scale;
