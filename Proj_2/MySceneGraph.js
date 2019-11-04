@@ -760,6 +760,7 @@ class MySceneGraph {
         var children = animationsNode.children;
 
         this.animations = [];
+        this.animationIDs = [];
 
         var grandChildren = [];
 
@@ -784,9 +785,12 @@ class MySceneGraph {
 
             var keyframes = [];
             var numKF = grandChildren.length;
+            if(numKF < 1){
+                return "no keyframes defined for animation ID " + animationID;
+            }
             // Specifications for the current animation.
             for(var j = 0; j < grandChildren.length; j++){
-                var keyframe = parseKeyframe(grandChildren[j], j);
+                var keyframe = this.parseKeyframe(grandChildren[j], j, animationID);
                 // Checking if an error was returned
                 if(typeof keyframe === 'string')
                     return keyframe;
@@ -794,7 +798,7 @@ class MySceneGraph {
                     keyframes.push(keyframe);
             }
             
-
+            this.animationIDs.push(animationID);
             this.animations[animationID] = new MyKeyframeAnimation(this.scene, animationID, numKF, keyframes);
         }
 
@@ -1053,6 +1057,7 @@ class MySceneGraph {
             }
 
             var transformationIndex = nodeNames.indexOf("transformation");
+            var animationIndex = nodeNames.indexOf("animationref");
             var materialsIndex = nodeNames.indexOf("materials");
             var textureIndex = nodeNames.indexOf("texture");
             var childrenIndex = nodeNames.indexOf("children");
@@ -1078,6 +1083,18 @@ class MySceneGraph {
                 // Checking if an error was returned
                 if(typeof transfMatrix === 'string')
                     return transfMatrix;
+            }
+
+            // : Component Animation
+            var animationID = null;
+            if(animationIndex != -1){
+                animationID = this.reader.getString(grandChildren[animationIndex], 'id');
+                if (animationID == null) {
+                    return "unable to parse animation id of component ID " + componentID;
+                }
+                if (this.animations[animationID] == null) {
+                    return "no such animation with ID " + animationID + " for component ID " + componentID;
+                }
             }
 
             // : Component Materials
@@ -1162,7 +1179,7 @@ class MySceneGraph {
                     this.onXMLMinorError("component children must be componentref or primitiveref");
             }
 
-            this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, textureID, compChildren, primChildren, ls, lt);
+            this.components[componentID] = new MyComponent(this.scene, componentID, transfMatrix, materials, textureID, compChildren, primChildren, ls, lt, animationID);
         }
 
         if (this.components[this.idRoot] == null) {
@@ -1318,30 +1335,32 @@ class MySceneGraph {
     /**
      * 
      * @param {keyframe block element} keyframe 
-     * @param {order number of the keyframe} num 
+     * @param {order number of the keyframe} num
+     * @param {animation id of the keyframe} id
      */
-    parseKeyframe(keyframe, num) {
-        var translation = parseCoordinates3D(keyframe[0], "keyframe.");
+    parseKeyframe(keyframe, num, id) {
+        var children = keyframe.children;
+        var translation = this.parseCoordinates3D(children[0], "keyframe " + num + " for animation ID " + id);
         var rotation = [];
-        var angle_x = this.reader.getFloat(keyframe[1], 'angle_x');
+        var angle_x = this.reader.getFloat(children[1], 'angle_x');
         if (!(angle_x != null && !isNaN(angle_x)))
-            return "unable to parse angle_x of the keyframe.";
+            return "unable to parse angle_x of the keyframe " + num + " for animation ID " + id;
         rotation.push(angle_x);
-        var angle_y = this.reader.getFloat(keyframe[1], 'angle_y');
+        var angle_y = this.reader.getFloat(children[1], 'angle_y');
         if (!(angle_y != null && !isNaN(angle_y)))
-            return "unable to parse angle_y of the keyframe.";
+            return "unable to parse angle_y of the keyframe " + num + " for animation ID " + id;
         rotation.push(angle_y);
-        var angle_z = this.reader.getFloat(keyframe[1], 'angle_z');
+        var angle_z = this.reader.getFloat(children[1], 'angle_z');
         if (!(angle_z != null && !isNaN(angle_z)))
-            return "unable to parse angle_z of the keyframe.";
+            return "unable to parse angle_z of the keyframe " + num + " for animation ID " + id;
         rotation.push(angle_z);
-        var scalation = parseCoordinates3D(keyframe[2], "keyframe.");
+        var scalation = this.parseCoordinates3D(children[2], "keyframe " + num + " for animation ID " + id);
 
         var instant = this.reader.getFloat(keyframe, 'instant');
         if (!(instant != null && !isNaN(instant)))
-            return "unable to parse instant of the keyframe.";
-        var returnFrame = MyKeyframe(num, instant, translation, rotation, scalation);
-        return returnFrame;
+            return "unable to parse instant of the keyframe " + num + " for animation ID " + id;
+        
+        return new MyKeyframe(num, instant, translation, rotation, scalation);
     }
 
     /**
@@ -1387,6 +1406,17 @@ class MySceneGraph {
         });
     }
 
+    /**
+     * Updates all keyframe animations based on current instant
+     * 
+     * @param {update period set on scene's initialization} t
+     */
+    updateKeyframeAnimations(t) {
+        this.animationIDs.forEach(element => {
+            this.animations[element].update(t);
+        });
+    }
+
 
     /**
      * Processes a node of the scene graph and calls itself recursively on the node's children.
@@ -1408,8 +1438,12 @@ class MySceneGraph {
 
         var componentChildren = this.components[component].compChildren;
         var primitiveChildren = this.components[component].primChildren;
+        var animationID = this.components[component].animation;
 
         this.scene.multMatrix(this.components[component].transfMat);
+        if(animationID != null) {
+            this.animations[animationID].apply();
+        }
 
         if (this.components[component].getCurrentMaterialID() == "inherit")
             var currentMaterialID = previousMaterialID;

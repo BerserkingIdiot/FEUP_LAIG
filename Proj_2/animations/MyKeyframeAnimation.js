@@ -8,6 +8,7 @@
 */
 class MyKeyframeAnimation extends MyAnimation {
     constructor(scene, id, numKF, keyframes){
+        super();
         this.scene = scene;
         this.id = id;
         this.numKF = numKF;

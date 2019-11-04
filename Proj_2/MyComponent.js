@@ -12,7 +12,7 @@
  * @param lt - scale of the t parameter of the texture
  */
 class MyComponent extends CGFobject {
-    constructor(scene, id, matrix, materials, texture, compChildren, primChildren, ls, lt) {
+    constructor(scene, id, matrix, materials, texture, compChildren, primChildren, ls, lt, animation) {
         super(scene);
         this.id = id;
         this.transfMat = matrix;
@@ -22,6 +22,7 @@ class MyComponent extends CGFobject {
         this.primChildren = primChildren;
         this.lengthS = ls;
         this.lengthT = lt;
+        this.animation = animation;
         this.visited = false;
         this.materialIndex = 0;
     }
