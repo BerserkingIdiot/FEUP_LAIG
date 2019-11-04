@@ -1113,21 +1113,21 @@ class MySceneGraph {
      * @param {block element} node
      * @param {message to be displayed in case of error} messageError
      */
-    parseCoordinates3D(node, messageError, prefix = '') {
+    parseCoordinates3D(node, messageError) {
         var position = [];
 
         // x
-        var x = this.reader.getFloat(node, prefix + 'x');
+        var x = this.reader.getFloat(node, 'x');
         if (!(x != null && !isNaN(x)))
             return "unable to parse x-coordinate of the " + messageError;
 
         // y
-        var y = this.reader.getFloat(node, prefix + 'y');
+        var y = this.reader.getFloat(node, 'y');
         if (!(y != null && !isNaN(y)))
             return "unable to parse y-coordinate of the " + messageError;
 
         // z
-        var z = this.reader.getFloat(node, prefix + 'z');
+        var z = this.reader.getFloat(node, 'z');
         if (!(z != null && !isNaN(z)))
             return "unable to parse z-coordinate of the " + messageError;
 
