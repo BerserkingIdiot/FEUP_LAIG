@@ -8,8 +8,9 @@ var LIGHTS_INDEX = 3;
 var TEXTURES_INDEX = 4;
 var MATERIALS_INDEX = 5;
 var TRANSFORMATIONS_INDEX = 6;
-var PRIMITIVES_INDEX = 7;
-var COMPONENTS_INDEX = 8;
+var ANIMATIONS_INDEX = 7;
+var PRIMITIVES_INDEX = 8;
+var COMPONENTS_INDEX = 9;
 
 /**
  * MySceneGraph class, representing the scene graph.
@@ -170,6 +171,18 @@ class MySceneGraph {
 
             //Parse transformations block
             if ((error = this.parseTransformations(nodes[index])) != null)
+                return error;
+        }
+
+        // <animations>
+        if ((index = nodeNames.indexOf("animations")) == -1)
+            return "tag <animations> missing";
+        else {
+            if (index != ANIMATIONS_INDEX)
+                this.onXMLMinorError("tag <animations> out of order");
+
+            //Parse animations block
+            if ((error = this.parseAnimations(nodes[index])) != null)
                 return error;
         }
 
@@ -740,6 +753,56 @@ class MySceneGraph {
     }
 
     /**
+     * Parses the <animations> block.
+     * @param {animations block element} animationsNode 
+     */
+    parseAnimations(animationsNode) {
+        var children = animationsNode.children;
+
+        this.animations = [];
+
+        var grandChildren = [];
+
+        // Any number of animations.
+        for (var i = 0; i < children.length; i++) {
+
+            if (children[i].nodeName != "animation") {
+                this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
+                continue;
+            }
+
+            // Get id of the current animation.
+            var animationID = this.reader.getString(children[i], 'id');
+            if (animationID == null)
+                return "no ID defined for animation";
+
+            // Checks for repeated IDs.
+            if (this.animations[animationID] != null)
+                return "ID must be unique for each animation (conflict: ID = " + animationID + ")";
+
+            grandChildren = children[i].children;
+
+            var keyframes = [];
+            var numKF = grandChildren.length;
+            // Specifications for the current animation.
+            for(var j = 0; j < grandChildren.length; j++){
+                var keyframe = parseKeyframe(grandChildren[j], j);
+                // Checking if an error was returned
+                if(typeof keyframe === 'string')
+                    return keyframe;
+                else
+                    keyframes.push(keyframe);
+            }
+            
+
+            this.animations[animationID] = new MyKeyframeAnimation(this.scene, animationID, numKF, keyframes);
+        }
+
+        this.log("Parsed animations");
+        return null;
+    }
+ 
+    /**
      * Parses the <primitives> block.
      * @param {primitives block element} primitivesNode
      */
@@ -1250,6 +1313,35 @@ class MySceneGraph {
         }
 
         return transfMatrix;
+    }
+
+    /**
+     * 
+     * @param {keyframe block element} keyframe 
+     * @param {order number of the keyframe} num 
+     */
+    parseKeyframe(keyframe, num) {
+        var translation = parseCoordinates3D(keyframe[0], "keyframe.");
+        var rotation = [];
+        var angle_x = this.reader.getFloat(keyframe[1], 'angle_x');
+        if (!(angle_x != null && !isNaN(angle_x)))
+            return "unable to parse angle_x of the keyframe.";
+        rotation.push(angle_x);
+        var angle_y = this.reader.getFloat(keyframe[1], 'angle_y');
+        if (!(angle_y != null && !isNaN(angle_y)))
+            return "unable to parse angle_y of the keyframe.";
+        rotation.push(angle_y);
+        var angle_z = this.reader.getFloat(keyframe[1], 'angle_z');
+        if (!(angle_z != null && !isNaN(angle_z)))
+            return "unable to parse angle_z of the keyframe.";
+        rotation.push(angle_z);
+        var scalation = parseCoordinates3D(keyframe[2], "keyframe.");
+
+        var instant = this.reader.getFloat(keyframe, 'instant');
+        if (!(instant != null && !isNaN(instant)))
+            return "unable to parse instant of the keyframe.";
+        var returnFrame = MyKeyframe(num, instant, translation, rotation, scalation);
+        return returnFrame;
     }
 
     /**
