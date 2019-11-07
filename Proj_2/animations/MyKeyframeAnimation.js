@@ -21,6 +21,10 @@ class MyKeyframeAnimation extends MyAnimation {
         this.leftKF = 0;
         this.rightKF = 1;
     }
+    /**
+     * Updates the transformation matrix according with the elapsed time
+     * @param {elapsed time since the scene has been initiated} t
+     */
     update(t) {
         // This first section adjusts the previous and next keyframes
         // according to the instant passed as argument.
@@ -49,10 +53,6 @@ class MyKeyframeAnimation extends MyAnimation {
             scale = this.interpolateScale(t);
         }
 
-        console.log("Translation Vector: " + translation);
-        console.log("Rotation Vector: " + rotation);
-        console.log("Scale Vector: " + scale);
-
         this.transfMatrix = mat4.create();
         this.transfMatrix = mat4.translate(this.transfMatrix, this.transfMatrix, translation);
         this.transfMatrix = mat4.rotateX(this.transfMatrix, this.transfMatrix, rotation[0]);
@@ -60,9 +60,16 @@ class MyKeyframeAnimation extends MyAnimation {
         this.transfMatrix = mat4.rotateZ(this.transfMatrix, this.transfMatrix, rotation[2]);
         this.transfMatrix = mat4.scale(this.transfMatrix, this.transfMatrix, scale);
     }
+    /**
+     * Applies the transformation matrix to the scene
+     */
     apply() {
         this.scene.multMatrix(this.transfMatrix);
     }
+    /**
+     * Calculates the current transformation value depending on the elapsed time
+     * @param {elapsed time since the scene has been initiated} t
+     */
     interpolateTranslation(t) {
         var translation = [];
 
@@ -73,6 +80,10 @@ class MyKeyframeAnimation extends MyAnimation {
         
         return translation;
     }
+    /**
+     * Calculates the current rotation value depending on the elapsed time
+     * @param {elapsed time since the scene has been initiated} t
+     */
     interpolateRotation(t) {
         var rotation = [];
 
@@ -83,12 +94,16 @@ class MyKeyframeAnimation extends MyAnimation {
         
         return rotation;
     }
+    /**
+     * Calculates the current scale value depending on the elapsed time
+     * @param {elapsed time since the scene has been initiated} t
+     */
     interpolateScale(t) {
         var scale = [];
 
         for(var i = 0; i < 3; i++){
             var r = Math.pow(this.keyframes[this.rightKF].scale[i] / this.keyframes[this.leftKF].scale[i], 1/(this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant));
-            scale[i] = Math.pow(r, t - this.keyframes[this.leftKF].instant) * this.keyframes[this.leftKF].scale[i]; //FIXME: this does not seem right
+            scale[i] = Math.pow(r, t - this.keyframes[this.leftKF].instant) * this.keyframes[this.leftKF].scale[i];
         }
 
         return scale;
