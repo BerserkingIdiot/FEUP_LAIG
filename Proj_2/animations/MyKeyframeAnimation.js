@@ -6,7 +6,7 @@
  * @param keyframes - Array with MyKeyframe objects
 */
 class MyKeyframeAnimation extends MyAnimation {
-    constructor(scene, id, keyframes){
+    constructor(scene, id, keyframes) {
         super();
         this.scene = scene;
         this.id = id;
@@ -27,12 +27,12 @@ class MyKeyframeAnimation extends MyAnimation {
      * @param {elapsed time since the scene has been initiated} t
      */
     update(t) {
-        if(this.finishedAnimation){
+        if (this.finishedAnimation) {
             return;
         }
         // This first section adjusts the previous and next keyframes
         // according to the instant passed as argument.
-        while(this.rightKF < this.numKF && t > this.keyframes[this.rightKF].instant){
+        while (this.rightKF < this.numKF && t > this.keyframes[this.rightKF].instant) {
             this.leftKF++;
             this.rightKF++;
         }
@@ -42,14 +42,14 @@ class MyKeyframeAnimation extends MyAnimation {
         var scale;
 
         //If t has surpassed the last keyframe, its transformation is always applied
-        if(t >= this.keyframes[this.numKF].instant){
+        if (t >= this.keyframes[this.numKF].instant) {
             translation = this.keyframes[this.numKF].translation;
             rotation = this.keyframes[this.numKF].rotation;
             scale = this.keyframes[this.numKF].scale;
             this.finishedAnimation = true;
         }
         //If t corresponds to the left keyframe's instant then it applies its transformation (preventing a division by 0 on interpolations)
-        else if(t == this.leftKF){
+        else if (t == this.leftKF) {
             translation = this.keyframes[this.leftKF].translation;
             rotation = this.keyframes[this.leftKF].rotation;
             scale = this.keyframes[this.leftKF].scale;
@@ -61,6 +61,7 @@ class MyKeyframeAnimation extends MyAnimation {
             scale = this.interpolateScale(t);
         }
 
+        // Apply all transformations to a new matrix
         this.transfMatrix = mat4.create();
         this.transfMatrix = mat4.translate(this.transfMatrix, this.transfMatrix, translation);
         this.transfMatrix = mat4.rotateX(this.transfMatrix, this.transfMatrix, rotation[0]);
@@ -81,11 +82,13 @@ class MyKeyframeAnimation extends MyAnimation {
     interpolateTranslation(t) {
         var translation = [];
 
-        for(var i = 0; i < 3; i++){
+        //Linear interpolation of an additive operation
+        //Tcurrent = (Tnext - Tprevious) / (tnext - tprevious) * (t - tprevious) + Tprevious
+        for (var i = 0; i < 3; i++) {
             translation[i] = (this.keyframes[this.rightKF].translation[i] - this.keyframes[this.leftKF].translation[i]) /
                 (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].translation[i];
         }
-        
+
         return translation;
     }
     /**
@@ -95,11 +98,13 @@ class MyKeyframeAnimation extends MyAnimation {
     interpolateRotation(t) {
         var rotation = [];
 
-        for(var i = 0; i < 3; i++){
+        //Linear interpolation of an additive operation
+        //Rcurrent = (Rnext - Rprevious) / (tnext - tprevious) * (t - tprevious) + Rprevious
+        for (var i = 0; i < 3; i++) {
             rotation[i] = (this.keyframes[this.rightKF].rotation[i] - this.keyframes[this.leftKF].rotation[i]) /
                 (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant) * (t - this.keyframes[this.leftKF].instant) + this.keyframes[this.leftKF].rotation[i];
         }
-        
+
         return rotation;
     }
     /**
@@ -109,8 +114,11 @@ class MyKeyframeAnimation extends MyAnimation {
     interpolateScale(t) {
         var scale = [];
 
-        for(var i = 0; i < 3; i++){
-            var r = Math.pow(this.keyframes[this.rightKF].scale[i] / this.keyframes[this.leftKF].scale[i], 1/(this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant));
+        //Linear interpolation of a multiplicative operation
+        //Scurrent = r^(t - tprevious) + Sprevious
+        //Where r = (tnext - tprevious) root (Snext / Sprevious)
+        for (var i = 0; i < 3; i++) {
+            var r = Math.pow(this.keyframes[this.rightKF].scale[i] / this.keyframes[this.leftKF].scale[i], 1 / (this.keyframes[this.rightKF].instant - this.keyframes[this.leftKF].instant));
             scale[i] = Math.pow(r, t - this.keyframes[this.leftKF].instant) * this.keyframes[this.leftKF].scale[i];
         }
 
