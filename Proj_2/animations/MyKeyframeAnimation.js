@@ -3,15 +3,14 @@
  * Extends MyAnimation and implements a keyframe based animation.
  * @param scene - Reference to XMLScene object
  * @param id - ID of the animation
- * @param numKF - Number of keyframes used on the animation
  * @param keyframes - Array with MyKeyframe objects
 */
 class MyKeyframeAnimation extends MyAnimation {
-    constructor(scene, id, numKF, keyframes){
+    constructor(scene, id, keyframes){
         super();
         this.scene = scene;
         this.id = id;
-        this.numKF = numKF;
+        this.numKF = keyframes.length;
         this.keyframes = keyframes;
         // Keyframe 0 is added at the start of the array
         this.keyframes.unshift(new MyKeyframe(0, 0, [0, 0, 0], [0, 0, 0], [1, 1, 1]));
