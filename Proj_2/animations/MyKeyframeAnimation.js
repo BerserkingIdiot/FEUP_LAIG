@@ -19,12 +19,17 @@ class MyKeyframeAnimation extends MyAnimation {
         // Keyframes to the left (previous) and to the right (next) of the current instant
         this.leftKF = 0;
         this.rightKF = 1;
+        //Indicates the end of the animation
+        this.finishedAnimation = false;
     }
     /**
      * Updates the transformation matrix according with the elapsed time
      * @param {elapsed time since the scene has been initiated} t
      */
     update(t) {
+        if(this.finishedAnimation){
+            return;
+        }
         // This first section adjusts the previous and next keyframes
         // according to the instant passed as argument.
         while(this.rightKF < this.numKF && t > this.keyframes[this.rightKF].instant){
@@ -36,16 +41,20 @@ class MyKeyframeAnimation extends MyAnimation {
         var rotation;
         var scale;
 
+        //If t has surpassed the last keyframe, its transformation is always applied
         if(t >= this.keyframes[this.numKF].instant){
             translation = this.keyframes[this.numKF].translation;
             rotation = this.keyframes[this.numKF].rotation;
             scale = this.keyframes[this.numKF].scale;
+            this.finishedAnimation = true;
         }
-        else if(t == 0){
-            translation = this.keyframes[0].translation;
-            rotation = this.keyframes[0].rotation;
-            scale = this.keyframes[0].scale;
+        //If t corresponds to the left keyframe's instant then it applies its transformation (preventing a division by 0 on interpolations)
+        else if(t == this.leftKF){
+            translation = this.keyframes[this.leftKF].translation;
+            rotation = this.keyframes[this.leftKF].rotation;
+            scale = this.keyframes[this.leftKF].scale;
         }
+        //Otherwise, the transformation is interpolated from the left and right keyframes
         else {
             translation = this.interpolateTranslation(t);
             rotation = this.interpolateRotation(t);

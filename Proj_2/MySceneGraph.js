@@ -789,7 +789,7 @@ class MySceneGraph {
             }
             // Specifications for the current animation.
             for (var j = 0; j < grandChildren.length; j++) {
-                var keyframe = this.parseKeyframe(grandChildren[j], j, animationID);
+                var keyframe = this.parseKeyframe(grandChildren[j], j + 1, animationID);
                 // Checking if an error was returned
                 if (typeof keyframe === 'string')
                     return keyframe;
@@ -829,7 +829,7 @@ class MySceneGraph {
             var primitiveId = this.reader.getString(children[i], 'id');
             if (primitiveId == null)
                 return "no ID defined for primitive";
-            
+
             // Checks for repeated IDs.
             if (this.primitives[primitiveId] != null)
                 return "ID must be unique for each primitive (conflict: ID = " + primitiveId + ")";
@@ -1428,41 +1428,66 @@ class MySceneGraph {
     }
 
     /**
-     * 
+     * Parses <keyframe> block node, returning a MyKeyframe object with all its information.
      * @param {keyframe block element} keyframe 
      * @param {order number of the keyframe} num
      * @param {animation id of the keyframe} id
      */
     parseKeyframe(keyframe, num, id) {
         var children = keyframe.children;
-        var translation = this.parseCoordinates3D(children[0], "keyframe " + num + " for animation ID " + id);
+        var nodeNames = [];
+        for (var i = 0; i < children.length; i++) {
+            nodeNames.push(children[i].nodeName);
+        }
+        // Checking if translate is one of the children nodes and if it is the first node
+        var translationIndex = nodeNames.indexOf('translate');
+        if (translationIndex == -1) {
+            return "no translation defined for keyframe number " + num + " for animation ID = " + id;
+        } else if (translationIndex != 0) {
+            this.onXMLMinorError("translation out of order in keyframe number " + num + " for animation ID = " + id)
+        }
+        // Checking if rotate is one of the children nodes and if it is the second node
+        var rotationIndex = nodeNames.indexOf('rotate');
+        if (rotationIndex == -1) {
+            return "no rotation defined for keyframe number " + num + " for animation ID = " + id;
+        } else if (rotationIndex != 1) {
+            this.onXMLMinorError("rotation out of order in keyframe number " + num + " for animation ID = " + id)
+        }
+        // Checking if scale is one of the children nodes and if it is the third node
+        var scaleIndex = nodeNames.indexOf('scale');
+        if (scaleIndex == -1) {
+            return "no scale defined for keyframe number " + num + " for animation ID = " + id;
+        } else if (scaleIndex != 2) {
+            this.onXMLMinorError("scale out of order in keyframe number " + num + " for animation ID = " + id)
+        }
+        //Parsing translation
+        var translation = this.parseCoordinates3D(children[translationIndex], "keyframe " + num + " for animation ID " + id);
 
+        //Parsing rotatio
         var rotation = [];
-
-        var angle_x = this.reader.getFloat(children[1], 'angle_x');
+        var angle_x = this.reader.getFloat(children[rotationIndex], 'angle_x');
         if (!(angle_x != null && !isNaN(angle_x)))
             return "unable to parse angle_x of the keyframe " + num + " for animation ID " + id;
-
         rotation.push(angle_x * DEGREE_TO_RAD);
 
-        var angle_y = this.reader.getFloat(children[1], 'angle_y');
+        var angle_y = this.reader.getFloat(children[rotationIndex], 'angle_y');
         if (!(angle_y != null && !isNaN(angle_y)))
             return "unable to parse angle_y of the keyframe " + num + " for animation ID " + id;
-
         rotation.push(angle_y * DEGREE_TO_RAD);
 
-        var angle_z = this.reader.getFloat(children[1], 'angle_z');
+        var angle_z = this.reader.getFloat(children[rotationIndex], 'angle_z');
         if (!(angle_z != null && !isNaN(angle_z)))
             return "unable to parse angle_z of the keyframe " + num + " for animation ID " + id;
-
         rotation.push(angle_z * DEGREE_TO_RAD);
 
-        var scalation = this.parseCoordinates3D(children[2], "keyframe " + num + " for animation ID " + id);
-
+        //Parsing scale
+        var scale = this.parseCoordinates3D(children[scaleIndex], "keyframe " + num + " for animation ID " + id);
+        //Keyframe's instant
         var instant = this.reader.getFloat(keyframe, 'instant');
         if (!(instant != null && !isNaN(instant)))
             return "unable to parse instant of the keyframe " + num + " for animation ID " + id;
-        return new MyKeyframe(num, instant, translation, rotation, scalation);
+
+        return new MyKeyframe(num, instant, translation, rotation, scale);
     }
 
     /**
@@ -1543,10 +1568,10 @@ class MySceneGraph {
         var primitiveChildren = this.components[component].primChildren;
         var animationID = this.components[component].animation;
 
-        this.scene.multMatrix(this.components[component].transfMat);
         if (animationID != null) {
             this.animations[animationID].apply();
         }
+        this.scene.multMatrix(this.components[component].transfMat);
 
         if (this.components[component].getCurrentMaterialID() == "inherit")
             var currentMaterialID = previousMaterialID;

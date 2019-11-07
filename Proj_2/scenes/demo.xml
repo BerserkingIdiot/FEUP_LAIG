@@ -60,8 +60,20 @@
         <animation id="demoAnim" >
             <keyframe instant="5">
                 <translate x="0" y="5" z="0" />
-                <rotate angle_x="0" angle_y="180" angle_z="0" />
+                <rotate angle_x="0" angle_y="0" angle_z="0" />
                 <scale x="3" y="3" z="3" />
+            </keyframe>
+            <keyframe instant="10">
+                <translate x="0" y="0" z="0" />
+                <rotate angle_x="0" angle_y="0" angle_z="0" />
+                <scale x="1" y="1" z="1" />
+            </keyframe>
+        </animation>
+        <animation id="aroundSphere" >
+            <keyframe instant="5">
+                <translate x="0" y="0" z="0" />
+                <rotate angle_x="0" angle_y="180" angle_z="0" />
+                <scale x="1" y="1" z="1" />
             </keyframe>
             <keyframe instant="10">
                 <translate x="0" y="0" z="0" />
@@ -86,19 +98,49 @@
         <primitive id="bigCylinder">
             <cylinder base="0.5" top="0.5" height="3.5" slices="20" stacks="20" />
         </primitive>
+        <primitive id="plane">
+            <plane npartsU="2" npartsV="2" />
+        </primitive>
+        <primitive id="patch">
+            <patch npointsU="3" npointsV="2" npartsU="20" npartsV="20" >
+                <controlpoint xx="-1.5" yy="-1.5" zz="0" />
+                <controlpoint xx="-1.5" yy="1.5" zz="0" />
+                <controlpoint xx="0" yy="-1.5" zz="3" />
+                <controlpoint xx="0" yy="1.5" zz="3" />
+                <controlpoint xx="1.5" yy="-1.5" zz="0" />
+                <controlpoint xx="1.5" yy="1.5" zz="0" />
+            </patch>
+        </primitive>
+        <!-- <primitive id="cylinder2">
+            <cylinder2 base=“ff” top=“ff” height=“ff” slices=“ii” stacks=“ii” />
+        </primitive> -->
     </primitives>
 
     <components>
         <component id="demoRoot">
             <transformation>
             </transformation>
-            <animationref id="demoAnim" />
+            <!-- <animationref id="demoAnim" /> -->
             <materials>
                 <material id="demoMaterial" />
             </materials>
             <texture id="demoTexture" length_s="1" length_t="1"/>
             <children>
-                <primitiveref id="sphere" />
+                <componentref id="patch" />
+                <!-- <primitiveref id="sphere" /> -->
+            </children>
+        </component>
+        <component id="patch">
+            <transformation>
+                <translate x="0" y="0" z="1"/>
+            </transformation>
+            <animationref id="aroundSphere" />
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture" length_s="1" length_t="1"/>
+            <children>
+                <primitiveref id="patch" />
             </children>
         </component>
     </components>
