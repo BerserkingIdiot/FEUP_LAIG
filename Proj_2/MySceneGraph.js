@@ -742,8 +742,8 @@ class MySceneGraph {
             // Specifications for the current transformation.
             var transfMatrix = this.parseSingleTransformation(grandChildren, transformationID);
             // Checking if an error was returned
-            if(typeof transfMatrix === 'string')
-                    return transfMatrix;
+            if (typeof transfMatrix === 'string')
+                return transfMatrix;
 
             this.transformations[transformationID] = transfMatrix;
         }
@@ -784,28 +784,27 @@ class MySceneGraph {
             grandChildren = children[i].children;
 
             var keyframes = [];
-            var numKF = grandChildren.length;
-            if(numKF < 1){
+            if (grandChildren.length < 1) {
                 return "no keyframes defined for animation ID " + animationID;
             }
             // Specifications for the current animation.
-            for(var j = 0; j < grandChildren.length; j++){
+            for (var j = 0; j < grandChildren.length; j++) {
                 var keyframe = this.parseKeyframe(grandChildren[j], j, animationID);
                 // Checking if an error was returned
-                if(typeof keyframe === 'string')
+                if (typeof keyframe === 'string')
                     return keyframe;
                 else
                     keyframes.push(keyframe);
             }
-            
+
             this.animationIDs.push(animationID);
-            this.animations[animationID] = new MyKeyframeAnimation(this.scene, animationID, numKF, keyframes);
+            this.animations[animationID] = new MyKeyframeAnimation(this.scene, animationID, keyframes);
         }
 
         this.log("Parsed animations");
         return null;
     }
- 
+
     /**
      * Parses the <primitives> block.
      * @param {primitives block element} primitivesNode
@@ -830,7 +829,7 @@ class MySceneGraph {
             var primitiveId = this.reader.getString(children[i], 'id');
             if (primitiveId == null)
                 return "no ID defined for primitive";
-
+            
             // Checks for repeated IDs.
             if (this.primitives[primitiveId] != null)
                 return "ID must be unique for each primitive (conflict: ID = " + primitiveId + ")";
@@ -841,8 +840,9 @@ class MySceneGraph {
             if (grandChildren.length != 1 ||
                 (grandChildren[0].nodeName != 'rectangle' && grandChildren[0].nodeName != 'triangle' &&
                     grandChildren[0].nodeName != 'cylinder' && grandChildren[0].nodeName != 'sphere' &&
-                    grandChildren[0].nodeName != 'torus')) {
-                return "There must be exactly 1 primitive type (rectangle, triangle, cylinder, sphere or torus)";
+                    grandChildren[0].nodeName != 'torus' && grandChildren[0].nodeName != 'plane' &&
+                    grandChildren[0].nodeName != 'patch' && grandChildren[0].nodeName != 'cylinder2')) {
+                return "There must be exactly 1 primitive type (rectangle, triangle, cylinder, sphere, torus, plane, patch, cylinder2)";
             }
 
             // Specifications for the current primitive.
@@ -947,7 +947,7 @@ class MySceneGraph {
                     return "unable to parse stacks of the primitive properties for ID = " + primitiveId;
 
                 //only one of base and top may be 0 on a single primitive
-                if(base == 0 && top == 0)
+                if (base == 0 && top == 0)
                     return "atleast one of the ends of the cylinder must have radius greater than zero for ID = " + primitiveId;
 
                 var cylinder = new MyCylinder(this.scene, primitiveId, base, top, height, slices, stacks);
@@ -993,6 +993,102 @@ class MySceneGraph {
 
                 var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops);
                 this.primitives[primitiveId] = torus;
+            } else if (primitiveType == 'plane') {
+                // npartsU -> has to be positive
+                var npartsU = this.reader.getFloat(grandChildren[0], 'npartsU');
+                if (!(npartsU != null && !isNaN(npartsU) && npartsU > 0))
+                    return "unable to parse npartsU of the primitive properties for ID = " + primitiveId;
+
+                // npartsV -> has to be positive
+                var npartsV = this.reader.getFloat(grandChildren[0], 'npartsV');
+                if (!(npartsV != null && !isNaN(npartsV) && npartsV > 0))
+                    return "unable to parse npartsV of the primitive properties for ID = " + primitiveId;
+
+                //TODO: uncomment following line for MyPlane
+                // var plane = new MyPlane(this.scene, primitiveId, npartsU, npartsV);
+                // this.primitives[primitiveId] = plane;
+            } else if (primitiveType == 'patch') {
+                // npointsU -> has to be positive
+                var npointsU = this.reader.getFloat(grandChildren[0], 'npointsU');
+                if (!(npointsU != null && !isNaN(npointsU) && npointsU > 0))
+                    return "unable to parse npointsU of the primitive properties for ID = " + primitiveId;
+
+                // npointsV -> has to be positive
+                var npointsV = this.reader.getFloat(grandChildren[0], 'npointsV');
+                if (!(npointsV != null && !isNaN(npointsV) && npointsV > 0))
+                    return "unable to parse npointsV of the primitive properties for ID = " + primitiveId;
+
+                // npartsU -> has to be positive
+                var npartsU = this.reader.getFloat(grandChildren[0], 'npartsU');
+                if (!(npartsU != null && !isNaN(npartsU) && npartsU > 0))
+                    return "unable to parse npartsU of the primitive properties for ID = " + primitiveId;
+
+                // npartsV -> has to be positive
+                var npartsV = this.reader.getFloat(grandChildren[0], 'npartsV');
+                if (!(npartsV != null && !isNaN(npartsV) && npartsV > 0))
+                    return "unable to parse npartsV of the primitive properties for ID = " + primitiveId;
+
+                // Control Points are the children of the patch node
+                var grandGrandChildren = grandChildren[0].children;
+                // Checking if the number of control points is correct
+                if (grandGrandChildren.length != (npointsU * npointsV)) {
+                    return "wrong number of control points defined for primitive ID = " + primitiveId +
+                        "; expected " + (npointsU * npointsV) + " but found " + grandGrandChildren.length;
+                }
+
+                // The controlPoints array will contain other arrays with the points' coordinates
+                var controlPoints = [];
+                for (var j = 0; j < grandGrandChildren.length; j++) {
+                    var x = this.reader.getFloat(grandGrandChildren[j], 'xx');
+                    if (!(x != null && !isNaN(x)))
+                        return "unable to parse x-coordinate of the control point number " + (j + 1) + " for primitive ID = " + primitiveId;
+
+                    var y = this.reader.getFloat(grandGrandChildren[j], 'yy');
+                    if (!(y != null && !isNaN(y)))
+                        return "unable to parse y-coordinate of the control point number " + (j + 1) + " for primitive ID = " + primitiveId;
+
+                    var z = this.reader.getFloat(grandGrandChildren[j], 'zz');
+                    if (!(z != null && !isNaN(z)))
+                        return "unable to parse z-coordinate of the control point number " + (j + 1) + " for primitive ID = " + primitiveId;
+
+                    controlPoints.push([x, y, z]);
+                }
+
+                var patch = new MyPatch(this.scene, primitiveId, npointsU, npointsV, npartsU, npartsV, controlPoints);
+                this.primitives[primitiveId] = patch;
+            } else if (primitiveType == 'cylinder2') {
+                // base -> has to be positive or 0
+                var base = this.reader.getFloat(grandChildren[0], 'base');
+                if (!(base != null && !isNaN(base) && base >= 0))
+                    return "unable to parse base of the primitive properties for ID = " + primitiveId;
+
+                // top -> has to be positive or 0
+                var top = this.reader.getFloat(grandChildren[0], 'top');
+                if (!(top != null && !isNaN(top) && top >= 0))
+                    return "unable to parse top of the primitive properties for ID = " + primitiveId;
+
+                // height -> has to be positive or 0
+                var height = this.reader.getFloat(grandChildren[0], 'height');
+                if (!(height != null && !isNaN(height) && height >= 0))
+                    return "unable to parse height of the primitive properties for ID = " + primitiveId;
+
+                // slices -> has to be greater than 2, otherwise it is not a valid object
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices >= 3))
+                    return "unable to parse slices of the primitive properties for ID = " + primitiveId;
+
+                // stacks -> has to be positive
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks > 0))
+                    return "unable to parse stacks of the primitive properties for ID = " + primitiveId;
+
+                //only one of base and top may be 0 on a single primitive
+                if (base == 0 && top == 0)
+                    return "atleast one of the ends of the cylinder must have radius greater than zero for ID = " + primitiveId;
+
+                //TODO: uncomment following lines after MyCylinder with NURBS is done
+                // var cylinder = new MyCylinderNURB(this.scene, primitiveId, base, top, height, slices, stacks);
+                // this.primitives[primitiveId] = cylinder;
             }
 
             numPrimitives++;
@@ -1078,16 +1174,16 @@ class MySceneGraph {
                 if (grandgrandChildren.length > 1)
                     this.onXMLMinorError("Multiple transformations declared and/or referred on " + componentID + "; defaulting to first referred transformation.");
             }
-            else{
+            else {
                 transfMatrix = this.parseSingleTransformation(grandgrandChildren, " of component " + componentID);
                 // Checking if an error was returned
-                if(typeof transfMatrix === 'string')
+                if (typeof transfMatrix === 'string')
                     return transfMatrix;
             }
 
             // : Component Animation
             var animationID = null;
-            if(animationIndex != -1){
+            if (animationIndex != -1) {
                 animationID = this.reader.getString(grandChildren[animationIndex], 'id');
                 if (animationID == null) {
                     return "unable to parse animation id of component ID " + componentID;
@@ -1187,27 +1283,26 @@ class MySceneGraph {
         }
     }
 
-
     /**
-     * Parse the coordinates from a node with ID = id
+     * Parse the coordinates from a node. In case of error displays the message passed as 2nd argument
      * @param {block element} node
      * @param {message to be displayed in case of error} messageError
      */
-    parseCoordinates3D(node, messageError, prefix = '') {
+    parseCoordinates3D(node, messageError) {
         var position = [];
 
         // x
-        var x = this.reader.getFloat(node, prefix + 'x');
+        var x = this.reader.getFloat(node, 'x');
         if (!(x != null && !isNaN(x)))
             return "unable to parse x-coordinate of the " + messageError;
 
         // y
-        var y = this.reader.getFloat(node, prefix + 'y');
+        var y = this.reader.getFloat(node, 'y');
         if (!(y != null && !isNaN(y)))
             return "unable to parse y-coordinate of the " + messageError;
 
         // z
-        var z = this.reader.getFloat(node, prefix + 'z');
+        var z = this.reader.getFloat(node, 'z');
         if (!(z != null && !isNaN(z)))
             return "unable to parse z-coordinate of the " + messageError;
 
@@ -1340,7 +1435,6 @@ class MySceneGraph {
      */
     parseKeyframe(keyframe, num, id) {
         var children = keyframe.children;
-        
         var translation = this.parseCoordinates3D(children[0], "keyframe " + num + " for animation ID " + id);
 
         var rotation = [];
@@ -1368,7 +1462,6 @@ class MySceneGraph {
         var instant = this.reader.getFloat(keyframe, 'instant');
         if (!(instant != null && !isNaN(instant)))
             return "unable to parse instant of the keyframe " + num + " for animation ID " + id;
-        
         return new MyKeyframe(num, instant, translation, rotation, scalation);
     }
 
@@ -1451,7 +1544,7 @@ class MySceneGraph {
         var animationID = this.components[component].animation;
 
         this.scene.multMatrix(this.components[component].transfMat);
-        if(animationID != null) {
+        if (animationID != null) {
             this.animations[animationID].apply();
         }
 
