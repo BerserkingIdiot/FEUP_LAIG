@@ -99,7 +99,7 @@
             <cylinder base="0.5" top="0.5" height="3.5" slices="20" stacks="20" />
         </primitive>
         <primitive id="plane">
-            <plane npartsU="2" npartsV="2" />
+            <plane npartsU="10" npartsV="10" />
         </primitive>
         <primitive id="patch">
             <patch npointsU="3" npointsV="2" npartsU="20" npartsV="20" >
@@ -127,6 +127,7 @@
             <texture id="demoTexture" length_s="1" length_t="1"/>
             <children>
                 <componentref id="patch" />
+                <componentref id="plane" />
                 <!-- <primitiveref id="sphere" /> -->
             </children>
         </component>
@@ -141,6 +142,19 @@
             <texture id="demoTexture" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="patch" />
+            </children>
+        </component>
+        <component id="plane">
+            <transformation>
+                <translate x="0" y="-2" z="0"/>
+                <scale x="10" y="1" z="10"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture" length_s="1" length_t="1"/>
+            <children>
+                <primitiveref id="plane" />
             </children>
         </component>
     </components>

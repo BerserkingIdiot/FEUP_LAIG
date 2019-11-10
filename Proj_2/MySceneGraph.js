@@ -1005,8 +1005,8 @@ class MySceneGraph {
                     return "unable to parse npartsV of the primitive properties for ID = " + primitiveId;
 
                 //TODO: uncomment following line for MyPlane
-                // var plane = new MyPlane(this.scene, primitiveId, npartsU, npartsV);
-                // this.primitives[primitiveId] = plane;
+                var plane = new MyPlane(this.scene, primitiveId, npartsU, npartsV);
+                this.primitives[primitiveId] = plane;
             } else if (primitiveType == 'patch') {
                 // npointsU -> has to be positive
                 var npointsU = this.reader.getFloat(grandChildren[0], 'npointsU');
