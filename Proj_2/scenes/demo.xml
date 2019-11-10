@@ -111,9 +111,9 @@
                 <controlpoint xx="1.5" yy="1.5" zz="0" />
             </patch>
         </primitive>
-        <!-- <primitive id="cylinder2">
-            <cylinder2 base=“ff” top=“ff” height=“ff” slices=“ii” stacks=“ii” />
-        </primitive> -->
+         <primitive id="cylinder2">
+            <cylinder2 base="3" top="3" height="5" slices="10" stacks="10" />
+        </primitive>
     </primitives>
 
     <components>
@@ -128,6 +128,7 @@
             <children>
                 <componentref id="patch" />
                 <componentref id="plane" />
+                <primitiveref id="cylinder2" />
                 <!-- <primitiveref id="sphere" /> -->
             </children>
         </component>

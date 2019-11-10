@@ -1087,8 +1087,8 @@ class MySceneGraph {
                     return "atleast one of the ends of the cylinder must have radius greater than zero for ID = " + primitiveId;
 
                 //TODO: uncomment following lines after MyCylinder with NURBS is done
-                // var cylinder = new MyCylinderNURB(this.scene, primitiveId, base, top, height, slices, stacks);
-                // this.primitives[primitiveId] = cylinder;
+                var cylinder = new MyCylinderNURB(this.scene, primitiveId, base, top, height, slices, stacks);
+                this.primitives[primitiveId] = cylinder;
             }
 
             numPrimitives++;
