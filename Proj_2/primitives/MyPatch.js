@@ -29,9 +29,6 @@ class MyPatch extends CGFobject {
 
         let controlPoints = this.arrangeControlPoints();
 
-        console.log("Degree U: " + degreeU);
-        console.log("Degree V: " + degreeV);
-
         let surface = new CGFnurbsSurface(degreeU, degreeV, controlPoints);
         
         this.nurbObject = new CGFnurbsObject(this.scene, this.npartsU, this.npartsV, surface)
@@ -53,8 +50,6 @@ class MyPatch extends CGFobject {
             }
             pointsU.push(pointsV);
         }
-
-        console.table("CONTROL POINTS: " + pointsU);
 
         return pointsU;
     }

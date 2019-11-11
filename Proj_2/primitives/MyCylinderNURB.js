@@ -26,14 +26,14 @@ class MyCylinderNURB extends CGFobject {
      * Creates the NURBS object with the specified atributes
      */
 	initObject() {
-        let degreeU = this.slices;
-        let degreeV = this.stacks;
+        let degreeU = 1;
+        let degreeV = 3;
 
         let controlPoints = this.arrangeControlPoints();
 
         let surface = new CGFnurbsSurface(degreeU, degreeV, controlPoints);
         
-        this.nurbObject = new CGFnurbsObject(this.scene, this.slices, this.stacks, surface)
+        this.nurbObject = new CGFnurbsObject(this.scene, this.slices * 2, this.stacks * 2, surface)
     }
     /**
 	 * @method arrangeControlPoints
@@ -41,7 +41,10 @@ class MyCylinderNURB extends CGFobject {
      * The returned array is a valid CGFnurbsSurface 3rd argument.
      */
     arrangeControlPoints() {
+
+        /*
         let pointsU = [];
+
 
         // Alpha is the angle value around the circuference, starting at x axis
         let alpha = 0;
@@ -79,11 +82,32 @@ class MyCylinderNURB extends CGFobject {
             alpha += delta_alpha;
         }
 
+        */
+
+        let pointsU = [];
+
+        let pointsV = [];
+        pointsV.push([-this.base, 0, 0, 1]);
+        pointsV.push([-this.base, ((4.0*this.base)/3.0), 0, 1]);
+        pointsV.push([this.base, ((4.0*this.base)/3.0), 0, 1]);
+        pointsV.push([this.base, 0, 0, 1]);
+        pointsU.push(pointsV);
+
+        pointsV = [];
+        pointsV.push([-this.top, 0, this.height, 1]);
+        pointsV.push([-this.top, ((4.0*this.top)/3.0), this.height, 1]);
+        pointsV.push([this.top, ((4.0*this.top)/3.0), this.height, 1]);
+        pointsV.push([this.top, 0, this.height, 1]);
+        pointsU.push(pointsV);
 
         return pointsU;
     }
 
     display() {
         this.nurbObject.display();
+        this.scene.pushMatrix();
+        this.scene.rotate(Math.PI, 0, 0, 1);
+        this.nurbObject.display();
+        this.scene.popMatrix();
     }
 }
