@@ -196,6 +196,9 @@
         </transformation>
     </transformations>
 
+    <animations>
+    </animations>
+
     <primitives>
         <primitive id="smallSquare">
             <rectangle x1="0" y1="0" x2="1" y2="1" />

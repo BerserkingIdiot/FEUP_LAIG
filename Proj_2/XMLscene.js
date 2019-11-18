@@ -43,18 +43,16 @@ class XMLscene extends CGFscene {
     // Light interface variable. Holds key value pairs as light_id -> index
     this.lightIDs = new Object();
     // Texture for render to texture
-    this.rtt = new CGFtextureRTT(this);
-    this.securityUI = new MySecurityCamera(this, this.rtt);
+    this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
+    this.securityUI = new MySecurityCamera(this, this.rttTexture);
   }
 
   /**
    * Initializes the scene camera
    */
   initCameras() {
-    this.camera = new CGFcamera(
-        0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
-    this.securityCamera = new CGFcamera(
-        0.4, 0.1, 500, vec3.fromValues(0, 9, 0), vec3.fromValues(0, 0, 0));
+    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+    this.securityCamera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(5, 5, 5), vec3.fromValues(0, 0, 0));
   }
 
   /**
@@ -168,6 +166,7 @@ class XMLscene extends CGFscene {
         this.graph.updateMaterialIndexes();
       }
       this.graph.updateKeyframeAnimations(t - this.startTime);
+      this.securityUI.updateShader(t - this.startTime);
     } else
       this.startTime = t;
   }
@@ -181,8 +180,8 @@ class XMLscene extends CGFscene {
     // ---- BEGIN Background, camera and axis setup
 
     // The following line enables camera movement and zoom on the scene
-    
-    this.interface.setActiveCamera(currentCamera);
+    this.camera = currentCamera
+    this.interface.setActiveCamera(this.camera);
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
@@ -220,19 +219,20 @@ class XMLscene extends CGFscene {
    * Displays the scene
    */
   display() {
-
+    if(this.sceneInited){
       // Renders the scene to a texture using the security camera
-      this.rtt.attachToFrameBuffer();
+      this.rttTexture.attachToFrameBuffer();
       this.render(this.securityCamera);
-      this.rtt.detachFromFrameBuffer();
+      this.rttTexture.detachFromFrameBuffer();
 
       // Renders the scene using the currently selected camera
+      this.changeCamera();
       this.render(this.camera);
 
-      // Displaying the security camera UI
       this.gl.disable(this.gl.DEPTH_TEST);
       this.securityUI.display();
       this.gl.enable(this.gl.DEPTH_TEST);
-
+      // Displaying the security camera UI
+    }
   }
 }
