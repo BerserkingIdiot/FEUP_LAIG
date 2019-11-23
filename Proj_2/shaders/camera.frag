@@ -23,7 +23,7 @@ void main() {
 
 	//By default there is no interference. It only is applied when the below condition is met
 	vec4 interference = vec4(color.rgb, 1.0);
-	if(mod((vTextureCoord.y + currentTime / 8.0) * 100.0, 10.0) < 0.8){
+	if(mod((vTextureCoord.y - currentTime / 8.0) * 100.0, 10.0) < 0.8){
 		interference = vec4(color.rgb + 0.1 , 1.0) + noise; //Applies the noise texture and adding a little white to the line color
 	}
 

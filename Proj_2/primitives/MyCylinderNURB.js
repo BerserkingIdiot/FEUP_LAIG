@@ -33,6 +33,7 @@ class MyCylinderNURB extends CGFobject {
 
         let surface = new CGFnurbsSurface(degreeU, degreeV, controlPoints);
         
+
         this.nurbObject = new CGFnurbsObject(this.scene, this.slices * 2, this.stacks * 2, surface)
     }
     /**
@@ -41,52 +42,9 @@ class MyCylinderNURB extends CGFobject {
      * The returned array is a valid CGFnurbsSurface 3rd argument.
      */
     arrangeControlPoints() {
-
-        /*
         let pointsU = [];
-
-
-        // Alpha is the angle value around the circuference, starting at x axis
-        let alpha = 0;
-        // Each iteration alpha will be incremented by 2*PI/slices
-        let delta_alpha = 2 * Math.PI / this.slices;
-
-        let z = 0;
-        // Each iteration z will be incremented by height/stacks
-        let delta_z = this.height / this.stacks;
-        // Radius of each circunference
-        let radius = this.base;
-        // Each iteration the base radius becomes closer to the top radius by a rate of (top - base)/stacks
-        let delta_r = (this.top - this.base) / this.stacks;
-
-        for (let u = 0; u <= this.slices; u++) {
-            let pointsV = [];
-            // X coordinate of current vertex
-            let x = Math.cos(alpha) * radius;
-            // Y coordinate of current vertex
-            let y = Math.sin(alpha) * radius;
-            for (let v = 0; v < this.stacks; v++) {
-                pointsV.push([x, y, z, 1]);
-                // At each iteration we go up on the z axis and closer to top radius
-                z += delta_z;
-                radius += delta_r;
-                x = Math.cos(alpha) * radius;
-                y = Math.sin(alpha) * radius;
-            }
-            //By stopping at j = stacks we miss the last point (the one on the top circunference)
-            pointsV.push([x, y, z, 1]);
-            pointsU.push(pointsV);
-
-            z = 0;
-            radius = this.base;
-            alpha += delta_alpha;
-        }
-
-        */
-
-        let pointsU = [];
-
         let pointsV = [];
+        
         pointsV.push([-this.base, 0, 0, 1]);
         pointsV.push([-this.base, ((4.0*this.base)/3.0), 0, 1]);
         pointsV.push([this.base, ((4.0*this.base)/3.0), 0, 1]);
@@ -104,7 +62,10 @@ class MyCylinderNURB extends CGFobject {
     }
 
     display() {
+        // Only half of the cylinder is modeled as a NURB
         this.nurbObject.display();
+
+        // Therefore, it needs to be displayed again rotated 180º around the Z axis
         this.scene.pushMatrix();
         this.scene.rotate(Math.PI, 0, 0, 1);
         this.nurbObject.display();

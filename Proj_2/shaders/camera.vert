@@ -5,7 +5,9 @@ attribute vec2 aTextureCoord;
 varying vec2 vTextureCoord;
 
 void main() {
-
+    // The position is calculated without the projection matrix
+    // so the rectangle does not get into the scene.
+    // This way it stands as a static UI element.
 	gl_Position = vec4(aVertexPosition, 1.0);
 
     //Since the rectangle texture coords are mirrored relative to x axis,

@@ -43,11 +43,13 @@ class MyPatch extends CGFobject {
         let pointsIndex = 0;
 
         for (let u = 0; u < this.npointsU; u++) {
+            // All the points are gathered until enough points for V axis have been gathered
             let pointsV = [];
             for (let v = 0; v < this.npointsV; v++) {
                 pointsV.push([...this.points[pointsIndex], 1]);
                 pointsIndex++;
             }
+            // Then the array of points is pushed into the U axis array
             pointsU.push(pointsV);
         }
 

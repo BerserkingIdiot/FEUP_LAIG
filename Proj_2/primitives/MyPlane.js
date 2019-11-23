@@ -23,6 +23,7 @@ class MyPlane extends CGFobject {
         let degreeU = 1;
         let degreeV = 1;
 
+        // The control points are straightforward so there is no need to create an auxiliary function
         let controlPoints = [
             [[-0.5, 0, 0.5, 1], [-0.5, 0, -0.5, 1]],
             [[0.5, 0, 0.5, 1], [0.5, 0, -0.5, 1]]

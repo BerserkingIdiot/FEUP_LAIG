@@ -167,7 +167,7 @@ class XMLscene extends CGFscene {
       this.graph.updateKeyframeAnimations(t - this.startTime);
       this.securityUI.updateShader(t - this.startTime);
     } else
-      this.startTime = t;
+      this.startTime = t; // Only when the scene is initiated we start to count the elapsed time
   }
 
   /**
