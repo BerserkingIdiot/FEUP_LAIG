@@ -1512,7 +1512,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="capeTexture"/>
+            <texture id="capeTexture" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="cape"/>
             </children>

@@ -71,7 +71,11 @@ class XMLscene extends CGFscene {
 
     // Currently active camera is set to the default camera
     this.selectedCamera = this.graph.defaultCameraId;
-    this.selectedSecurityCamera = this.selectedCamera;
+    // Current scurity camera is the first security defined (if there is one)
+    if(this.securityIDs.length != 0)
+      this.selectedSecurityCamera = this.securityIDs[0];
+    else
+      this.selectedSecurityCamera = this.selectedCamera;
   }
   /**
    * Initializes the scene lights with the values read from the XML file.
