@@ -97,13 +97,16 @@
             <plane npartsU="10" npartsV="10" />
         </primitive>
         <primitive id="patch">
-            <patch npointsU="3" npointsV="2" npartsU="20" npartsV="20" >
-                <controlpoint xx="-1.5" yy="-1.5" zz="0" />
-                <controlpoint xx="-1.5" yy="1.5" zz="0" />
-                <controlpoint xx="0" yy="-1.5" zz="3" />
+            <patch npointsU="3" npointsV="3" npartsU="20" npartsV="20" >
+                <controlpoint xx="-0.5" yy="5" zz="0" />
+                <controlpoint xx="0" yy="5" zz="0.5" />
+                <controlpoint xx="0.5" yy="5" zz="0" />
+                <controlpoint xx="-0.7" yy="3" zz="1" />
+                <controlpoint xx="0" yy="3" zz="1.5" />
+                <controlpoint xx="0.7" yy="3" zz="2" />
+                <controlpoint xx="-1" yy="1.5" zz="1.5" />
                 <controlpoint xx="0" yy="1.5" zz="3" />
-                <controlpoint xx="1.5" yy="-1.5" zz="0" />
-                <controlpoint xx="1.5" yy="1.5" zz="0" />
+                <controlpoint xx="1" yy="1.5" zz="2" />
             </patch>
         </primitive>
          <primitive id="cylinder2">
@@ -122,16 +125,11 @@
             <texture id="demoTexture" length_s="1" length_t="1"/>
             <children>
                 <componentref id="patch" /> 
-                <componentref id="plane" />
-                <primitiveref id="cylinder2" />
-                <!-- <primitiveref id="sphere" /> -->
             </children>
         </component>
         <component id="patch">
             <transformation>
-                <translate x="0" y="0" z="1"/>
             </transformation>
-            <animationref id="aroundSphere" />
             <materials>
                 <material id="demoMaterial" />
             </materials>
