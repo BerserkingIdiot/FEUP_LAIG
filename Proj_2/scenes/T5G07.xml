@@ -18,11 +18,11 @@
             <from x="5" y="8" z="1" />
             <to x="5" y="1" z="2" />
         </perspective>
-        <perspective id="roomSecurityCamera" near="0.1" far="50" angle="90">
+        <perspective id="roomSecurityCam" near="0.1" far="50" angle="90">
             <from x="8" y="8" z="1" />
             <to x="5" y="3" z="5" />
         </perspective>
-        <perspective id="buoySecurityCamera" near="0.1" far="50" angle="90">
+        <perspective id="buoySecurityCam" near="0.1" far="50" angle="90">
             <from x="1" y="8" z="1" />
             <to x="1" y="6" z="5" />
         </perspective>

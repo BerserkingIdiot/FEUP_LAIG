@@ -39,7 +39,9 @@ class XMLscene extends CGFscene {
 
     // Camera interface related variables
     this.cameraIDs = [];
+    this.securityIDs = [];
     this.selectedCamera = null;
+    this.selectedSecurityCamera = null;
     // Light interface variable. Holds key value pairs as light_id -> index
     this.lightIDs = new Object();
     // Texture for render to texture
@@ -52,7 +54,6 @@ class XMLscene extends CGFscene {
    */
   initCameras() {
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
-    this.securityCamera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(5, 5, 5), vec3.fromValues(0, 0, 0));
   }
 
   /**
@@ -61,18 +62,16 @@ class XMLscene extends CGFscene {
   initGraphCameras() {
     // Every id is saved so cameras can be manipulated on the interface
     for (var key in this.graph.views) {
-      this.cameraIDs.push(key);
+      // Checking if the camera does not have security in its id
+      if(key.search(/security/i) == -1)
+        this.cameraIDs.push(key); // This array will contain all normal cameras' ids
+      else
+        this.securityIDs.push(key); // This array will contain all security cameras' ids
     }
 
     // Currently active camera is set to the default camera
     this.selectedCamera = this.graph.defaultCameraId;
-    this.changeCamera();
-  }
-  /**
-   * Changes current active camera. It is meant to be called by the interface
-   */
-  changeCamera() {
-    this.camera = this.graph.views[this.selectedCamera];
+    this.selectedSecurityCamera = this.selectedCamera;
   }
   /**
    * Initializes the scene lights with the values read from the XML file.
@@ -180,7 +179,7 @@ class XMLscene extends CGFscene {
     // ---- BEGIN Background, camera and axis setup
 
     // The following line enables camera movement and zoom on the scene
-    this.camera = currentCamera
+    this.camera = this.graph.views[currentCamera];
     this.interface.setActiveCamera(this.camera);
 
     // Clear image and depth buffer everytime we update the scene
@@ -222,17 +221,17 @@ class XMLscene extends CGFscene {
     if(this.sceneInited){
       // Renders the scene to a texture using the security camera
       this.rttTexture.attachToFrameBuffer();
-      this.render(this.securityCamera);
+      this.render(this.selectedSecurityCamera);
       this.rttTexture.detachFromFrameBuffer();
 
       // Renders the scene using the currently selected camera
-      this.changeCamera();
-      this.render(this.camera);
+      this.render(this.selectedCamera);
 
+      // Displaying the security camera UI
+      // Depth test has to be disable because the UI overlaps the scene
       this.gl.disable(this.gl.DEPTH_TEST);
       this.securityUI.display();
       this.gl.enable(this.gl.DEPTH_TEST);
-      // Displaying the security camera UI
     }
   }
 }

@@ -30,7 +30,9 @@ class MyInterface extends CGFinterface {
      */
     initInterface() {
         // Dropdown to control the active camera
-        this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected View').onChange(this.scene.changeCamera.bind(this.scene));
+        this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected Cam');
+        // Drop to control the security camera
+        this.gui.add(this.scene, 'selectedSecurityCamera', this.scene.securityIDs).name('Security Cam');
 
         // Folder holding all the lights
         this.lightsFolder = this.gui.addFolder('Lights');
