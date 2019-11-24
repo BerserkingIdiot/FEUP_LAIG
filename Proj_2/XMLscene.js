@@ -111,7 +111,7 @@ class XMLscene extends CGFscene {
           this.lights[i].setSpotCutOff(light[9]);
           this.lights[i].setSpotExponent(light[10]);
           this.lights[i].setSpotDirection(
-              light[11][0], light[11][1], light[11][2]);
+              light[11][0] - light[2][0], light[11][1] - light[2][1], light[11][2] - light[2][2]);
         }
 
         // Uncomment following line to see the light sources in the scene
