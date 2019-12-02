@@ -25,7 +25,7 @@ class Server {
     /**
      * Plays a piece on the server side
      * 
-     * @param {Input board state} board 
+     * @param {Current board state} board 
      * @param {Current player} player 
      * @param {X coordinate} x 
      * @param {Y coordinate} y
@@ -35,7 +35,7 @@ class Server {
     play(board, player, x, y) {
         this.getPrologRequest(`play(${board}, ${player}, ${x}, ${y})`, this.handleReply);
 
-        //Wait for server to reply
+        //TODO: Wait for server to reply
         
         return JSON.parse(this.reply);
     }
@@ -47,10 +47,26 @@ class Server {
      * 
      * @param {Boolean indicating if there was a cut on diagonal link} cut 
      * @param {Current turn state} turns 
+     * 
+     * @returns An array in the format: [Player1 Plays, Player2 Plays]
      */
     updateTurns(cut, turns) {
         this.getPrologRequest(`update_turns(${turns}, ${cut})`);
 
         return JSON.parse(this.reply)
+    }
+
+    /**
+     * Checks if the game has ended.
+     * 
+     * @param {Current board state} board 
+     * @param {Current player} player 
+     * 
+     * @returns true if the game has ended, false otherwise.
+     */
+    checkGameEnd(board, player){
+        this.getPrologRequest(`game_end(${board}, ${player})`);
+
+        return this.reply === '1';
     }
 }

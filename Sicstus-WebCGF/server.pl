@@ -107,6 +107,9 @@ parse_input(handshake, handshake).
 parse_input(test(C,N), Res) :- test(C,Res,N).
 parse_input(count(N, List), Res) :- count_similar(N, List, Res).
 parse_input(first(List), Res) :- nth0(0, List, Res).
+parse_input(game_end(Board,Player), 1) :- checkGameEnd(Board,Player).
+parse_input(game_end(Board,Player), 0).
+
 parse_input(quit, goodbye).
 
 count_similar(_, [], 0).
