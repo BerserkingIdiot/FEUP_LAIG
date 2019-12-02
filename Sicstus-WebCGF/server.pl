@@ -12,7 +12,7 @@
 
 % Made by Luis Reis (ei12085@fe.up.pt) for LAIG course at FEUP.
 
-port(8081).
+port(8082).
 
 % Server Entry Point
 server :-
@@ -105,7 +105,18 @@ print_header_line(_).
 
 parse_input(handshake, handshake).
 parse_input(test(C,N), Res) :- test(C,Res,N).
+parse_input(count(N, List), Res) :- count_similar(N, List, Res).
+parse_input(first(List), Res) :- nth0(0, List, Res).
 parse_input(quit, goodbye).
+
+count_similar(_, [], 0).
+
+count_similar(N, [N | Rest], Sum) :-
+	count_similar(N, Rest, Sum2),
+	Sum is Sum2 + 1.
+
+count_similar(N, [_ | Rest], Sum) :-
+	count_similar(N, Rest, Sum).
 
 test(_,[],N) :- N =< 0.
 test(A,[A|Bs],N) :- N1 is N-1, test(A,Bs,N1).
