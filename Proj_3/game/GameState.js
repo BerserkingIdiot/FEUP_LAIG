@@ -1,4 +1,4 @@
-class GameState {
+    class GameState {
     constructor(board, turns) {
         this.board = board;
         this.turns = turns;
