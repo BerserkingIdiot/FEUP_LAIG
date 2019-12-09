@@ -47,6 +47,8 @@ class XMLscene extends CGFscene {
     // Texture for render to texture
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
     this.securityUI = new MySecurityCamera(this, this.rttTexture);
+
+    //this.piece = new MyPiece(this, null);
   }
 
   /**

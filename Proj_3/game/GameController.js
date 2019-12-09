@@ -4,15 +4,31 @@ class GameController {
         this.currentState;
         this.player1Dif = player1Dif;
         this.player2Dif = player2Dif;
+        this.player1 = true;
         this.server = Server();
     }
     gameLoop(){
         this.initGame();
 
-        while(this.gameEnded){ //TODO: game end
-            //Check player
+        while(!this.gameEnded){ //TODO: game end
             //Display
-            //IF PLAYER -> handlePick : aiPlay_prolog
+            if(this.player1) {
+                if(this.player1Dif != 0){
+                    //play AI
+                }
+                else {
+                    //player 1 pick
+                }
+            }
+            else {
+                if(this.player2Dif != 0){
+                    //play AI
+                }
+                else {
+                    //player 2 pick
+                }
+            }
+
             //execute_play (animation, prolog, change state)
 
             // Saves a copy of the current state in the stack for Undo and Replay purposes
@@ -22,8 +38,7 @@ class GameController {
                 this.gameEnded = true;
             }
         }
-
-        //RESET
+        
     }
     initGame() {
         this.plays = [];
