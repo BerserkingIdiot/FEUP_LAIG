@@ -69,4 +69,32 @@ class Server {
 
         return this.reply === '1';
     }
+
+    /**
+     * Determines the current player.
+     * 
+     * @param {current turn state} turns
+     * 
+     * @returns A value, either 1 or 2, representing the current player.
+     */
+    get_player(turns) {
+        this.getPrologRequest(`get_player(${turns})`);
+
+        return JSON.parse(this.reply);
+    }
+
+    /**
+     * Gets the coordinates for the next play executed by the computer.
+     * 
+     * @param {difficulty level of the AI} depth 
+     * @param {current turn state} turns 
+     * @param {current board state} board
+     * 
+     * @returns a pair of coordinates in the form [X, Y]. 
+     */
+    getAIinput(depth, turns, board) {
+        this.getPrologRequest(`getAIinput(${depth},${turns},${board})`);
+
+        return JSON.parse(this.reply);
+    }
 }
