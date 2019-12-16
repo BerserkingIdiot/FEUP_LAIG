@@ -27,4 +27,15 @@ class MyPiece extends CGFobject {
 
         this.scene.popMatrix();
     }
+    getCoords() {
+        let coords = [];
+        coords['x'] = this.x;
+        coords['y'] = this.y;
+
+        return coords;
+    }
+    setCoords(coords) {
+        this.x = coords['x'];
+        this.y = coords['y'];
+    }
 }
