@@ -1,4 +1,4 @@
-class MyTile extends CGFobject {
+class MyOctoTile extends CGFobject {
     constructor(scene, id, x, y) {
         super(scene);
         this.id = id;
@@ -6,6 +6,7 @@ class MyTile extends CGFobject {
         this.coords['x']=x;
         this.coords['y']=y;
         this.octagon = new MyOctagon(this.scene, this.id, 0.5);
+        this.piece;
         //TODO: make pickable
     }
 
@@ -13,8 +14,19 @@ class MyTile extends CGFobject {
         return this.coords;
     }
 
+    setPiece(piece) {
+        this.piece = piece;
+    }
+
+    clearPiece() {
+        this.piece = null;
+    }
+
     display() {
         this.octagon.display();
+        if(this.piece != null){
+            this.piece.display();
+        }
     }
 
 

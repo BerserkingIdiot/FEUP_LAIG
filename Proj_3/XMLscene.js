@@ -48,7 +48,7 @@ class XMLscene extends CGFscene {
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
     this.securityUI = new MySecurityCamera(this, this.rttTexture);
 
-    this.mypiece = new MyPiece(this, 1, 1, 'white');
+    this.mypiece = new MyGamePiece(this, 1, 1, 'white');
     this.board = new MyBoard(this, 0);
   }
 

@@ -21,12 +21,12 @@ class MyBoard extends CGFobject {
     initTiles() {
         for(var i = 0; i < 8; i++) {
             for(var j = 0; j < 8; j++){
-                this.octoTiles.push(new MyTile(this.scene, i*8+j, j, i));
+                this.octoTiles.push(new MyOctoTile(this.scene, i*8+j, j, i));
             }
         }
         for(var i = 0; i < 7; i++) {
             for(var j = 0; j < 7; j++) {
-                this.squareTiles.push(new MyRectangle(this.scene, i*7+j, 0, Math.PI/8, 0, Math.PI/8));
+                this.squareTiles.push(new MySquareTile(this.scene, i*7+j, j, i));
             }
         }
     }
