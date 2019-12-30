@@ -49,6 +49,7 @@ class XMLscene extends CGFscene {
     this.securityUI = new MySecurityCamera(this, this.rttTexture);
 
     this.mypiece = new MyPiece(this, 1, 1, 'white');
+    this.board = new MyBoard(this, 0);
   }
 
   /**
@@ -216,6 +217,7 @@ class XMLscene extends CGFscene {
       // Displays the scene (MySceneGraph function).
       this.graph.displayScene();
       this.mypiece.display();
+      this.board.display();
     }
 
     this.popMatrix();
