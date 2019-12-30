@@ -5,6 +5,13 @@ class MyGameMove {
         this.destination = destination;
         this.state = state;
 
+        //FIXME: change animation speed here
+        this.endInstant = 1;
+        let coords = destination.getCoords();
+        let keyframe = new MyKeyframe(1, this.endInstant, [coords['x'], 0, coords['y']], [0, 0, 0], [1, 1, 1]);
+        this.animation = new MyKeyframeAnimation(this.orchestrator.scene, 0, [keyframe]);
+        this.startTime = null;
+
         this.calculate();
     }
     calculate() {
@@ -18,7 +25,14 @@ class MyGameMove {
         this.mid['x'] = src['x'] + (dest['x'] - src['x']) / 2.0;
         this.mid['y'] = src['y'] + (dest['y'] - src['y']) / 2.0;
     }
+    onAnimationOver() {
+        this.piece.setCoords(this.destination.getCoords());
+    }
+    animate(t) {
+        this.animation.update(t);
+    }
     display() {
+        this.animation.apply();
         this.piece.display();
     }
 }
