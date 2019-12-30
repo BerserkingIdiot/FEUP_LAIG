@@ -124,31 +124,6 @@
             </materials>
             <texture id="demoTexture" length_s="1" length_t="1"/>
             <children>
-                <componentref id="patch" /> 
-            </children>
-        </component>
-        <component id="patch">
-            <transformation>
-            </transformation>
-            <materials>
-                <material id="demoMaterial" />
-            </materials>
-            <texture id="demoTexture" length_s="1" length_t="1"/>
-            <children>
-                <primitiveref id="patch" />
-            </children>
-        </component>
-        <component id="plane">
-            <transformation>
-                <translate x="0" y="-2" z="0"/>
-                <scale x="10" y="1" z="10"/>
-            </transformation>
-            <materials>
-                <material id="demoMaterial" />
-            </materials>
-            <texture id="demoTexture" length_s="1" length_t="1"/>
-            <children>
-                <primitiveref id="plane" />
             </children>
         </component>
     </components>

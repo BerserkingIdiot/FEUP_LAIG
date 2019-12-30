@@ -2,8 +2,9 @@ class MyPiece extends CGFobject {
     constructor(scene, x, y, color) {
         super(scene);
 
-        this.shape = new MyCylinder(scene, 0, 0.5, 0.5, 0.2, 8, 4);
-        this.lid = new MyOctagon(scene, 0, 0.5);
+        let radius = 0.5 / Math.cos(22.5 * Math.PI / 180);
+        this.shape = new MyCylinder(scene, 0, radius, radius, 0.2, 8, 4);
+        this.lid = new MyOctagon(scene, 0, radius);
         this.x = x;
         this.y = y;
         this.color = color;

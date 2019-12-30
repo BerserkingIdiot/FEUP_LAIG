@@ -5,10 +5,6 @@ class MyGameMove {
         this.destination = destination;
         this.state = state;
 
-        //FIXME: change animation speed here
-        let keyframe = new MyKeyframe(1, 1, [0, 0, 0], [180, 0, 180], [1, 1, 1]);
-        this.animation = new MyKeyframeAnimation(this.orchestrator.scene, 0, [keyframe]);
-
         this.calculate();
     }
     calculate() {
@@ -22,9 +18,7 @@ class MyGameMove {
         this.mid['x'] = src['x'] + (dest['x'] - src['x']) / 2.0;
         this.mid['y'] = src['y'] + (dest['y'] - src['y']) / 2.0;
     }
-    animate(t) {
-        this.animation.update(t);
-        
-        //TODO: display scene
+    display() {
+        this.piece.display();
     }
 }
