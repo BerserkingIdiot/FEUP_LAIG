@@ -1,7 +1,9 @@
-class GameController {
-    constructor(player1Dif, player2Dif) {
-        this.plays;
-        this.currentState;
+class MyGameOrchestrator {
+    constructor(scene, player1Dif, player2Dif) {
+        this.scene = scene;
+        this.animator = new MyGameAnimator(this);
+        this.board = new MyGameBoard();
+        this.gameSequence = new MyGameSequence(this);
         this.player1Dif = player1Dif;
         this.player2Dif = player2Dif;
         this.player1 = true;
