@@ -26,7 +26,8 @@ class MyGameMove {
         this.mid['y'] = src['y'] + (dest['y'] - src['y']) / 2.0;
     }
     onAnimationOver() {
-        this.piece.setCoords(this.destination.getCoords());
+        //this.piece.setCoords(this.destination.getCoords());
+        this.destination.setPiece(this.piece);
     }
     animate(t) {
         this.animation.update(t);
