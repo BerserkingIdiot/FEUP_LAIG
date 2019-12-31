@@ -23,10 +23,14 @@ class MyOctoTile extends CGFobject {
     }
 
     display() {
-        this.octagon.display();
         if(this.piece != null){
             this.piece.display();
         }
+        else {
+            this.scene.registerForPick(this.id + 1, this); //DON'T use pick id 0
+        }
+        this.octagon.display();
+        this.scene.clearPickRegistration();
     }
 
 
