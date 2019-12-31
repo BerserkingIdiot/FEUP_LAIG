@@ -48,8 +48,9 @@ class XMLscene extends CGFscene {
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
     this.securityUI = new MySecurityCamera(this, this.rttTexture);
 
-    this.mypiece = new MyPiece(this, 1, 1, 'white');
+    this.mypiece = new MyGamePiece(this, 1, 1, 'white');
     this.board = new MyBoard(this, 0);
+    this.scenes = new MyGameScenes(this);
   }
 
   /**
@@ -215,9 +216,9 @@ class XMLscene extends CGFscene {
       this.setDefaultAppearance();
 
       // Displays the scene (MySceneGraph function).
-      this.graph.displayScene();
-      this.mypiece.display();
-      this.board.display();
+      this.scenes.displayScene();
+      // this.mypiece.display();
+      // this.board.display();
     }
 
     this.popMatrix();
