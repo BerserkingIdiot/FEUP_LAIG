@@ -29,10 +29,14 @@ class MyInterface extends CGFinterface {
      *  Handler to be called after scene has been inited to configure the interface
      */
     initInterface() {
+        this.gui.destroy();
+        this.gui = new dat.GUI();
         // Dropdown to control the active camera
         this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected Cam');
         // Drop to control the security camera
         this.gui.add(this.scene, 'selectedSecurityCamera', this.scene.securityIDs).name('Security Cam');
+        // Button to change themes
+        this.gui.add(this.scene.themes, 'selectedScene', this.scene.themes.sceneNames).name('Theme').onChange(this.scene.themes.changeScene.bind(this.scene.themes));
 
         // Folder holding all the lights
         this.lightsFolder = this.gui.addFolder('Lights');

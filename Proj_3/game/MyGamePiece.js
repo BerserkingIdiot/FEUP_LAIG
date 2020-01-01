@@ -2,7 +2,8 @@ class MyGamePiece extends CGFobject {
     constructor(scene, x, y, color) {
         super(scene);
 
-        let radius = 0.5 / Math.cos(22.5 * Math.PI / 180);
+        // let radius = 0.5 / Math.cos(22.5 * Math.PI / 180);
+        let radius = 0.5;
         this.shape = new MyCylinder(scene, 0, radius, radius, 0.2, 8, 4);
         this.lid = new MyOctagon(scene, 0, radius);
         this.x = x;

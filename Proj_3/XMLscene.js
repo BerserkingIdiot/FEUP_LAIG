@@ -50,7 +50,7 @@ class XMLscene extends CGFscene {
 
     this.mypiece = new MyGamePiece(this, 1, 1, 'white');
     this.board = new MyBoard(this, 0);
-    this.scenes = new MyGameScenes(this);
+    this.themes = new MyGameScenes(this);
     this.setPickEnabled(true);
   }
 
@@ -65,6 +65,9 @@ class XMLscene extends CGFscene {
    * Initializes the scene cameras according to graph information.
    */
   initGraphCameras() {
+    // Cleaning the arrays in case the scene changes
+    this.cameraIDs = [];
+    this.securityIDs = [];
     // Every id is saved so cameras can be manipulated on the interface
     for (var key in this.graph.views) {
       // Checking if the camera does not have security in its id
@@ -204,7 +207,6 @@ class XMLscene extends CGFscene {
     this.applyViewMatrix();
 
     this.pushMatrix();
-    this.setDefaultAppearance();
     this.axis.display();
 
     // Updating lights to enable and disable them
@@ -215,11 +217,11 @@ class XMLscene extends CGFscene {
     if (this.graph.displayOk) {
       // Draw axis
       this.setDefaultAppearance();
-
+      
       // Displays the scene (MySceneGraph function).
-      this.scenes.displayScene();
-      // this.mypiece.display();
-      // this.board.display();
+      this.themes.display();
+      this.mypiece.display();
+      this.board.display();
     }
 
     this.popMatrix();
