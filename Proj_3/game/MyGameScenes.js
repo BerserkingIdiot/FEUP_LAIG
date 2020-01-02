@@ -62,8 +62,6 @@ class MyGameScenes {
         }
     }
     display() {
-        if (this.graph.displayOk) {
-            this.graph.displayScene();
-        }
+        this.graph.displayScene();
     }
 }

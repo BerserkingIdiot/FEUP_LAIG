@@ -33,8 +33,6 @@ class MyInterface extends CGFinterface {
         this.gui = new dat.GUI();
         // Dropdown to control the active camera
         this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected Cam');
-        // Drop to control the security camera
-        this.gui.add(this.scene, 'selectedSecurityCamera', this.scene.securityIDs).name('Security Cam');
         // Button to change themes
         let orchestrator = this.scene.gameOrchestrator;
         this.gui.add(orchestrator.themes, 'selectedScene', orchestrator.themes.sceneNames).name('Theme').onChange(orchestrator.themes.changeScene.bind(orchestrator.themes));
