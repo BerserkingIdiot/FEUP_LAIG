@@ -15,6 +15,26 @@ class MyGameOrchestrator {
         this.mypiece = new MyGamePiece(this.scene, 1, 1, 'white');
         this.themes = new MyGameScenes(this.scene);
     }
+    update(time) {
+        this.scene.graph.updateKeyframeAnimations(time);
+    }
+    pickingHandler(pickMode, pickResults) {
+        if (pickMode == false) {
+            if (pickResults != null && pickResults.length > 0) {
+                for (var i = 0; i < pickResults.length; i++) {
+                    var obj = pickResults[i][0];
+                    if (obj) {
+                        var customId = pickResults[i][1];
+                        console.log("Picked tile: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);						
+                    }
+                }
+                pickResults.splice(0, pickResults.length);
+            }
+        }
+    }
+    orchestrate() {
+        this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
+    }
     display(){
         if(this.scene.graph.displayOk) {
             this.themes.display();

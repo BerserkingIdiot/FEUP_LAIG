@@ -35,8 +35,8 @@ class MyInterface extends CGFinterface {
         this.gui.add(this.scene, 'reset').name('Reset Camera');
         // Slider to rotate the camera. Rotation variable is used to reset the rotation angle back to 0 on camera reset
         this.rotation = this.gui.add(this.scene, 'rotationAngle', 0, 90).name('Rotate Camera').onChange(this.scene.rotateCamera.bind(this.scene));
-        // Dropdown to control the active camera
-        this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected Camera');
+        // Dropdown to control the active camera. Selected variable is used to reset to the original camera
+        this.selected = this.gui.add(this.scene, 'selectedCamera', this.scene.cameraIDs).name('Selected Cam');
         // Button to change themes
         let orchestrator = this.scene.gameOrchestrator;
         this.gui.add(orchestrator.themes, 'selectedScene', orchestrator.themes.sceneNames).name('Theme').onChange(orchestrator.themes.changeScene.bind(orchestrator.themes));

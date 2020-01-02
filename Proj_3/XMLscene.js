@@ -43,7 +43,8 @@ class XMLscene extends CGFscene {
 
     // Camera interface related variables
     this.cameraIDs = [];
-    this.selectedCamera = null;
+    // The default camera is the original camera defined in initCameras
+    this.selectedCamera = 'Original Camera';
     this.reset = this.resetCamera;
     this.rotationAngle = 0;
     // Light interface variable. Holds key value pairs as light_id -> index
@@ -68,6 +69,8 @@ class XMLscene extends CGFscene {
    */
   resetCamera() {
     this.interface.rotation.setValue(0);
+    this.interface.selected.setValue('Original Camera');
+    this.selectedCamera = 'Original Camera';
     this.originalCamera = new CGFcamera(0.5, 0.1, 200, vec3.fromValues(BOARD_MIDDLE, 20, 20), vec3.fromValues(BOARD_MIDDLE, 0, 3.9));
   }
   /**
@@ -88,13 +91,12 @@ class XMLscene extends CGFscene {
   initGraphCameras() {
     // Cleaning the arrays in case the scene changes
     this.cameraIDs = [];
+    // The player's original camera is inserted into the array
+    this.cameraIDs.push('Original Camera');
     // Every id is saved so cameras can be manipulated on the interface
     for (var key in this.graph.views) {
       this.cameraIDs.push(key); // This array will contain all cameras' ids
     }
-
-    // Currently active camera is set to the default camera
-    this.selectedCamera = this.graph.defaultCameraId;
   }
   /**
    * Initializes the scene lights with the values read from the XML file.
@@ -187,7 +189,7 @@ class XMLscene extends CGFscene {
       if (this.interface.isKeyPressed('KeyM')) {
         this.graph.updateMaterialIndexes();
       }
-      this.graph.updateKeyframeAnimations(t - this.startTime);
+      this.gameOrchestrator.update(t - this.startTime);
     } else
       this.startTime = t; // Only when the scene is initiated we start to count the elapsed time
   }
@@ -195,7 +197,8 @@ class XMLscene extends CGFscene {
   /**
    * Renders the scene.
    *
-   * @param  {camera used as view point} camera
+   * @param {camera used as view point} currentCamera
+   * @param {boolean indicating if the camera should be movable} movable
    */
   render(currentCamera, movable) {
     // ---- BEGIN Background, camera and axis setup
@@ -233,35 +236,25 @@ class XMLscene extends CGFscene {
     // ---- END Background, camera and axis setup
   }
 
-  getPicked() {
-    if (this.pickMode == false) {
-			if (this.pickResults != null && this.pickResults.length > 0) {
-				for (var i = 0; i < this.pickResults.length; i++) {
-					var obj = this.pickResults[i][0];
-					if (obj) {
-						var customId = this.pickResults[i][1];
-						console.log("Picked tile: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);						
-					}
-				}
-				this.pickResults.splice(0, this.pickResults.length);
-			}
-		}
-  }
-
   /**
    * Displays the scene
    */
   display() {
     if(this.sceneInited){
-      this.getPicked();
+      // Handling game logic at each display loop
+      this.gameOrchestrator.orchestrate();
       // Renders the scene to a texture using the overview camera
       this.rttTexture.attachToFrameBuffer();
       this.render(this.overviewCamera, false);
       this.rttTexture.detachFromFrameBuffer();
 
       // Renders the scene using the currently selected camera
-      let currentCamera = this.graph.views[this.selectedCamera];
-      this.render(this.originalCamera, false);
+      if(this.selectedCamera === 'Original Camera') {
+        this.render(this.originalCamera, false);
+      } else {
+        let currentCamera = this.graph.views[this.selectedCamera];
+        this.render(currentCamera, true);
+      }
 
       // Displaying the overviw camera UI
       // Depth test has to be disable because the UI overlaps the scene
