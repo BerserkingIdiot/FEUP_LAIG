@@ -36,7 +36,8 @@ class MyInterface extends CGFinterface {
         // Drop to control the security camera
         this.gui.add(this.scene, 'selectedSecurityCamera', this.scene.securityIDs).name('Security Cam');
         // Button to change themes
-        this.gui.add(this.scene.themes, 'selectedScene', this.scene.themes.sceneNames).name('Theme').onChange(this.scene.themes.changeScene.bind(this.scene.themes));
+        let orchestrator = this.scene.gameOrchestrator;
+        this.gui.add(orchestrator.themes, 'selectedScene', orchestrator.themes.sceneNames).name('Theme').onChange(orchestrator.themes.changeScene.bind(orchestrator.themes));
 
         // Folder holding all the lights
         this.lightsFolder = this.gui.addFolder('Lights');

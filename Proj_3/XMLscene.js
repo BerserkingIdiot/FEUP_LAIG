@@ -35,7 +35,10 @@ class XMLscene extends CGFscene {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.axis = new CGFaxis(this);
+    // Function update will be called 60 times per second
     this.setUpdatePeriod(FPS_60);
+    // Enables mouse picking on the scene canvas
+    this.setPickEnabled(true);
 
     // Camera interface related variables
     this.cameraIDs = [];
@@ -48,10 +51,7 @@ class XMLscene extends CGFscene {
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
     this.securityUI = new MySecurityCamera(this, this.rttTexture);
 
-    this.mypiece = new MyGamePiece(this, 1, 1, 'white');
-    this.board = new MyBoard(this, 0);
-    this.themes = new MyGameScenes(this);
-    this.setPickEnabled(true);
+    this.gameOrchestrator = new MyGameOrchestrator(this, 0, 0);
   }
 
   /**
@@ -214,15 +214,8 @@ class XMLscene extends CGFscene {
       this.lights[i].update();
     }
 
-    if (this.graph.displayOk) {
-      // Draw axis
-      this.setDefaultAppearance();
-      
-      // Displays the scene (MySceneGraph function).
-      this.themes.display();
-      this.mypiece.display();
-      this.board.display();
-    }
+    this.setDefaultAppearance();
+    this.gameOrchestrator.display();
 
     this.popMatrix();
     // ---- END Background, camera and axis setup
