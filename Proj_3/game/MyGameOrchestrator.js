@@ -13,6 +13,7 @@ class MyGameOrchestrator {
     }
     test() {
         this.mypiece = new MyGamePiece(this.scene, 1, 1, 'white');
+        this.mypiece2 = new MyGamePiece(this.scene, 2, 2, 'black');
         this.themes = new MyGameScenes(this.scene);
     }
     update(time) {
@@ -39,6 +40,7 @@ class MyGameOrchestrator {
         if(this.scene.graph.displayOk) {
             this.themes.display();
             this.mypiece.display();
+            this.mypiece2.display();
             this.board.display();
         }
     }

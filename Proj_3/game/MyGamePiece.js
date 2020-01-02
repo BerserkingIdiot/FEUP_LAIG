@@ -8,10 +8,30 @@ class MyGamePiece extends CGFobject {
         this.lid = new MyOctagon(scene, 0, radius);
         this.x = x;
         this.y = y;
-        this.color = color;
+        this.initMaterials(scene, color);
+    }
+    initMaterials(scene, color) {
+        if(color === 'white') {
+            this.color = new CGFappearance(scene);
+            this.color.setAmbient(0.2, 0.2, 0.2, 1.0);
+            this.color.setDiffuse(0.8, 0.8, 0.8, 1.0);
+            this.color.setSpecular(0.1, 0.1, 0.1, 1.0);
+            this.color.setShininess(10.0);
+        } else if (color === 'black') {
+            this.color = new CGFappearance(scene);
+            this.color.setAmbient(0.1, 0.1, 0.1, 1.0);
+            this.color.setDiffuse(0.0, 0.0, 0.0, 1.0);
+            this.color.setSpecular(0.1, 0.1, 0.1, 1.0);
+            this.color.setShininess(10.0);
+        } else {
+            console.error('Invalid piece type');
+        }
     }
     display() {
+        // if(this.color){
         this.scene.pushMatrix();
+        this.color.apply();
+
         this.scene.translate(this.x - 0.5, 0, this.y - 0.5);
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.rotate(Math.PI / 8, 0, 0, 1);
@@ -28,6 +48,7 @@ class MyGamePiece extends CGFobject {
         this.scene.popMatrix();
 
         this.scene.popMatrix();
+        // }
     }
     getCoords() {
         let coords = [];
