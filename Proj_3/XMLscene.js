@@ -1,5 +1,6 @@
 var DEGREE_TO_RAD = Math.PI / 180;
 var FPS_60 = 1000 / 60;
+var BOARD_MIDDLE = 4;
 
 /**
  * XMLscene class, representing the scene that is to be rendered.
@@ -43,11 +44,13 @@ class XMLscene extends CGFscene {
     // Camera interface related variables
     this.cameraIDs = [];
     this.selectedCamera = null;
+    this.reset = this.resetCamera;
+    this.rotationAngle = 0;
     // Light interface variable. Holds key value pairs as light_id -> index
     this.lightIDs = new Object();
     // Texture for render to texture
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
-    this.gameOverview = new MyGameOverView(this, this.rttTexture);
+    this.gameOverview = new MyGameOverview(this, this.rttTexture);
 
     this.gameOrchestrator = new MyGameOrchestrator(this, 0, 0);
   }
@@ -56,9 +59,27 @@ class XMLscene extends CGFscene {
    * Initializes the scene camera
    */
   initCameras() {
-    this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
-    this.overviewCamera = new CGFcamera(0.5, 0.1, 500, vec3.fromValues(4, 20, 4), vec3.fromValues(4, 0, 3.9));
+    this.originalCamera = new CGFcamera(0.5, 0.1, 200, vec3.fromValues(BOARD_MIDDLE, 20, 20), vec3.fromValues(BOARD_MIDDLE, 0, 3.9));
+    this.overviewCamera = new CGFcamera(0.5, 0.1, 200, vec3.fromValues(BOARD_MIDDLE, 20, BOARD_MIDDLE), vec3.fromValues(BOARD_MIDDLE, 0, 3.9));
     // this.overviewCamera = new CGFcameraOrtho(-3, 7, -7, 3, 0.1, 200, vec3.fromValues(2, 15, 2), vec3.fromValues(2, 0, 1.9), vec3.fromValues(0, 1, 0));
+  }
+  /**
+   * Resets the camera to itts original position
+   */
+  resetCamera() {
+    this.interface.rotation.setValue(0);
+    this.originalCamera = new CGFcamera(0.5, 0.1, 200, vec3.fromValues(BOARD_MIDDLE, 20, 20), vec3.fromValues(BOARD_MIDDLE, 0, 3.9));
+  }
+  /**
+   * Rotates the original camera around the center of the board
+   */
+  rotateCamera(angle) {
+    let radius = 20 - BOARD_MIDDLE;
+    let oldY = this.originalCamera.position[1];
+    let newX = BOARD_MIDDLE + Math.sin(angle * DEGREE_TO_RAD) * radius;
+    let newZ = BOARD_MIDDLE + Math.cos(angle * DEGREE_TO_RAD) * radius;
+    
+    this.originalCamera.position = vec3.fromValues(newX, oldY, newZ);
   }
 
   /**
@@ -176,12 +197,14 @@ class XMLscene extends CGFscene {
    *
    * @param  {camera used as view point} camera
    */
-  render(currentCamera) {
+  render(currentCamera, movable) {
     // ---- BEGIN Background, camera and axis setup
 
     // The following line enables camera movement and zoom on the scene
     this.camera = currentCamera;
-    this.interface.setActiveCamera(this.camera);
+    if(movable){
+      this.interface.setActiveCamera(this.camera);
+    }
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
@@ -233,12 +256,12 @@ class XMLscene extends CGFscene {
       this.getPicked();
       // Renders the scene to a texture using the overview camera
       this.rttTexture.attachToFrameBuffer();
-      this.render(this.overviewCamera);
+      this.render(this.overviewCamera, false);
       this.rttTexture.detachFromFrameBuffer();
 
       // Renders the scene using the currently selected camera
       let currentCamera = this.graph.views[this.selectedCamera];
-      this.render(currentCamera);
+      this.render(this.originalCamera, false);
 
       // Displaying the overviw camera UI
       // Depth test has to be disable because the UI overlaps the scene

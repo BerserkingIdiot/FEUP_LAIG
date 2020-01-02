@@ -1,11 +1,17 @@
 /**
+ * MyGameOverview
+ * Class to display an overview of the board in the top left corner of the screen.
  * 
+ * @constructor
+ * @param scene - Reference to XMLScene object
+ * @param id - ID of the camera
  */
-class MyGameOverView extends CGFobject {
+class MyGameOverview extends CGFobject {
     constructor(scene, texture) {
         super(scene);
 
         // The rectangle's coordinates are set according to the screen's axis system
+        // The rectangle is placed on the top left corner of the canvas
         this.rectangle = new MyRectangle(scene, 0, -1, -0.5, 0.5, 1);
         // Normalizing the rectangle texCoords
         this.rectangle.updateTexCoords(0.5, 0.5);
