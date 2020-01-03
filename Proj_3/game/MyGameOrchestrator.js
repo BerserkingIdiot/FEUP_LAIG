@@ -9,10 +9,14 @@ class MyGameOrchestrator {
         this.player1 = true;
         this.prolog = new Server();
 
+        this.prologConnectionState = 0; // 0 -> not awaiting anything, 1 -> awaiting play reply, 2-> awaiting game end reply, 3-> awaiting turns reply
+
         this.currentTurnState = new TurnStateMachine(this.scene);
         this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'white');
 
         this.test();
+        this.initGame();
+        this.initTurnVars();
     }
     test() {
         //this.mypiece = new MyGamePiece(this.scene, 1, 1, 'white');
@@ -46,18 +50,57 @@ class MyGameOrchestrator {
     }
     orchestrate() {
         this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
-        if(this.currentTurnState.state == 2){
+        if(this.currentTurnState.state == 2 && this.prologConnectionState == 0){
+
+            if(this.player1){this.currPlayer = 1;}
+            else{this.currPlayer = 2;}
+            this.prolog.play(this.currentState.boardToString(), this.currPlayer, this.currentTurnState.destinationTile.coords['x'] + 1, this.currentTurnState.destinationTile.coords['y'] + 1);
+            
             //execute GameMove here
             this.currentTurnState.destinationTile.setPiece(this.currentTurnState.piece); //this will get swapped for GameMove
+            this.prologConnectionState = 1;
+        }
+        else if(this.currentTurnState.state == 2 && this.prologConnectionState == 1){
             //this occurs AFTER GameMove finishes
-            this.player1 = !this.player1;
-            if(this.player1){
-                this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'white');
+            let ret = this.prolog.getReply();
+            //console.log(ret);
+            if(ret != null){
+                this.Cut = ret[1];
+                this.NewBoard = ret[0];
+                this.prolog.checkGameEnd(JSON.stringify(this.NewBoard), this.currPlayer);
+                this.prologConnectionState = 2;
             }
-            else{
-                this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'black');
+
+        }
+        else if(this.currentTurnState.state == 2 && this.prologConnectionState == 2){
+
+            let ret = this.prolog.getReply();
+            if(ret != null){
+                if(ret === 1){this.gameEnded = true;}
+                this.prolog.updateTurns(this.Cut, this.currentState.turnsToString());
+                this.prologConnectionState = 3;
             }
-            this.currentTurnState.clean();
+        }
+        else if(this.currentTurnState.state == 2 && this.prologConnectionState == 3){
+            let ret = this.prolog.getReply();
+            console.log(ret);
+            if(ret != null){
+                this.newTurns = ret;
+                if(this.newTurns[0] > 0){this.player1 = true}
+                else{this.player1 = false}
+                //this.player1 = !this.player1;
+                if(this.player1){
+                    this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'white');
+                }
+                else{
+                    this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'black');
+                }
+                this.currentTurnState.clean();
+                this.currentState = new MyGameState(this.NewBoard, this.newTurns);
+                console.log(this.currentState);
+                this.prologConnectionState = 0;
+                this.initTurnVars();
+            }
         }
     }
     display(){
@@ -77,7 +120,14 @@ class MyGameOrchestrator {
     }
     initGame() {
         this.plays = [];
-        this.currentState = new GameState([Array(8).fill(Array(8).fill(0)), Array(7).fill(Array(7).fill(0))], [1,0]);
+        this.currentState = new MyGameState([Array(8).fill(Array(8).fill(0)), Array(7).fill(Array(7).fill(0))], [1,0]);
         this.gameEnded = false;
+    }
+
+    initTurnVars(){
+        this.Cut = null;
+        this.NewBoard = null;
+        this.newTurns = null;
+        this.currPlayer = 0;
     }
 }
