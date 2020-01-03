@@ -2,8 +2,8 @@ class MyGameMove {
     constructor(orchestrator, piece, destination, state) {
         this.orchestrator = orchestrator;
         this.piece = piece;
-        this.destination = destination;
-        this.state = state;
+        this.destination = destination; //destination octoTile
+        this.state = state; //game state in prolog spec
 
         //FIXME: change animation speed here
         this.endInstant = 1;

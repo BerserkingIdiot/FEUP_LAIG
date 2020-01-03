@@ -29,7 +29,11 @@ class MyOctoTile extends CGFobject {
         else {
             this.scene.registerForPick(this.id + 1, this); //DON'T use pick id 0
         }
+        this.scene.pushMatrix();
+        this.scene.rotate(-Math.PI/2,1,0,0);
+        this.scene.rotate(Math.PI / 8, 0, 0, 1);
         this.octagon.display();
+        this.scene.popMatrix();
         this.scene.clearPickRegistration();
     }
 
