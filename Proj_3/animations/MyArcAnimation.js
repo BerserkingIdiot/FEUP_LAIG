@@ -44,15 +44,16 @@ class MyArcAnimation extends MyKeyframeAnimation {
         let dxz = Math.sqrt(x*x + z*z);
         let dyz = Math.sqrt(y*y + z*z);
 
-        if(y > 0){
-            this.alpha_x = Math.acos(z / dyz);
-        } else {
-            this.alpha_x = - Math.acos(z / dyz);
-        }
-        if(x > 0) {
+        if(x > 0){
             this.alpha_y = - Math.acos(z/dxz);
         } else {
             this.alpha_y = Math.acos(z/dxz);
+        }
+
+        if(y < 0){
+            this.alpha_x = - Math.acos(z/dyz);
+        } else {
+            this.alpha_x = Math.acos(z/dyz);
         }
     }
     /**
@@ -68,11 +69,11 @@ class MyArcAnimation extends MyKeyframeAnimation {
     }
     apply() {
         this.scene.translate(...this.displacement);
-        this.scene.rotate(this.alpha_x, 1, 0, 0);
-        this.scene.rotate(this.alpha_y, 0, 1, 0);
-        super.apply();
         this.scene.rotate(-this.alpha_y, 0, 1, 0);
         this.scene.rotate(-this.alpha_x, 1, 0, 0);
+        super.apply();
+        this.scene.rotate(this.alpha_x, 1, 0, 0);
+        this.scene.rotate(this.alpha_y, 0, 1, 0);
         this.scene.translate(...this.inverse_disp);
     }
 }

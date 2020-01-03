@@ -6,7 +6,7 @@ class MyOctoTile extends CGFobject {
         this.coords['x']=x;
         this.coords['y']=y;
         this.octagon = new MyOctagon(this.scene, this.id, 0.5);
-        this.piece;
+        this.piece = null;
         
         this.initMaterials();
     }
@@ -31,7 +31,7 @@ class MyOctoTile extends CGFobject {
     }
 
     display() {
-        if(this.piece != null){
+        if(this.piece !== null){
             this.piece.display();
         }
         else {
@@ -39,6 +39,7 @@ class MyOctoTile extends CGFobject {
         }
         this.octoMat.apply();
         this.scene.pushMatrix();
+        this.scene.translate(this.coords['x'] + 0.5, 0, this.coords['y'] + 0.5);
         this.scene.rotate(-Math.PI/2,1,0,0);
         this.scene.rotate(Math.PI / 8, 0, 0, 1);
         this.octagon.display();

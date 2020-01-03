@@ -10,7 +10,7 @@ class MyGameOrchestrator {
         this.prolog = new Server();
 
         this.currentTurnState = new TurnStateMachine(this.scene);
-        this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+        this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
 
         this.test();
     }
@@ -21,16 +21,17 @@ class MyGameOrchestrator {
         //this occurs AFTER GameMove finishes
         this.player1 = !this.player1;
         if(this.player1){
-            this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+            this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
         }
         else{
-            this.pickablePiece = new MyGamePiece(this.scene, 9.5, 4, 'black');
+            this.pickablePiece = new MyGamePiece(this.scene, 8.5, 3.5, 'black');
         }
         this.currentTurnState.clean();
     }
     update(time) {
         if(this.moveInitiated){
             this.animator.start(time, 'arc');
+            this.currentTurnState.startAnimation();
             this.moveInitiated = false;
         }
         this.scene.graph.updateKeyframeAnimations(time);
@@ -66,7 +67,6 @@ class MyGameOrchestrator {
             let move = new MyGameMove(piece, tile);
             this.gameSequence.push(move);
             this.moveInitiated = true;
-            this.currentTurnState.startAnimation();
         }
     }
     display(){

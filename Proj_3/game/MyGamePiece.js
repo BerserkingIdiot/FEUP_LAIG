@@ -28,7 +28,6 @@ class MyGamePiece extends CGFobject {
         }
     }
     display() {
-        // if(this.color){
         this.scene.pushMatrix();
         this.color.apply();
 
@@ -48,7 +47,6 @@ class MyGamePiece extends CGFobject {
         this.scene.popMatrix();
 
         this.scene.popMatrix();
-        // }
     }
     getCoords() {
         let coords = [];

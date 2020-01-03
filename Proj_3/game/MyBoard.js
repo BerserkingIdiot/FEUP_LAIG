@@ -101,13 +101,13 @@ class MyBoard extends CGFobject {
     }
     octoTileDisplay(tile) {
         let coords = tile.getCoords();
-        this.octoMat.apply();
-        this.scene.pushMatrix();
-        this.scene.translate(coords['x'] + 0.5, 0, coords['y'] + 0.5);
-        //this.scene.rotate(-Math.PI/2,1,0,0);
-        //this.scene.rotate(Math.PI / 8, 0, 0, 1);
         tile.display();
-        this.scene.popMatrix();
+        // this.octoMat.apply();
+        // this.scene.pushMatrix();
+        // // this.scene.translate(coords['x'] + 0.5, 0, coords['y'] + 0.5);
+        // // this.scene.rotate(-Math.PI/2,1,0,0);
+        // // this.scene.rotate(Math.PI / 8, 0, 0, 1);
+        // this.scene.popMatrix();
     } 
     getTile(x, y) {
         let index = y*8+x;
