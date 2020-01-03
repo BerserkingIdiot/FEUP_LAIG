@@ -1,12 +1,13 @@
 /**
- * MyGameOverview
+ * @class MyGameOverview
  * Class to display an overview of the board in the top left corner of the screen.
- * 
- * @constructor
- * @param scene - Reference to XMLScene object
- * @param id - ID of the camera
  */
 class MyGameOverview extends CGFobject {
+    /**
+     * @constructor
+     * @param {reference to my XMLscene object} scene 
+     * @param {reference to CGFtextureRTT to be applied on the overview} texture 
+     */
     constructor(scene, texture) {
         super(scene);
 
@@ -19,6 +20,10 @@ class MyGameOverview extends CGFobject {
         this.texture = texture;
         this.cameraShader = new CGFshader(scene.gl, "shaders/camera.vert", "shaders/camera.frag");
     }
+    /**
+     * @method display
+     * Displays the overview camera as a GUI
+     */
     display() {
         this.scene.pushMatrix();
         

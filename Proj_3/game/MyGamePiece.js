@@ -1,4 +1,16 @@
+/**
+ * @class MyGamePiece
+ * Class that represents a game piece. Holds its coordinates and color.
+ * Also responsible for displaying the piece.
+ */
 class MyGamePiece extends CGFobject {
+    /**
+     * @constructor
+     * @param {reference to XMLscene this belongs to} scene 
+     * @param {piece's x coordinate} x 
+     * @param {piece's y coordinate} y 
+     * @param {piece's color: either 'white' or 'black'} color 
+     */
     constructor(scene, x, y, color) {
         super(scene);
 
@@ -10,6 +22,12 @@ class MyGamePiece extends CGFobject {
         this.y = y;
         this.initMaterials(scene, color);
     }
+    /**
+     * @method initMaterials
+     * Initializes the piece's material according to its color.
+     * @param {reference to XMLscene this belongs to} scene 
+     * @param {piece's color} color 
+     */
     initMaterials(scene, color) {
         if(color === 'white') {
             this.color = new CGFappearance(scene);
@@ -27,6 +45,31 @@ class MyGamePiece extends CGFobject {
             console.error('Invalid piece type');
         }
     }
+    /**
+     * @method getCoords
+     * Getter for piece's coordinates.
+     */
+    getCoords() {
+        let coords = [];
+        coords['x'] = this.x;
+        coords['y'] = this.y;
+
+        return coords;
+    }
+    /**
+     * @method setCoords
+     * Setter for piece's coordinates.
+     * @param {map with 'x' and 'y' as keys representing new piece coordinates} coords 
+     */
+    setCoords(coords) {
+        this.x = coords['x'];
+        this.y = coords['y'];
+    }
+    /**
+     * @method display
+     * Display the piece on the scene.
+     * Applies all necessary transformations to display it correctly.
+     */
     display() {
         this.scene.pushMatrix();
         this.color.apply();
@@ -47,16 +90,5 @@ class MyGamePiece extends CGFobject {
         this.scene.popMatrix();
 
         this.scene.popMatrix();
-    }
-    getCoords() {
-        let coords = [];
-        coords['x'] = this.x;
-        coords['y'] = this.y;
-
-        return coords;
-    }
-    setCoords(coords) {
-        this.x = coords['x'];
-        this.y = coords['y'];
     }
 }

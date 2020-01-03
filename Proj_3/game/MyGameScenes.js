@@ -1,7 +1,17 @@
+/**
+ * @class MyGameScenes
+ * Class that representes a set of xml defined scenes.
+ * It loads the xml filenames from scenes/scenes.txt.
+ * Loads the first one on file as the default.
+ * Only loads another one when the user changes the current scene in the interface.
+ */
 class MyGameScenes {
+    /**
+     * @constructor
+     * @param {refrence to XMLscene this belongs to} scene 
+     */
     constructor(scene) {
         this.scene = scene;
-        // this.orchestrator = orchestrator;
         this.sceneFiles = [];
         this.totalScenes = 0;
         // The first scene is the default one
@@ -13,6 +23,11 @@ class MyGameScenes {
 
         this.loadFile();
     }
+    /**
+     * @method loadFile
+     * Loads the scenes/scenes.txt file via AJAX.
+     * Calls @method onFileLoad when the file is ready.
+     */
     loadFile() {
         let request = new XMLHttpRequest();
         request.open('GET', './scenes/scenes.txt', true);
@@ -23,6 +38,15 @@ class MyGameScenes {
 
         request.send();
     }
+    /**
+     * @method onFileLoad
+     * Reads the file and loads all filenames and associated scenenames.
+     * Also counts the number of scenes defined.
+     * Scene's filenames are saved in @member sceneFiles and scenenames in @member sceneNames .
+     * Calls @method loadGraph to initialize the first scene.
+     * 
+     * @param {XMLHttpRequest onload event} event 
+     */
     onFileLoad(event) {
         let fileText = event.target.responseText;
         let lines = fileText.split('\n');
@@ -46,12 +70,22 @@ class MyGameScenes {
         // After reading the scenes file the first scene is loaded
         this.loadGraph();
     }
+    /**
+     * @method loadGraph
+     * Loads a scene by constructing a MySceneGraph with the current selected scene.
+     */
     loadGraph() {
         // First the display on scene is stoped
         this.scene.sceneInited = false;
         // Then the graph is loaded and it restarts the scene display
         this.graph = new MySceneGraph(this.sceneFiles[this.currentScene], this.scene);
     }
+    /**
+     * @method changeScene
+     * Changes the current scene to the one passed as argument.
+     * 
+     * @param {new scene's name} scenename 
+     */
     changeScene(scenename) {
         // Finds the scene on the scenes array
         let index = this.sceneNames.indexOf(scenename);
@@ -61,6 +95,10 @@ class MyGameScenes {
             this.loadGraph();
         }
     }
+    /**
+     * @method display
+     * Displays the current scene graph.
+     */
     display() {
         this.graph.displayScene();
     }
