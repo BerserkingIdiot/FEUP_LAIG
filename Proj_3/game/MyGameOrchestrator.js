@@ -12,12 +12,25 @@ class MyGameOrchestrator {
         this.test();
     }
     test() {
-        this.mypiece = new MyGamePiece(this.scene, 1, 1, 'white');
+        this.mypiece = new MyGamePiece(this.scene, 0, 0, 'white');
         this.mypiece2 = new MyGamePiece(this.scene, 2, 2, 'black');
+        // this.board.getTile(2,2).setPiece(this.mypiece2);
+        this.move = new MyGameMove(this.scene, this.mypiece, this.board.getTile(7,7));
         this.themes = new MyGameScenes(this.scene);
+        this.gameSequence.push(this.move);
+        this.moveInitiated = true;
+    }
+    onAnimationOver() {
+        this.animationInitiated = false;
     }
     update(time) {
+        if(this.moveInitiated){
+            this.animator.start(time, 'arc', this.move);
+            this.moveInitiated = false;
+            this.animationInitiated = true;
+        }
         this.scene.graph.updateKeyframeAnimations(time);
+        this.animator.update(time)
     }
     pickingHandler(pickMode, pickResults) {
         if (pickMode == false) {
@@ -38,9 +51,12 @@ class MyGameOrchestrator {
     }
     display(){
         if(this.scene.graph.displayOk) {
-            this.themes.display();
-            this.mypiece.display();
+            // this.themes.display();
             this.mypiece2.display();
+            if(this.animationInitiated)
+                this.animator.display();
+            else
+                this.mypiece.display();
             this.board.display();
         }
     }

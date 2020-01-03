@@ -127,13 +127,13 @@
             <transformation>
                 <translate x="0.5" y="0" z="0.5" />
             </transformation>
-            <!-- <animationref id="demoAnim" /> -->
+            <animationref id="demoAnim" />
             <materials>
                 <material id="inherit" />
             </materials>
             <texture id="none" />
             <children>
-                <primitiveref id="sphere"/>
+                <primitiveref id="triangle"/>
             </children>
         </component>
         <component id="demoEnd">

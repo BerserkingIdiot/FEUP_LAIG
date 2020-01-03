@@ -32,7 +32,7 @@ class MyGamePiece extends CGFobject {
         this.scene.pushMatrix();
         this.color.apply();
 
-        this.scene.translate(this.x - 0.5, 0, this.y - 0.5);
+        this.scene.translate(this.x + 0.5, 0, this.y + 0.5);
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.rotate(Math.PI / 8, 0, 0, 1);
         this.shape.display();

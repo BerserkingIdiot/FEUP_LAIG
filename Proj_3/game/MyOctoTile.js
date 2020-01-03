@@ -7,9 +7,17 @@ class MyOctoTile extends CGFobject {
         this.coords['y']=y;
         this.octagon = new MyOctagon(this.scene, this.id, 0.5);
         this.piece;
-        //TODO: make pickable
+        
+        this.initMaterials();
     }
-
+    initMaterials() {
+        // Octogonal tiles material
+        this.octoMat = new CGFappearance(this.scene);
+        this.octoMat.setAmbient(0.6, 0.4, 0.0, 1.0);
+        this.octoMat.setDiffuse(0.6, 0.4, 0.0, 1.0);
+        this.octoMat.setSpecular(0.6, 0.4, 0.0, 1.0);
+        this.octoMat.setShininess(10.0);
+    }
     getCoords() {
         return this.coords;
     }
@@ -29,6 +37,7 @@ class MyOctoTile extends CGFobject {
         else {
             this.scene.registerForPick(this.id + 1, this); //DON'T use pick id 0
         }
+        this.octoMat.apply();
         this.octagon.display();
         this.scene.clearPickRegistration();
     }

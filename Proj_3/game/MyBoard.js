@@ -6,7 +6,7 @@ class MyBoard extends CGFobject {
         this.squareTiles = [];
         this.whiteTiles = [];
         this.blackTiles = [];
-        //TODO: materials for octo tiles and square tiles
+
         this.initMaterials();
         
         this.initTiles();
@@ -94,5 +94,8 @@ class MyBoard extends CGFobject {
         tile.display();
         this.scene.popMatrix();
     } 
-
+    getTile(x, y) {
+        let index = y*8+x;
+        return this.octoTiles[index];
+    }
 }
