@@ -23,9 +23,41 @@ class MyGameAnimator {
         }
     }
     createArcAnimation() {
-        let midpoint = this.currentMove.midpoint;
-        let keyframe = new MyKeyframe(1, this.finalInstant, [0, 0, 0], [179 * Math.PI / 180, 0, 0], [1, 1, 1]);
-        this.animation = new MyArcAnimation(this.scene, 0, [keyframe], vec3.fromValues(-1, 0, 1), vec3.fromValues(midpoint['x'], 0, midpoint['y']));
+        let {midpoint, axis, angle} = this.calculateValues(this.currentMove);
+        let keyframe = new MyKeyframe(1, this.finalInstant, [0, 0, 0], [0, 0, angle], [1, 1, 1]);
+        this.animation = new MyArcAnimation(this.scene, 0, [keyframe], axis, midpoint);
+    }
+    calculateValues(move) {
+        // Source and destination coordinates
+        let piece = move.piece.getCoords();
+        let src = [];
+        src['x'] = piece['x'] + 0.5;
+        src['y'] = piece['y'] + 0.5;
+        let tile = move.destination.getCoords();
+        let dest = [];
+        dest['x'] = tile['x'] + 0.5;
+        dest['y'] = tile['y'] + 0.5;
+        
+        //Midpoint of the segment
+        let dx = dest['x'] - src['x'];
+        let dy = dest['y'] - src['y'];
+        let midX = src['x'] + dx / 2.0;
+        let midY = src['y'] + dy / 2.0;
+        let midpoint = vec3.fromValues(midX, 0, midY);
+
+        //Perpendicular axis
+        let axis = vec3.fromValues(-dy, 0, dx);
+
+        //Rotation angle
+        let angle = dx > 0 ? (-175 * Math.PI / 180) : (175 * Math.PI / 180);
+
+        console.log(src);
+        console.log(dest);
+        console.log(midpoint);
+        console.log(axis);
+        console.log(angle * 180 / Math.PI);
+
+        return {midpoint, axis, angle};
     }
     update(t) {
         let deltaT = t - this.startTime;

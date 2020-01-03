@@ -12,10 +12,10 @@ class MyGameOrchestrator {
         this.test();
     }
     test() {
-        this.mypiece = new MyGamePiece(this.scene, 0, 0, 'white');
+        this.mypiece = new MyGamePiece(this.scene, 4, 4, 'white');
         this.mypiece2 = new MyGamePiece(this.scene, 2, 2, 'black');
         // this.board.getTile(2,2).setPiece(this.mypiece2);
-        this.move = new MyGameMove(this.scene, this.mypiece, this.board.getTile(7,7));
+        this.move = new MyGameMove(this.scene, this.mypiece, this.board.getTile(7,0));
         this.themes = new MyGameScenes(this.scene);
         this.gameSequence.push(this.move);
         this.moveInitiated = true;
