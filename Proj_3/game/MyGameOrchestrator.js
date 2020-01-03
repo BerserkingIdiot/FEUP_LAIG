@@ -21,6 +21,7 @@ class MyGameOrchestrator {
     test() {
         //this.mypiece = new MyGamePiece(this.scene, 1, 1, 'white');
         //this.mypiece2 = new MyGamePiece(this.scene, 2, 2, 'black');
+        //this.sqrpiece = new MySquarePiece(this.scene, 0, 0, 'white');
         this.themes = new MyGameScenes(this.scene);
     }
     update(time) {
@@ -89,6 +90,7 @@ class MyGameOrchestrator {
                 if(this.newTurns[0] > 0){this.player1 = true}
                 else{this.player1 = false}
                 //this.player1 = !this.player1;
+                this.updateDiagonals(this.currentState.board[1], this.NewBoard[1], this.board.squareTiles);
                 if(this.player1){
                     this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'white');
                 }
@@ -106,6 +108,7 @@ class MyGameOrchestrator {
     display(){
         if(this.scene.graph.displayOk) {
             this.themes.display();
+            //this.sqrpiece.display();
             //this.mypiece.display();
             //this.mypiece2.display();
             this.board.display();
@@ -129,5 +132,18 @@ class MyGameOrchestrator {
         this.NewBoard = null;
         this.newTurns = null;
         this.currPlayer = 0;
+    }
+
+    updateDiagonals(oldDiagArray, newDiagArray, tiles){
+        for(let i = 0; i < 7; i++){ //this is the Y
+            for(let j = 0; j < 7; j++){ // this is the X
+                if(oldDiagArray[i][j] != newDiagArray[i][j]){
+                    let color;
+                    if(newDiagArray[i][j] == 1){color = 'white';}
+                    else{color = 'black';}
+                    tiles[i*7+j].setPiece(new MySquarePiece(this.scene, j, i, color));
+                }
+            }
+        }
     }
 }

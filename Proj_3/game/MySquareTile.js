@@ -5,7 +5,7 @@ class MySquareTile extends CGFobject {
         this.coords = [];
         this.coords['x']=x;
         this.coords['y']=y;
-        this.square = new MyRectangle(this.scene, this.id, 0, Math.PI/8, 0, Math.PI/8);
+        this.square = new MyRectangle(this.scene, this.id, -Math.PI/16, Math.PI/16, -Math.PI/16, Math.PI/16);
         this.piece;
     }
 
@@ -22,7 +22,11 @@ class MySquareTile extends CGFobject {
     }
 
     display() {
+        this.scene.pushMatrix();
+        this.scene.rotate(-Math.PI/2,1,0,0);
+        this.scene.rotate(-Math.PI/4,0,0,1);
         this.square.display();
+        this.scene.popMatrix();
         if(this.piece != null){
             this.piece.display();
         }
