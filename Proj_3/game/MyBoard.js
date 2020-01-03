@@ -10,6 +10,7 @@ class MyBoard extends CGFobject {
         this.initMaterials();
         
         this.initTiles();
+        this.base = new MyPlane(this.scene, 0, 20, 20);
     }
     initMaterials() {
         // Octogonal tiles material
@@ -36,6 +37,12 @@ class MyBoard extends CGFobject {
         this.blackMat.setDiffuse(0.1, 0.1, 0.1, 1.0);
         this.blackMat.setSpecular(0.1, 0.1, 0.1, 1.0);
         this.blackMat.setShininess(10.0);
+        // Base plane material
+        this.baseMat = new CGFappearance(this.scene);
+        this.baseMat.setAmbient(0.75, 0.55, 0.0, 1.0);
+        this.baseMat.setDiffuse(0.75, 0.55, 0.0, 1.0);
+        this.baseMat.setSpecular(0.75, 0.55, 0.0, 1.0);
+        this.baseMat.setShininess(10.0);
     }   
     initTiles() {
         for(var i = 0; i < 8; i++) {
@@ -58,8 +65,16 @@ class MyBoard extends CGFobject {
         }
     }
     display() {
+        this.baseMat.apply();
+        this.scene.pushMatrix();
+        this.scene.translate(4, -0.1, 4);
+        this.scene.scale(12, 1, 12);
+        this.base.display();
+        this.scene.popMatrix();
+
+
         // Applying the octogonal tile material
-        this.octoMat.apply();
+        //this.octoMat.apply();
         this.octoTiles.forEach((tile) => this.octoTileDisplay(tile));
         
         // Applying the square tile material
@@ -86,11 +101,11 @@ class MyBoard extends CGFobject {
     }
     octoTileDisplay(tile) {
         let coords = tile.getCoords();
-        
+        this.octoMat.apply();
         this.scene.pushMatrix();
         this.scene.translate(coords['x'] + 0.5, 0, coords['y'] + 0.5);
-        this.scene.rotate(-Math.PI/2,1,0,0);
-        this.scene.rotate(Math.PI / 8, 0, 0, 1);
+        //this.scene.rotate(-Math.PI/2,1,0,0);
+        //this.scene.rotate(Math.PI / 8, 0, 0, 1);
         tile.display();
         this.scene.popMatrix();
     } 

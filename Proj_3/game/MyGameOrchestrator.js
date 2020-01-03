@@ -1,36 +1,40 @@
 class MyGameOrchestrator {
     constructor(scene, player1Dif, player2Dif) {
         this.scene = scene;
-        this.animator = new MyGameAnimator(this);
         this.board = new MyBoard(this.scene, 0);
         this.gameSequence = new MyGameSequence(this);
+        this.animator = new MyGameAnimator(this);
         this.player1Dif = player1Dif;
         this.player2Dif = player2Dif;
         this.player1 = true;
         this.prolog = new Server();
 
+        this.currentTurnState = new TurnStateMachine(this.scene);
+        this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+
         this.test();
     }
     test() {
-        this.mypiece = new MyGamePiece(this.scene, 0, 0, 'white');
-        this.mypiece2 = new MyGamePiece(this.scene, 2, 2, 'black');
-        // this.board.getTile(2,2).setPiece(this.mypiece2);
-        this.move = new MyGameMove(this.scene, this.mypiece, this.board.getTile(7,7));
         this.themes = new MyGameScenes(this.scene);
-        this.gameSequence.push(this.move);
-        this.moveInitiated = true;
     }
     onAnimationOver() {
-        this.animationInitiated = false;
+        //this occurs AFTER GameMove finishes
+        this.player1 = !this.player1;
+        if(this.player1){
+            this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+        }
+        else{
+            this.pickablePiece = new MyGamePiece(this.scene, 9.5, 4, 'black');
+        }
+        this.currentTurnState.clean();
     }
     update(time) {
         if(this.moveInitiated){
-            this.animator.start(time, 'arc', this.move);
+            this.animator.start(time, 'arc');
             this.moveInitiated = false;
-            this.animationInitiated = true;
         }
         this.scene.graph.updateKeyframeAnimations(time);
-        this.animator.update(time)
+        this.animator.update(time);
     }
     pickingHandler(pickMode, pickResults) {
         if (pickMode == false) {
@@ -39,7 +43,15 @@ class MyGameOrchestrator {
                     var obj = pickResults[i][0];
                     if (obj) {
                         var customId = pickResults[i][1];
-                        console.log("Picked tile: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);						
+                        if(customId == 65){
+                            this.currentTurnState.pickPiece(obj);
+                        }
+                        else {
+                            this.currentTurnState.pickTile(obj);
+                        }
+                        console.log("Picked object: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);
+                        console.log("CTS is at state: " + this.currentTurnState.state);						
+						
                     }
                 }
                 pickResults.splice(0, pickResults.length);
@@ -48,16 +60,27 @@ class MyGameOrchestrator {
     }
     orchestrate() {
         this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
+        if(this.currentTurnState.state == 2){
+            let piece = this.currentTurnState.getPiece();
+            let tile = this.currentTurnState.getTile();
+            let move = new MyGameMove(piece, tile);
+            this.gameSequence.push(move);
+            this.moveInitiated = true;
+            this.currentTurnState.startAnimation();
+        }
     }
     display(){
         if(this.scene.graph.displayOk) {
             // this.themes.display();
-            this.mypiece2.display();
-            if(this.animationInitiated)
-                this.animator.display();
-            else
-                this.mypiece.display();
             this.board.display();
+            if(this.currentTurnState.state == 3){
+                this.animator.display();
+            }else {
+                this.scene.registerForPick(65, this.pickablePiece);
+                this.pickablePiece.display();
+                this.scene.clearPickRegistration();
+            }
+            
         }
     }
     initGame() {

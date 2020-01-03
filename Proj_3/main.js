@@ -14,7 +14,7 @@ function getUrlVars() {
 serialInclude(['../lib/CGF.js', 'XMLscene.js', 'MySceneGraph.js', 'MyInterface.js', 'primitives/MyRectangle.js', 'primitives/MyCylinder.js', 'primitives/MyTriangle.js', 'primitives/MySphere.js', 'primitives/MyOctagon.js', 'primitives/MyTorus.js',
         'MyComponent.js', 'animations/MyAnimation.js', 'animations/MyKeyframe.js', 'animations/MyKeyframeAnimation.js', 'animations/MyArcAnimation.js', 'primitives/MyPatch.js', 'primitives/MyPlane.js', 'primitives/MyCylinderNURB.js', 'game/MyGameOverview.js',
         'game/MyGamePiece.js', 'game/MyGameMove.js', 'game/MyGameOrchestrator.js', 'game/MyOctoTile.js', 'game/MySquareTile.js', 'game/MyBoard.js', 'game/MyGameScenes.js', 'game/MyGameState.js', 'game/MyGameAnimator.js',
-        'game/MyGameSequence.js', 'prolog/Server.js',
+        'game/MyGameSequence.js', 'prolog/Server.js', 'game/TurnStateMachine.js',
 
 main=function()
 {

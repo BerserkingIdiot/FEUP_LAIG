@@ -1,9 +1,7 @@
 class MyGameMove {
-    constructor(scene, piece, destination) { // state) {
-        this.scene = scene;
+    constructor(piece, destination) {
         this.piece = piece;
         this.destination = destination;
-        // this.state = state;
         this.midpoint = this.calculateMidpoint();
     }
     calculateMidpoint() {
@@ -13,7 +11,6 @@ class MyGameMove {
         let dest = [];
         dest['x'] = tile['x'] + 1;
         dest['y'] = tile['y'] + 1;
-        console.log(dest);
         //Midpoint of the segment
         let mid = [];
         mid['x'] = src['x'] + (dest['x'] - src['x']) / 2.0;
