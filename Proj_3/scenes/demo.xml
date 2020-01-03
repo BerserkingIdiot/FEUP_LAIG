@@ -1,7 +1,7 @@
 <lxs>
     <scene root="demoRoot" axis_length="5"/>
 
-    <views default="defaultCamera">
+    <views>
         <perspective id="defaultCamera" near="0.1" far="500" angle="45">
             <from x="10" y="10" z="10" />
             <to x="1" y="0" z="0" />
@@ -59,13 +59,8 @@
     <animations>
         <animation id="demoAnim" >
             <keyframe instant="5">
-                <translate x="0" y="5" z="0" />
-                <rotate angle_x="0" angle_y="0" angle_z="0" />
-                <scale x="3" y="3" z="3" />
-            </keyframe>
-            <keyframe instant="10">
                 <translate x="0" y="0" z="0" />
-                <rotate angle_x="0" angle_y="0" angle_z="0" />
+                <rotate angle_x="180" angle_y="0" angle_z="180" />
                 <scale x="1" y="1" z="1" />
             </keyframe>
         </animation>
@@ -85,7 +80,7 @@
                 x3="3" y3="3" z3="1" />
         </primitive>
         <primitive id="sphere">
-            <sphere radius="2" slices="40" stacks="40" />
+            <sphere radius="0.5" slices="40" stacks="40" />
         </primitive>
         <primitive id="mediumCylinder">
             <cylinder base="0.2" top="0.2" height="2" slices="20" stacks="20" />
@@ -124,6 +119,33 @@
             </materials>
             <texture id="demoTexture" length_s="1" length_t="1"/>
             <children>
+                <componentref id="demoSphere" />
+                <componentref id="demoEnd" />
+            </children>
+        </component>
+        <component id="demoSphere">
+            <transformation>
+                <translate x="0.5" y="0" z="0.5" />
+            </transformation>
+            <!-- <animationref id="demoAnim" /> -->
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none" />
+            <children>
+                <primitiveref id="sphere"/>
+            </children>
+        </component>
+        <component id="demoEnd">
+            <transformation>
+                <translate x="7.5" y="0" z="7.5" />
+            </transformation>
+            <materials>
+                <material id="inherit" />
+            </materials>
+            <texture id="none" />
+            <children>
+                <primitiveref id="sphere"/>
             </children>
         </component>
     </components>

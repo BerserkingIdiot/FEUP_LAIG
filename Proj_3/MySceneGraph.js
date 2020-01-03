@@ -248,14 +248,6 @@ class MySceneGraph {
             return "at least one view must be defined";
         }
 
-        var firstId = this.reader.getString(children[0], 'id');
-        this.defaultCameraId = this.reader.getString(viewsNode, 'default');
-        //checking if defaultCameraId is a valid string; otherwise it becomes firstId
-        if (this.defaultCameraId == null) {
-            this.onXMLMinorError("unable to set default camera from <views> block; assuming first camera found as default");
-            this.defaultCameraId = firstId;
-        }
-
         this.views = [];
         var numViews = 0;
 
@@ -387,11 +379,6 @@ class MySceneGraph {
         // Views is a map, so we have to guarantee that its size isn't zero
         if (numViews == 0) {
             return "at least one view must be defined";
-        }
-        // Checking if default
-        if (this.views[this.defaultCameraId] == null) {
-            this.onXMLMinorError("default camera id does not exist in <views> block; assuming first camera found as default");
-            this.defaultCameraId = firstId;
         }
 
         this.log("Parsed views");
