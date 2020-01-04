@@ -14,30 +14,21 @@ function getUrlVars() {
 serialInclude(['../lib/CGF.js', 'game/GameScene.js', 'MySceneGraph.js', 'MyInterface.js', 'primitives/MyRectangle.js', 'primitives/MyCylinder.js', 'primitives/MyTriangle.js', 'primitives/MySphere.js', 'primitives/MyOctagon.js', 'primitives/MyTorus.js',
         'MyComponent.js', 'animations/MyAnimation.js', 'animations/MyKeyframe.js', 'animations/MyKeyframeAnimation.js', 'animations/MyArcAnimation.js', 'animations/MyDropAnimation.js', 'animations/MyGrowAnimation.js', 'primitives/MyPatch.js', 'primitives/MyPlane.js', 'primitives/MyCylinderNURB.js',
         'game/MyGameOverview.js', 'game/MyGamePiece.js', 'game/MyGameMove.js', 'game/MyGameOrchestrator.js', 'game/MyOctoTile.js', 'game/MySquareTile.js', 'game/MyBoard.js', 'game/MyGameScenes.js', 'game/MyGameState.js', 'game/MyGameAnimator.js',
-        'game/MyGameSequence.js', 'prolog/Server.js', 'game/TurnStateMachine.js', 'game/MySquarePiece.js', 'game/MyReplayOrchestrator.js', 
+        'game/MyGameSequence.js', 'prolog/Server.js', 'game/TurnStateMachine.js', 'game/MySquarePiece.js', 'game/MyReplayOrchestrator.js', 'main_menu/MyMainMenu.js' , 'main_menu/MainMenuScene.js', 'main_menu/MenuStateMachine.js',
 
 main=function()
 {
 	// Standard application, scene and interface setup
     var app = new CGFapplication(document.body);
-    var myInterface = new MyInterface();
-    var myScene = new GameScene(myInterface);
+    var myInterface = new MyInterface(false);
+    var myScene = new MainMenuScene(myInterface);
 
     app.init();
 
     app.setScene(myScene);
     app.setInterface(myInterface);
 
-    myInterface.setActiveCamera(myScene.camera);
-
-	// get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml 
-	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor) 
-	
-    var filename= getUrlVars()['file'] || "demo.xml";
-
-	// create and load graph, and associate it to scene. 
-	// Check console for loading errors
-	// var myGraph = new MySceneGraph(filename, myScene);
+    // myInterface.setActiveCamera(myScene.camera);
 	
 	// start
     app.run();
