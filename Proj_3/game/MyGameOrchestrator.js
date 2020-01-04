@@ -69,6 +69,7 @@ class MyGameOrchestrator {
                 this.Cut = ret[1];
                 this.NewBoard = ret[0];
                 this.prolog.checkGameEnd(JSON.stringify(this.NewBoard), this.currPlayer);
+                this.board.updateDiagonals(this.NewBoard[1]);
                 this.prologConnectionState = 2;
             }
 
@@ -84,13 +85,13 @@ class MyGameOrchestrator {
         }
         else if(this.currentTurnState.state == 2 && this.prologConnectionState == 3){
             let ret = this.prolog.getReply();
-            console.log(ret);
+            
             if(ret != null){
                 this.newTurns = ret;
                 if(this.newTurns[0] > 0){this.player1 = true}
                 else{this.player1 = false}
-                //this.player1 = !this.player1;
-                this.updateDiagonals(this.currentState.board[1], this.NewBoard[1], this.board.squareTiles);
+                
+                
                 if(this.player1){
                     this.pickablePiece = new MyGamePiece(this.scene, 0.5, 0.5, 'white');
                 }
@@ -99,13 +100,16 @@ class MyGameOrchestrator {
                 }
                 this.currentTurnState.clean();
                 this.currentState = new MyGameState(this.NewBoard, this.newTurns);
-                console.log(this.currentState);
+                // console.log(this.currentState);
                 this.prologConnectionState = 0;
                 this.initTurnVars();
             }
         }
     }
     display(){
+        if(this.gameEnded) {
+            alert('Game Ended - Player ' + this.currPlayer + ' Wins!');
+        }
         if(this.scene.graph.displayOk) {
             this.themes.display();
             //this.sqrpiece.display();
@@ -122,7 +126,6 @@ class MyGameOrchestrator {
         }
     }
     initGame() {
-        this.plays = [];
         this.currentState = new MyGameState([Array(8).fill(Array(8).fill(0)), Array(7).fill(Array(7).fill(0))], [1,0]);
         this.gameEnded = false;
     }
@@ -132,18 +135,5 @@ class MyGameOrchestrator {
         this.NewBoard = null;
         this.newTurns = null;
         this.currPlayer = 0;
-    }
-
-    updateDiagonals(oldDiagArray, newDiagArray, tiles){
-        for(let i = 0; i < 7; i++){ //this is the Y
-            for(let j = 0; j < 7; j++){ // this is the X
-                if(oldDiagArray[i][j] != newDiagArray[i][j]){
-                    let color;
-                    if(newDiagArray[i][j] == 1){color = 'white';}
-                    else{color = 'black';}
-                    tiles[i*7+j].setPiece(new MySquarePiece(this.scene, j, i, color));
-                }
-            }
-        }
     }
 }

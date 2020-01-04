@@ -6,7 +6,7 @@ class MySquareTile extends CGFobject {
         this.coords['x']=x;
         this.coords['y']=y;
         this.square = new MyRectangle(this.scene, this.id, -Math.PI/16, Math.PI/16, -Math.PI/16, Math.PI/16);
-        this.piece;
+        this.piece = null;
     }
 
     getCoords() {
@@ -19,6 +19,14 @@ class MySquareTile extends CGFobject {
 
     clearPiece() {
         this.piece = null;
+    }
+
+    getColor() {
+        if(this.piece !== null) {
+            return this.piece.color === 'white' ? 1 : 2;
+        }
+
+        return 0;
     }
 
     display() {
