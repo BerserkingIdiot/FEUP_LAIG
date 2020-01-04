@@ -105,4 +105,10 @@ class MyBoard extends CGFobject {
         
         return updatedPieces;
     }
+
+    clear() {
+        this.octoTiles.forEach((tile) => tile.clearPiece());
+        
+        this.squareTiles.forEach((tile) => tile.clearPiece());
+    }
 }

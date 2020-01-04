@@ -19,6 +19,8 @@ class MyGameOrchestrator {
         this.undoButton = new MyRectangle(this.scene, 66, -1, 1, -1, 1);
         this.undoing = false;
 
+        this.finalPaddingMove = new MyGameMove(new MyGamePiece(this.scene, 0, 0, 'white'), new MyOctoTile(this.scene, 0, 0));
+
         this.initGame();
         this.initTurnVars();
     }
@@ -101,7 +103,11 @@ class MyGameOrchestrator {
 
             let ret = this.prolog.getReply();
             if(ret != null){
-                if(ret === 1){this.gameEnded = true;}
+                if(ret === 1){
+                    this.gameEnded = true;
+                    this.finalPaddingMove.setGameState(new MyGameState(this.NewBoard, this.NewTurns));
+                    this.gameSequence.push(this.finalPaddingMove);
+                }
                 this.prolog.updateTurns(this.Cut, this.currentState.turnsToString());
                 this.prologConnectionState = 3;
             }
@@ -125,7 +131,7 @@ class MyGameOrchestrator {
                 }
                 this.currentTurnState.clean();
                 this.currentState = new MyGameState(this.NewBoard, this.newTurns);
-                console.log(this.gameSequence);
+                //console.log(this.gameSequence);
                 // console.log(this.currentState);
                 this.prologConnectionState = 0;
                 this.initTurnVars();
@@ -161,7 +167,8 @@ class MyGameOrchestrator {
     }
     display(){
         if(this.gameEnded) {
-            alert('Game Ended - Player ' + this.currPlayer + ' Wins!');
+            alert('Game Ended - Player ' + this.currPlayer + ' Wins, replaying game...');
+            this.scene.gameOrchestrator = new MyReplayOrchestrator(this.scene, this.board, this.gameSequence, this.currPlayer);
         }
         if(this.scene.graph.displayOk) {
             // this.themes.display();
