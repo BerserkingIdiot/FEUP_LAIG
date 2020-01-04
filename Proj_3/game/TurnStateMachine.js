@@ -5,8 +5,11 @@ class TurnStateMachine {
         this.destinationTile;
         // 0-> awaiting piece pick,
         // 1-> awaiting tile pick,
-        // 2-> awaiting animation start,
-        // 3-> awaiting animation end,
+        // 2-> awaiting arc animation start,
+        // 3-> awaiting arc animation end,
+        // 4-> awaiting grow animation start,
+        // 5-> awaiting grow animation end,
+        // 6-> 
         // -1-> game start
         this.state = 0;
     }

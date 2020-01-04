@@ -1,23 +1,29 @@
 /**
  *  @class MyArcAnimation
- *  @description Represents and applies an arc shaped keyframe animation.
+ *  @description Represents and applies an arc shaped animation.
  * 
  *  In order to place pieces on the board, they have to be animated.
  *  KeyframeAnimation does not allow a specific rotation axis to be chosen.
- *  ArcAnimation makes use of all KeyframeAnimation methods, but allowing a custom vertical axis for rotation.
+ *  ArcAnimation makes implements MyAnimation methods, allowing a custom vertical axis for rotation.
  */
-class MyArcAnimation extends MyKeyframeAnimation {
+class MyArcAnimation extends MyAnimation {
     /**
      * @constructor
      * @param {XMLscene object to whom this animation belongs to} scene 
-     * @param {this animation id} id 
-     * @param {array of MyKeyframe objects} keyframes 
+     * @param {duration of the animation in seconds} duration
+     * @param {angle of the rotation} angle
      * @param {vec3 axis to rotate around} axis 
      * @param {vec3 axis translation from origin} displacement 
      */
-    constructor(scene, id, keyframes, axis, displacement) {
-        super(scene, id, keyframes);
+    constructor(scene, duration, angle, axis, displacement) {
+        super();
 
+        this.scene = scene;
+        this.duration = duration * 1000;
+        this.angle = angle;
+        // Current angle starts at 0 and will be interpolated on update() calls
+        this.currentAngle = 0;
+        this.finishedAnimation = false;
         // In order to rotate around any axis, we first need to:
         // 1 - rotate it to one of the three main axis
         // 2 - apply the desired rotation on that main axis
@@ -67,11 +73,28 @@ class MyArcAnimation extends MyKeyframeAnimation {
 
         return reverse;
     }
+    update(t) {
+        if (this.finishedAnimation) {
+            return;
+        }
+
+        if (t >= this.duration) {
+            this.currentAngle =  this.angle;
+            this.finishedAnimation = true;
+        } else {
+            //Linear interpolation of an additive operation
+            //Rcurrent = (Rnext - Rprevious) / (tnext - tprevious) * (t - tprevious) + Rprevious
+            this.currentAngle = this.angle / this.duration * t
+        }
+    }
     apply() {
+        // This 3 operations shift the rotation axis to its original position
         this.scene.translate(...this.displacement);
         this.scene.rotate(-this.alpha_y, 0, 1, 0);
         this.scene.rotate(-this.alpha_x, 1, 0, 0);
-        super.apply();
+        // The following operation applies the actual rotation on the scene
+        this.scene.rotate(this.currentAngle, 0, 0, 1);
+        // This 3 operations shift the rotation axis to the z-axis
         this.scene.rotate(this.alpha_x, 1, 0, 0);
         this.scene.rotate(this.alpha_y, 0, 1, 0);
         this.scene.translate(...this.inverse_disp);

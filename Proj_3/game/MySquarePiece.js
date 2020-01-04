@@ -1,10 +1,13 @@
 class MySquarePiece extends CGFobject {
-    constructor(scene, color) {
+    constructor(scene, x, y, color) {
         super(scene);
+
+        this.x = x;
+        this.y = y;
+        this.color = color;
 
         this.lidSquare = new MyRectangle(this.scene, this.id, -Math.PI/16, Math.PI/16, -Math.PI/16, Math.PI/16);
         this.sideSquare = new MyRectangle(this.scene, this.id, -Math.PI/16, Math.PI/16, 0, 0.2);
-        this.color = color
         this.initMaterials(scene, color);
     }
     initMaterials(scene, color) {
@@ -24,10 +27,24 @@ class MySquarePiece extends CGFobject {
             console.error('Invalid piece type');
         }
     }
+    /**
+     * @method getCoords
+     * Getter for piece's coordinates.
+     */
+    getCoords() {
+        let coords = [];
+        coords['x'] = this.x;
+        coords['y'] = this.y;
+
+        return coords;
+    }
     display() {
         this.colorMat.apply();
         this.scene.pushMatrix();
+        this.scene.translate(this.x + 1, 0, this.y + 1);
         
+        this.scene.pushMatrix();
+
         this.scene.rotate(-Math.PI/2,1,0,0);
         this.scene.rotate(-Math.PI/4,0,0,1);
 
@@ -65,6 +82,8 @@ class MySquarePiece extends CGFobject {
         this.scene.rotate(7*Math.PI/4, 0,1,0);
         this.scene.translate(0, 0, Math.PI/16);
         this.sideSquare.display();
+        this.scene.popMatrix();
+
         this.scene.popMatrix();
     }
 }

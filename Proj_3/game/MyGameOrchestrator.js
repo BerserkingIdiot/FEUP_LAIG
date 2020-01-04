@@ -23,7 +23,7 @@ class MyGameOrchestrator {
     }
     update(time) {
         if(this.moveInitiated){
-            this.animator.start(time, 'arc');
+            this.animator.start(time, 'arc', this.gameSequence.getCurrentMove());
             this.currentTurnState.startAnimation();
             this.moveInitiated = false;
         }
@@ -79,7 +79,7 @@ class MyGameOrchestrator {
                 this.Cut = ret[1];
                 this.NewBoard = ret[0];
                 this.prolog.checkGameEnd(JSON.stringify(this.NewBoard), this.currPlayer);
-                this.board.updateDiagonals(this.NewBoard[1]);
+                this.updatedSquares = this.board.updateDiagonals(this.NewBoard[1]);
                 this.prologConnectionState = 2;
             }
         }
