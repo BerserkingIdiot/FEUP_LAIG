@@ -6,7 +6,7 @@
 class MyGamePiece extends CGFobject {
     /**
      * @constructor
-     * @param {reference to XMLscene this belongs to} scene 
+     * @param {reference to scene this belongs to} scene 
      * @param {piece's x coordinate} x 
      * @param {piece's y coordinate} y 
      * @param {piece's color: either 'white' or 'black'} color 
@@ -26,7 +26,7 @@ class MyGamePiece extends CGFobject {
     /**
      * @method initMaterials
      * Initializes the piece's material according to its color.
-     * @param {reference to XMLscene this belongs to} scene 
+     * @param {reference to scene this belongs to} scene 
      * @param {piece's color} color 
      */
     initMaterials(scene, color) {

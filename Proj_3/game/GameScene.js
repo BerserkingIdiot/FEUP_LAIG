@@ -3,9 +3,9 @@ var FPS_60 = 1000 / 60;
 var BOARD_MIDDLE = 4;
 
 /**
- * XMLscene class, representing the scene that is to be rendered.
+ * GameScene class, representing the scene that is to be rendered.
  */
-class XMLscene extends CGFscene {
+class GameScene extends CGFscene {
   /**
    * @constructor
    * @param {MyInterface} myinterface

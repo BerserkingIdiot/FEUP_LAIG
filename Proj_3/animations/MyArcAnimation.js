@@ -9,7 +9,7 @@
 class MyArcAnimation extends MyAnimation {
     /**
      * @constructor
-     * @param {XMLscene object to whom this animation belongs to} scene 
+     * @param {scenecene object to whom this animation belongs to} scene 
      * @param {duration of the animation in seconds} duration
      * @param {angle of the rotation} angle
      * @param {vec3 axis to rotate around} axis 

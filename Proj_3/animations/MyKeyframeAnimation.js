@@ -1,7 +1,7 @@
 /**
  * MyKeyframeAnimation
  * Extends MyAnimation and implements a keyframe based animation.
- * @param scene - Reference to XMLScene object
+ * @param scene - Reference to scene object
  * @param id - ID of the animation
  * @param keyframes - Array with MyKeyframe objects
 */

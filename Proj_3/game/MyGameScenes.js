@@ -8,7 +8,7 @@
 class MyGameScenes {
     /**
      * @constructor
-     * @param {refrence to XMLscene this belongs to} scene 
+     * @param {refrence to scene this belongs to} scene 
      */
     constructor(scene) {
         this.scene = scene;

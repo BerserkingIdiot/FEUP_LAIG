@@ -5,7 +5,7 @@
 class MyGameOverview extends CGFobject {
     /**
      * @constructor
-     * @param {reference to my XMLscene object} scene 
+     * @param {reference to scene object} scene 
      * @param {reference to CGFtextureRTT to be applied on the overview} texture 
      */
     constructor(scene, texture) {
