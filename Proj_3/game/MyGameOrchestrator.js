@@ -14,6 +14,10 @@ class MyGameOrchestrator {
 
         this.currentTurnState = new TurnStateMachine(this.scene);
         this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
+        
+        
+        this.undoButton = new MyRectangle(this.scene, 66, -1, 1, -1, 1);
+        this.undoing = false;
 
         this.initGame();
         this.initTurnVars();
@@ -39,11 +43,20 @@ class MyGameOrchestrator {
                         var customId = pickResults[i][1];
                         if(customId == 65){
                             this.currentTurnState.pickPiece(obj);
+                            console.log("Picked object: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);
+                        }
+                        else if(customId == 66){
+                            if(this.currentTurnState.state == 0 || this.currentTurnState.state == 1){
+                                this.undoing = true;
+                            }
+                            console.log("Picked object: undoButton, with pick id " + customId);
                         }
                         else {
                             this.currentTurnState.pickTile(obj);
+                            console.log("Picked object: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);
                         }
-                        console.log("Picked object: (" + obj.getCoords()['x'] + ", " + obj.getCoords()['y'] + "), with pick id " + customId);
+                        
+                        
                         console.log("CTS is at state: " + this.currentTurnState.state);						
 						
                     }
@@ -59,6 +72,7 @@ class MyGameOrchestrator {
             let tile = this.currentTurnState.getTile();
             let coords = tile.getCoords();
             let move = new MyGameMove(piece, tile);
+            move.setGameState(this.currentState);
 
             if(this.player1) {
                 this.currPlayer = 1;
@@ -111,10 +125,38 @@ class MyGameOrchestrator {
                 }
                 this.currentTurnState.clean();
                 this.currentState = new MyGameState(this.NewBoard, this.newTurns);
+                console.log(this.gameSequence);
                 // console.log(this.currentState);
                 this.prologConnectionState = 0;
                 this.initTurnVars();
             }
+        }
+        if(this.undoing){
+            let undoneMove = this.gameSequence.undo();
+            if(undoneMove == null){
+                console.log("No moves to undo.");
+            }
+            else{
+                undoneMove.destination.clearPiece();
+                this.board.updateDiagonals(undoneMove.gameState.board[1]);
+                this.currentState = undoneMove.gameState;
+                if(this.currentState.turns[0] > 0) {
+                    this.player1 = true;
+                } else {
+                    this.player1 = false;
+                }
+                
+                if(this.player1){
+                    this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+                }
+                else{
+                    this.pickablePiece = new MyGamePiece(this.scene, 8.5, 4, 'black');
+                }
+                this.currentTurnState.clean();
+                this.initTurnVars();
+                
+            }
+            this.undoing = false;
         }
     }
     display(){
@@ -131,6 +173,14 @@ class MyGameOrchestrator {
                 this.pickablePiece.display();
                 this.scene.clearPickRegistration();
             }
+
+            this.scene.setDefaultAppearance();
+            this.scene.pushMatrix();
+            this.scene.translate(4, 2, -1);
+            this.scene.registerForPick(66, this.undoButton);
+            this.undoButton.display();
+            this.scene.clearPickRegistration();
+            this.scene.popMatrix();
             
         }
     }

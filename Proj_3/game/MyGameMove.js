@@ -12,6 +12,7 @@ class MyGameMove {
     constructor(piece, destination) {
         this.piece = piece;
         this.destination = destination;
+        this.gameState; //state BEFORE the move is executed
     }
     /**
      * @method onAnimationOver
@@ -28,5 +29,9 @@ class MyGameMove {
      */
     display() {
         this.piece.display();
+    }
+
+    setGameState(gameState){
+        this.gameState = gameState;
     }
 }
