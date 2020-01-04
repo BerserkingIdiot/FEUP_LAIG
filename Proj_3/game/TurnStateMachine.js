@@ -3,7 +3,7 @@ class TurnStateMachine {
         this.scene = scene;
         this.piece;
         this.destinationTile;
-        // 0-> awaiting piece pick (drop animation finished)
+        // 0-> awaiting piece pick
         // 1-> awaiting tile pick
         // 2-> starting arc animation and play request
         // 3-> play request returned; awaiting animation end
@@ -78,12 +78,6 @@ class TurnStateMachine {
     updateTurnsRequestOver() {
         if(this.state == 8) {
             this.state = 9;
-        }
-    }
-
-    dropAnimationOver() {
-        if(this.state == 9) {
-            this.reset();
         }
     }
 

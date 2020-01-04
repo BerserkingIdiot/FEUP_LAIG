@@ -4,28 +4,46 @@ class MyGameOrchestrator {
         this.themes = new MyGameScenes(this.scene);
         this.board = new MyBoard(this.scene, 0);
         this.gameSequence = new MyGameSequence(this);
-        this.animator = new MyGameAnimator(this);
         this.player1Dif = player1Dif;
         this.player2Dif = player2Dif;
-        this.player1 = true;
-        this.prolog = new Server();
-
-        this.prologConnectionState = 0; // 0 -> not awaiting anything, 1 -> awaiting play reply, 2-> awaiting game end reply, 3-> awaiting turns reply
-
+        
+        this.animator = new MyGameAnimator(this);
+        this.animationPlaying = false;
+        
+        this.prolog = new Server(this);
+        this.waintingReply = false;
+        
         this.currentTurnState = new TurnStateMachine(this.scene);
-        this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
 
         this.initGame();
         this.initTurnVars();
     }
-    onAnimationOver() {
-        this.currentTurnState.state = 4;
+    initGame() {
+        this.currentState = new MyGameState([Array(8).fill(Array(8).fill(0)), Array(7).fill(Array(7).fill(0))], [1,0]);
+        this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
+        this.dropInitiated = true;
+        this.player1 = true;
+        this.gameEnded = false;
+    }
+    initTurnVars(){
+        this.Cut = null;
+        this.NewBoard = null;
+        this.newTurns = null;
+        this.currPlayer = 0;
     }
     update(time) {
-        if(this.moveInitiated){
+        if(this.arcInitiated){
             this.animator.start(time, 'arc', this.gameSequence.getCurrentMove());
-            this.currentTurnState.startAnimation();
-            this.moveInitiated = false;
+            this.animationPlaying = true;
+            this.arcInitiated = false;
+        } else if (this.growInitiated) {
+            this.animator.start(time, 'grow', this.updatedSquares);
+            this.animationPlaying = true;
+            this.growInitiated = false;
+        } else if (this.dropInitiated) {
+            this.animator.start(time, 'drop', this.pickablePiece);
+            this.animationPlaying = true;
+            this.dropInitiated = false;
         }
         this.scene.graph.updateKeyframeAnimations(time);
         this.animator.update(time);
@@ -52,51 +70,84 @@ class MyGameOrchestrator {
             }
         }
     }
+    onAnimationOver(type) {
+        this.animationPlaying = false;
+
+        switch (type) {
+            case 'arc':
+                this.gameSequence.getCurrentMove().onAnimationOver();
+                this.currentTurnState.arcAnimationOver();
+                break;
+
+            case 'grow':
+                this.board.updateDiagonals(this.updatedSquares);
+                this.updatedSquares = [];
+                this.currentTurnState.growAnimationOver();
+                break;
+        
+            default:
+                break;
+        }
+    }
+    handlePrologReply(code, reply) {
+        this.waintingReply = false;
+        this.reply = JSON.parse(reply);
+
+        switch (code) {
+            case 1:
+                this.currentTurnState.playRequestOver();
+                break;
+
+            case 2:
+                this.currentTurnState.checkGameEndRequestOver();
+                break;
+            case 3:
+                this.currentTurnState.updateTurnsRequestOver();
+                break;
+        
+            default:
+                break;
+        }
+    }
     orchestrate() {
         this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
-        if(this.currentTurnState.state == 2 && this.prologConnectionState == 0){
-            let piece = this.currentTurnState.getPiece();
-            let tile = this.currentTurnState.getTile();
-            let coords = tile.getCoords();
-            let move = new MyGameMove(piece, tile);
+        if(!this.waintingReply){
+            if(this.currentTurnState.state == 2){
+                let piece = this.currentTurnState.getPiece();
+                let tile = this.currentTurnState.getTile();
+                let coords = tile.getCoords();
+                let move = new MyGameMove(piece, tile);
 
-            if(this.player1) {
-                this.currPlayer = 1;
-            } else {
-                this.currPlayer = 2;
+                if(this.player1) {
+                    this.currPlayer = 1;
+                } else {
+                    this.currPlayer = 2;
+                }
+                this.prolog.play(this.currentState.boardToString(), this.currPlayer, coords['x'] + 1, coords['y'] + 1);
+                this.waintingReply = true;
+                
+                this.gameSequence.push(move);
+                this.arcInitiated = true;
             }
-            this.prolog.play(this.currentState.boardToString(), this.currPlayer, coords['x'] + 1, coords['y'] + 1);
-            
-            this.gameSequence.push(move);
-            this.moveInitiated = true;
-            this.prologConnectionState = 1;
-        }
-        else if(this.currentTurnState.state == 4 && this.prologConnectionState == 1){
-            //this occurs AFTER GameMove finishes
-            let ret = this.prolog.getReply();
-            //console.log(ret);
-            if(ret != null){
-                this.Cut = ret[1];
-                this.NewBoard = ret[0];
+            else if(this.currentTurnState.state == 5){
+                this.Cut = this.reply[1];
+                this.NewBoard = this.reply[0];
+
                 this.prolog.checkGameEnd(JSON.stringify(this.NewBoard), this.currPlayer);
-                this.updatedSquares = this.board.updateDiagonals(this.NewBoard[1]);
-                this.prologConnectionState = 2;
-            }
-        }
-        else if(this.currentTurnState.state == 4 && this.prologConnectionState == 2){
+                this.waintingReply = true;
 
-            let ret = this.prolog.getReply();
-            if(ret != null){
-                if(ret === 1){this.gameEnded = true;}
-                this.prolog.updateTurns(this.Cut, this.currentState.turnsToString());
-                this.prologConnectionState = 3;
+                this.updatedSquares = this.board.compareDiagonals(this.NewBoard[1]);
+                this.growInitiated = true;
             }
-        }
-        else if(this.currentTurnState.state == 4 && this.prologConnectionState == 3){
-            let ret = this.prolog.getReply();
-            
-            if(ret != null){
-                this.newTurns = ret;
+            else if(this.currentTurnState.state == 8){
+                if(this.reply === 1) {
+                    this.gameEnded = true;
+                }
+                this.prolog.updateTurns(this.Cut, this.currentState.turnsToString());
+                this.waintingReply = true;
+            }
+            else if(this.currentTurnState.state == 9){
+                this.newTurns = this.reply;
                 if(this.newTurns[0] > 0) {
                     this.player1 = true;
                 } else {
@@ -109,10 +160,11 @@ class MyGameOrchestrator {
                 else{
                     this.pickablePiece = new MyGamePiece(this.scene, 8.5, 4, 'black');
                 }
-                this.currentTurnState.clean();
+                this.dropInitiated = true;
+
                 this.currentState = new MyGameState(this.NewBoard, this.newTurns);
-                // console.log(this.currentState);
-                this.prologConnectionState = 0;
+                // Once this is done, the state machine restarts from the beginning of the turn
+                this.currentTurnState.reset();
                 this.initTurnVars();
             }
         }
@@ -124,25 +176,14 @@ class MyGameOrchestrator {
         if(this.scene.graph.displayOk) {
             // this.themes.display();
             this.board.display();
-            if(this.currentTurnState.state == 3){
+            if(this.animationPlaying){
                 this.animator.display();
-            }else {
+            }else if (!this.dropInitiated) {
                 this.scene.registerForPick(65, this.pickablePiece);
                 this.pickablePiece.display();
                 this.scene.clearPickRegistration();
             }
             
         }
-    }
-    initGame() {
-        this.currentState = new MyGameState([Array(8).fill(Array(8).fill(0)), Array(7).fill(Array(7).fill(0))], [1,0]);
-        this.gameEnded = false;
-    }
-
-    initTurnVars(){
-        this.Cut = null;
-        this.NewBoard = null;
-        this.newTurns = null;
-        this.currPlayer = 0;
     }
 }

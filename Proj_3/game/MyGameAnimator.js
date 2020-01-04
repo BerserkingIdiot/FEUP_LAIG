@@ -6,9 +6,12 @@ class MyGameAnimator {
         this.object = null;
         this.type = null;
         this.animation = null;
+        this.currentDuration = 0;
         this.playing = false;
 
-        this.finalInstant = 1;
+        this.arcDuration = 1;
+        this.growDuration = 0.5;
+        this.dropDuration = 1;
     }
     reset() {
         this.startTime = 0;
@@ -25,26 +28,36 @@ class MyGameAnimator {
         
         switch (type) {
             case 'arc':
-                let {midpoint, axis, angle} = this.calculateValues(this.object);
-                this.animation = new MyArcAnimation(this.scene, this.finalInstant, angle, axis, midpoint);
+                // object is a MyGameMove object
+                this.currentDuration = this.arcDuration;
+                let {midpoint, axis, angle} = this.calculateValues(obj);
+                this.animation = new MyArcAnimation(this.scene, this.arcDuration, angle, axis, midpoint);
                 break;
 
             case 'grow':
+                // object is an array of MySquarePiece objects
+                this.currentDuration = this.growDuration;
                 this.animation = [];
                 for(let i = 0; i < obj.length; i++) {
                     let coords = obj[i].getCoords();
-                    let position = vec3.fromValues(coords['x'], 0, coords['y']);
-                    this.animation.push(new MyGrowAnimation(this.scene, this.finalInstant, 0.1, position));
+                    let position = vec3.fromValues(coords['x'] + 1, 0, coords['y'] + 1);
+                    console.log(position);
+                    this.animation.push(new MyGrowAnimation(this.scene, this.growDuration, 0.1, position));
                 }
                 break;
 
             case 'drop':
-                this.createDropAnimation();
+                // object is a MyGamePiece object
+                this.currentDuration = this.dropDuration;
+                this.animation = new MyDropAnimation(this.scene, this.dropDuration, 7, 0);
                 break;
                 
             // If no type is specified or it is invalid, a Drop animation is used
             default:
-                this.createDropAnimation();
+                // object is a MyGamePiece object
+                this.type = 'drop';
+                this.currentDuration = this.dropDuration;
+                this.animation = new MyDropAnimation(this.scene, this.dropDuration, 7, 0);
                 break;
         }
     }
@@ -78,30 +91,31 @@ class MyGameAnimator {
         if(this.playing){
             let deltaT = t - this.startTime;
     
-            if(deltaT < this.finalInstant * 1000)
-                this.animation.update(t - this.startTime);
+            if(deltaT < this.currentDuration * 1000)
+                if(this.type === 'grow') {
+                    for(let i = 0; i < this.animation.length; i++) {
+                        this.animation[i].update(t - this.startTime);
+                    }
+                } else {
+                    this.animation.update(t - this.startTime);
+                }
             else{
-                this.orchestrator.onAnimationOver();
-                this.object.onAnimationOver();
+                this.orchestrator.onAnimationOver(this.type);
                 this.reset();
             }
         }
     }
     displayType() {
-        switch (this.type) {
-            // Grow animations can be called on an array of square pieces
-            case 'grow':
-                for(let i = 0; i < this.object.length; i++) {
-                    this.animation[i].apply();
-                    this.object[i].display();
-                }
-                break;
-                
-            // Both arc and drop animations are called on a single object
-            default:
-                this.animation.apply();
-                this.object.display();
-                break;
+        if(this.type === 'grow') {
+            for(let i = 0; i < this.object.length; i++) {
+                this.scene.pushMatrix();
+                this.animation[i].apply();
+                this.object[i].display();
+                this.scene.popMatrix();
+            }
+        } else {
+            this.animation.apply();
+            this.object.display();
         }
     }
     display() {

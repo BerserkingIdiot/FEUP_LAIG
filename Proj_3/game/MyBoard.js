@@ -79,21 +79,29 @@ class MyBoard extends CGFobject {
         let index = y*8+x;
         return this.octoTiles[index];
     }
-    updateDiagonals(newDiagArray){
+    updateDiagonals(newDiagonals) {
+        for(let i = 0; i < newDiagonals.length; i++){
+            let piece = newDiagonals[i];
+            let coords = piece.getCoords();
+            let index = coords['y'] * 7 + coords['x'];
+            this.squareTiles[index].setPiece(piece);
+        }
+    }
+    compareDiagonals(newDiagArray){
         let updatedPieces = [];
 
         for(let i = 0; i < 7; i++){ //this is the Y
             for(let j = 0; j < 7; j++){ // this is the X
-                let index = i*7+j;
-                let currentColor = this.squareTiles[index].getColor();
+                let tile = this.squareTiles[i*7+j];
+                let currentColor = tile.getColor();
                 let newColor = newDiagArray[i][j];
                 if( currentColor != newColor){
                     let color;
                     if(newColor == 1) { color = 'white'; }
                     else { color = 'black'; }
                     let piece = new MySquarePiece(this.scene, j, i, color);
+                    tile.clearPiece();
                     updatedPieces.push(piece);
-                    this.squareTiles[index].setPiece(piece);
                 }
             }
         }

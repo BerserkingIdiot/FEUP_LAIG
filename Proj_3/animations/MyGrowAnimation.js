@@ -40,14 +40,16 @@ class MyGrowAnimation extends MyAnimation {
             //Scurrent = r^(t - tprevious) + Sprevious
             //Where r = (tnext - tprevious) root (Snext / Sprevious)
             let r = Math.pow(1/ this.initialSize, 1 / this.duration)
-            this.currentSize = Math.pow(r, this.duration) + this.initialSize;
+            this.currentSize = Math.pow(r, t) + this.initialSize;
         }
     }
     apply() {
         // The following operation translates the object back to its original position
         this.scene.translate(...this.position);
-        // The following operation applies the actual scaling on the scene
+        // The following operation applies the actual scaling on the scene, making the object grow
         this.scene.scale(this.currentSize, this.currentSize, this.currentSize);
+        // The following operation scales down the oject first
+        this.scene.scale(this.initialSize, this.initialSize, this.initialSize);
         // The following operation translates the object back to the origin
         this.scene.translate(...this.inverse_trans);
     }
