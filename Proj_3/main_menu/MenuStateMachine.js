@@ -8,28 +8,28 @@ class MenuStateMachine {
         switch (this.state) {
             case 'start':
                 if(objID === 1) { // Play button pressed
-                    // this.playState();
+                    this.playState();
                 }
                 break;
             
             case 'play':
-                if(objID === 1) { // Back button pressed
-                    // this.startState();
+                if(objID === 2) { // Back button pressed
+                    this.startState();
                 }
-                if(objID === 2) { // Start button pressed
+                if(objID === 3) { // Start button pressed
                     // Start Game
                 }
                 if(objID === 10) { // Player 1 down arrow pressed
-
+                    this.player1Texture == 0 ? (this.player1Texture = this.playerTextures.length - 1) : (this.player1Texture -= 1);
                 }
                 if(objID === 20) { // Player 2 down arrow pressed
-
+                    this.player2Texture == 0 ? (this.player2Texture = this.playerTextures.length - 1) : (this.player2Texture -= 1);
                 }
                 if(objID === 11) { // Player 1 up arrow pressed
-
+                    this.player1Texture = (this.player1Texture + 1) % this.playerTextures.length;
                 }
                 if(objID === 21) { // Player 2 up arrow pressed
-
+                    this.player2Texture = (this.player2Texture + 1) % this.playerTextures.length;
                 }
                 break;
 
@@ -39,8 +39,8 @@ class MenuStateMachine {
     }
     startState() {
         this.state = 'start';
-        this.button = new MyRectangle(this.scene, 1, -0.25, 0.25, -0.25, 0);
-        this.button.updateTexCoords(0.5, 0.25);
+        this.button = new MyRectangle(this.scene, 1, -0.35, 0.35, -0.25, 0);
+        this.button.updateTexCoords(0.7, 0.25);
         this.buttonTexture = new CGFtexture(this.scene, "scenes/images/play_button.png");
     }
     playState() {
@@ -52,11 +52,11 @@ class MenuStateMachine {
             new CGFtexture(this.scene, "scenes/images/ai_hard.png")
         ];
 
-        this.player1 = new MyRectangle(this.scene, 0, -0.5, -0.2, -0.15, 0);
+        this.player1 = new MyRectangle(this.scene, 0, -0.5, -0.2, -0.075, 0.075);
         this.player1.updateTexCoords(0.3, 0.15);
         this.player1Texture = 0;
         
-        this.player2 = new MyRectangle(this.scene, 0, 0.2, 0.5, -0.15, 0);
+        this.player2 = new MyRectangle(this.scene, 0, 0.2, 0.5, -0.075, 0.075);
         this.player2.updateTexCoords(0.3, 0.15);
         this.player2Texture = 0;
 
@@ -67,6 +67,16 @@ class MenuStateMachine {
         this.start = new MyRectangle(this.scene, 3, 0, 0.2, -0.55, -0.40);
         this.start.updateTexCoords(0.2, 0.15);
         this.startTexture = new CGFtexture(this.scene, "scenes/images/start_button.png");
+
+        this.player1Up = new MyTriangle(this.scene, 11, -0.4, -0.3, -0.35, 0.125, 0.125, 0.225, 0, 0, 0);
+        this.player1Down = new MyTriangle(this.scene, 10, -0.3, -0.4, -0.35, -0.125, -0.125, -0.225, 0, 0, 0);
+
+        this.player2Up = new MyTriangle(this.scene, 21, 0.3, 0.4, 0.35, 0.125, 0.125, 0.225, 0, 0, 0);
+        this.player2Down = new MyTriangle(this.scene, 20, 0.4, 0.3, 0.35, -0.125, -0.125, -0.225, 0, 0, 0);
+
+        this.vs = new MyRectangle(this.scene, 0, -0.15, 0.15, -0.14, 0.16);
+        this.vs.updateTexCoords(0.3, 0.3);
+        this.vsTexture = new CGFtexture(this.scene, "scenes/images/vs_white.png");
     }
     display() {
         this.scene.pushMatrix();
@@ -93,6 +103,22 @@ class MenuStateMachine {
                 this.startTexture.unbind();
                 this.scene.clearPickRegistration();
 
+                this.scene.registerForPick(11, this.player1Up);
+                this.player1Up.display();
+                this.scene.clearPickRegistration();
+                
+                this.scene.registerForPick(10, this.player1Down);
+                this.player1Down.display();
+                this.scene.clearPickRegistration();
+                
+                this.scene.registerForPick(21, this.player2Up);
+                this.player2Up.display();
+                this.scene.clearPickRegistration();
+                
+                this.scene.registerForPick(20, this.player2Down);
+                this.player2Down.display();
+                this.scene.clearPickRegistration();
+
                 this.playerTextures[this.player1Texture].bind();
                 this.player1.display();
                 this.playerTextures[this.player1Texture].unbind();
@@ -100,6 +126,10 @@ class MenuStateMachine {
                 this.playerTextures[this.player2Texture].bind();
                 this.player2.display();
                 this.playerTextures[this.player2Texture].unbind();
+
+                this.vsTexture.bind();
+                this.vs.display();
+                this.vsTexture.unbind();
                 break;
 
             default:

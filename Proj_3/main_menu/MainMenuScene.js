@@ -20,11 +20,12 @@ class MainMenuScene extends CGFscene {
         super.init(application);
 
         this.initCameras();
+        this.initLights();
         this.enableTextures(true);
         
         this.gl.clearDepth(100.0);
         // No depth test is used because the menu is a GUI whit overlaping elements
-        this.gl.disable(this.gl.DEPTH_TEST);
+        this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.enable(this.gl.CULL_FACE);
         this.gl.depthFunc(this.gl.LEQUAL);
         
@@ -35,9 +36,22 @@ class MainMenuScene extends CGFscene {
     }
     /**
      * Initializes the scene camera
+     * It is an ortho camera so everything appears to be in 2D
      */
     initCameras() {
-        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(0, 0, 2), vec3.fromValues(0, 0, 0));
+        this.camera = new CGFcameraOrtho(-1.5, 1.5, -1, 1, 0.1, 500, vec3.fromValues(0, 0, 10), vec3.fromValues(0, 0.0001, 0), vec3.fromValues(0, 0, 1));
+    }
+    initLights() {
+        this.lights[0].setPosition(0, 0, 2, 1);
+        this.lights[0].setAmbient(1.0, 1.0, 1.0, 1.0);
+        this.lights[0].enable();
+        this.lights[0].update();
+    }
+    setDefaultAppearance() {
+        this.setAmbient(1, 1, 1, 1.0);
+        this.setDiffuse(0, 0, 0, 1.0);
+        this.setSpecular(0, 0, 0, 1.0);
+        this.setShininess(10.0);
     }
     logPicking() {
         // console.log('picker called');
@@ -72,6 +86,7 @@ class MainMenuScene extends CGFscene {
         this.applyViewMatrix();
 
         this.pushMatrix();
+        this.setDefaultAppearance();
         // Displaying the menu
         this.menu.display();
         this.popMatrix();
