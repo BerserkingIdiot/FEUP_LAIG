@@ -21,6 +21,7 @@ class MyGamePiece extends CGFobject {
         this.x = x;
         this.y = y;
         this.initMaterials(scene, color);
+        this.strColor = color;
     }
     /**
      * @method initMaterials
@@ -90,5 +91,16 @@ class MyGamePiece extends CGFobject {
         this.scene.popMatrix();
 
         this.scene.popMatrix();
+    }
+
+    resetCoords(){
+        if(this.strColor == 'white'){
+            this.x = -1.5;
+            this.y = 4;
+        }
+        else{
+            this.x = 8.5;
+            this.y = 4;
+        }
     }
 }

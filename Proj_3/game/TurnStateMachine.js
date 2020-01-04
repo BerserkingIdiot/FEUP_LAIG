@@ -81,7 +81,7 @@ class TurnStateMachine {
         }
     }
 
-    reset(){
+    clean(){
         this.piece = null;
         this.destinationTile = null;
         this.state = 0;

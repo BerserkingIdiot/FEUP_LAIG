@@ -96,16 +96,25 @@ class MyBoard extends CGFobject {
                 let currentColor = tile.getColor();
                 let newColor = newDiagArray[i][j];
                 if( currentColor != newColor){
-                    let color;
-                    if(newColor == 1) { color = 'white'; }
-                    else { color = 'black'; }
-                    let piece = new MySquarePiece(this.scene, j, i, color);
                     tile.clearPiece();
-                    updatedPieces.push(piece);
+                    
+                    if(newColor != 0){
+                        let color;
+                        if(newColor == 1) { color = 'white'; }
+                        else { color = 'black'; }
+                        let piece = new MySquarePiece(this.scene, j, i, color);
+                        updatedPieces.push(piece);
+                    }
                 }
             }
         }
         
         return updatedPieces;
+    }
+
+    clear() {
+        this.octoTiles.forEach((tile) => tile.clearPiece());
+        
+        this.squareTiles.forEach((tile) => tile.clearPiece());
     }
 }

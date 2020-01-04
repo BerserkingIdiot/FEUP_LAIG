@@ -21,5 +21,14 @@ class MyGameSequence {
     }
     replay() {
         this.currentMove = 0;
+        this.moves.forEach((move) => move.piece.resetCoords());
+    }
+
+    advance() {
+        this.currentMove = this.currentMove + 1;
+    }
+
+    atEnd(){
+        return (this.currentMove == this.moves.length - 1);
     }
 }
