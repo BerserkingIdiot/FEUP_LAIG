@@ -172,10 +172,10 @@ class MyGameOrchestrator {
                 }
                 
                 if(this.player1){
-                    this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+                    this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
                 }
                 else{
-                    this.pickablePiece = new MyGamePiece(this.scene, 8.5, 4, 'black');
+                    this.pickablePiece = new MyGamePiece(this.scene, 8.5, 3.5, 'black');
                 }
                 this.dropInitiated = true;
 
@@ -217,7 +217,7 @@ class MyGameOrchestrator {
     display(){
         if(this.gameEnded) {
             alert('Game Ended - Player ' + this.currPlayer + ' Wins, replaying game...');
-            this.scene.gameOrchestrator = new MyReplayOrchestrator(this.scene, this.board, this.gameSequence, this.currPlayer);
+            this.scene.gameOrchestrator = new MyReplayOrchestrator(this.scene, this.board, this.gameSequence, this.themes, this.currPlayer);
         }
         if(this.scene.graph.displayOk) {
             // this.themes.display();

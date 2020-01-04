@@ -96,11 +96,11 @@ class MyGamePiece extends CGFobject {
     resetCoords(){
         if(this.strColor == 'white'){
             this.x = -1.5;
-            this.y = 4;
+            this.y = 3.5;
         }
         else{
             this.x = 8.5;
-            this.y = 4;
+            this.y = 3.5;
         }
     }
 }
