@@ -3,11 +3,13 @@ class Server {
         this.reply;
     }
     getPrologRequest(requestString, callback) {
+        //console.log(requestString);
+        let theDamnedServer = this;
         var requestPort = 8082;
         var request = new XMLHttpRequest();
         request.open('GET', 'http://localhost:' + requestPort + '/' + requestString, true);
 
-        request.onload = callback;
+        request.onload = function(data) {theDamnedServer.handleReply(data);};
         request.onerror = function () { console.log("Error waiting for response"); };
 
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
@@ -20,6 +22,8 @@ class Server {
     //Handle the Reply
     handleReply(data) {
         this.reply = data.target.response;
+        //console.log(this);
+        //console.log(data.target.response);
     }
 
     /**
@@ -33,11 +37,12 @@ class Server {
      * @returns An array in the format: [NewBoard, Cut] 
      */
     play(board, player, x, y) {
-        this.getPrologRequest(`play(${board}, ${player}, ${x}, ${y})`, this.handleReply);
+        this.reply = null;
+        this.getPrologRequest(`play(${board},${player},${x},${y})`, this.handleReply);
 
         //TODO: Wait for server to reply
         
-        return JSON.parse(this.reply);
+        //return JSON.parse(this.reply);
     }
 
     /**
@@ -51,9 +56,10 @@ class Server {
      * @returns An array in the format: [Player1 Plays, Player2 Plays]
      */
     updateTurns(cut, turns) {
-        this.getPrologRequest(`update_turns(${turns}, ${cut})`);
+        this.reply = null;
+        this.getPrologRequest(`update_turns(${turns},${cut})`, this.handleReply);
 
-        return JSON.parse(this.reply)
+        //return JSON.parse(this.reply)
     }
 
     /**
@@ -65,9 +71,10 @@ class Server {
      * @returns true if the game has ended, false otherwise.
      */
     checkGameEnd(board, player){
-        this.getPrologRequest(`game_end(${board}, ${player})`);
+        this.reply = null;
+        this.getPrologRequest(`game_end(${board},${player})`, this.handleReply);
 
-        return this.reply === '1';
+        //return this.reply === '1';
     }
 
     /**
@@ -78,9 +85,10 @@ class Server {
      * @returns A value, either 1 or 2, representing the current player.
      */
     get_player(turns) {
-        this.getPrologRequest(`get_player(${turns})`);
+        this.reply = null;
+        this.getPrologRequest(`get_player(${turns})`, this.handleReply);
 
-        return JSON.parse(this.reply);
+        //return JSON.parse(this.reply);
     }
 
     /**
@@ -93,8 +101,20 @@ class Server {
      * @returns a pair of coordinates in the form [X, Y]. 
      */
     getAIinput(depth, turns, board) {
-        this.getPrologRequest(`getAIinput(${depth},${turns},${board})`);
+        this.reply = null;
+        this.getPrologRequest(`getAIinput(${depth},${turns},${board})`, this.handleReply);
 
-        return JSON.parse(this.reply);
+        //return JSON.parse(this.reply);
+    }
+
+    getReply(){
+        //console.log(this.reply);
+        if(this.reply != null){
+            //console.log("flip");
+            return JSON.parse(this.reply);
+        }
+        else{
+            return null;
+        }
     }
 }

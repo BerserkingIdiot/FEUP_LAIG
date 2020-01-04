@@ -75,42 +75,50 @@ class MyBoard extends CGFobject {
 
         // Applying the octogonal tile material
         //this.octoMat.apply();
-        this.octoTiles.forEach((tile) => this.octoTileDisplay(tile));
+        this.octoTiles.forEach((tile) => tile.display());
         
         // Applying the square tile material
-        this.squareMat.apply();
-        this.squareTiles.forEach((tile) => this.squareTileDisplay(tile));
+        //this.squareMat.apply();
+        this.squareTiles.forEach((tile) => this.squareTileDisplay(tile, false));
 
         // Applying the white square tile material
         this.whiteMat.apply();
-        this.whiteTiles.forEach((tile) => this.squareTileDisplay(tile));
+        this.whiteTiles.forEach((tile) => this.squareTileDisplay(tile, true));
 
         // Applying the black square tile material
         this.blackMat.apply();
-        this.blackTiles.forEach((tile) => this.squareTileDisplay(tile));
+        this.blackTiles.forEach((tile) => this.squareTileDisplay(tile, true));
     }
-    squareTileDisplay(tile) {
+    squareTileDisplay(tile, border) {
         let coords = tile.getCoords();
-
+        if(!border){this.squareMat.apply();}
         this.scene.pushMatrix();
-        this.scene.translate(coords['x'] + 0.725, 0, coords['y'] + 1);
-        this.scene.rotate(-Math.PI/2,1,0,0);
-        this.scene.rotate(-Math.PI/4,0,0,1);
+        this.scene.translate(coords['x'] + 1, 0, coords['y'] + 1);
+        //this.scene.rotate(-Math.PI/2,1,0,0);
+        //this.scene.rotate(-Math.PI/4,0,0,1);
         tile.display();
         this.scene.popMatrix();
     }
-    octoTileDisplay(tile) {
-        let coords = tile.getCoords();
-        tile.display();
-        // this.octoMat.apply();
-        // this.scene.pushMatrix();
-        // // this.scene.translate(coords['x'] + 0.5, 0, coords['y'] + 0.5);
-        // // this.scene.rotate(-Math.PI/2,1,0,0);
-        // // this.scene.rotate(Math.PI / 8, 0, 0, 1);
-        // this.scene.popMatrix();
-    } 
     getTile(x, y) {
         let index = y*8+x;
         return this.octoTiles[index];
+    }
+    updateDiagonals(newDiagArray){
+        for(let i = 0; i < 7; i++){ //this is the Y
+            for(let j = 0; j < 7; j++){ // this is the X
+                let index = i*7+j;
+                let currentColor = this.squareTiles[index].getColor();
+                let newColor = newDiagArray[i][j];
+                if( currentColor != newColor){
+                    let color;
+                    if(newColor == 1) {
+                        color = 'white';
+                    } else {
+                        color = 'black';
+                    }
+                    this.squareTiles[index].setPiece(new MySquarePiece(this.scene, color));
+                }
+            }
+        }
     }
 }
