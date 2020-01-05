@@ -17,7 +17,7 @@ class MenuStateMachine {
                     this.startState();
                 }
                 if(objID === 3) { // Start button pressed
-                    // Start Game
+                    this.scene.startGame(this.player1Texture - 1, this.player2Texture - 1);
                 }
                 if(objID === 10) { // Player 1 down arrow pressed
                     this.player1Texture == 0 ? (this.player1Texture = this.playerTextures.length - 1) : (this.player1Texture -= 1);
@@ -47,18 +47,18 @@ class MenuStateMachine {
         this.state = 'play';
 
         this.playerTextures = [
-            new CGFtexture(this.scene, "scenes/images/player_button.png"),
             new CGFtexture(this.scene, "scenes/images/ai_easy.png"),
+            new CGFtexture(this.scene, "scenes/images/player_button.png"),
             new CGFtexture(this.scene, "scenes/images/ai_hard.png")
         ];
 
         this.player1 = new MyRectangle(this.scene, 0, -0.5, -0.2, -0.075, 0.075);
         this.player1.updateTexCoords(0.3, 0.15);
-        this.player1Texture = 0;
+        this.player1Texture = 1;
         
         this.player2 = new MyRectangle(this.scene, 0, 0.2, 0.5, -0.075, 0.075);
         this.player2.updateTexCoords(0.3, 0.15);
-        this.player2Texture = 0;
+        this.player2Texture = 1;
 
         this.back = new MyRectangle(this.scene, 2, -0.2, 0, -0.55, -0.40);
         this.back.updateTexCoords(0.2, 0.15);

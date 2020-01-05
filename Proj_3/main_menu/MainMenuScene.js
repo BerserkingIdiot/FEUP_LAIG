@@ -8,9 +8,10 @@ class MainMenuScene extends CGFscene {
      * @constructor
      * @param {MyInterface} myinterface 
      */
-    constructor(myinterface) {
+    constructor(myinterface, squexGame) {
         super();
         this.interface = myinterface;
+        this.game = squexGame;
     }
     /**
      * Initializes the scene, setting some WebGL defaults, initializing the camera and the axis.
@@ -68,6 +69,9 @@ class MainMenuScene extends CGFscene {
 				this.pickResults.splice(0, this.pickResults.length);
 			}
 		}
+    }
+    startGame(player1, player2) {
+        this.game.startGame(player1, player2);
     }
     display() {
         // Check for picking results

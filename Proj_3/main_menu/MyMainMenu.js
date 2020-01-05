@@ -14,7 +14,7 @@ class MyMainMenu extends CGFobject {
     display() {
         this.scene.pushMatrix();
 
-        // Applying the backgournd texture and displaying it
+        // Applying the background texture and displaying it
         this.backgroundTexture.bind();
         this.background.display();
         this.backgroundTexture.unbind();
