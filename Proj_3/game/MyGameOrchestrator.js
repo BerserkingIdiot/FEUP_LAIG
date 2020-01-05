@@ -210,6 +210,18 @@ class MyGameOrchestrator {
                 let diagonals = this.board.compareDiagonals(undoneMove.gameState.board[1]);
                 this.board.updateDiagonals(diagonals);
                 this.currentState = undoneMove.gameState;
+                if(this.player1Dif != 0 || this.player2Dif != 0){
+                    undoneMove = this.gameSequence.undo();
+                    if(undoneMove == null){
+                        console.log("No moves to undo.");
+                    }
+                    else{
+                        undoneMove.destination.clearPiece();
+                        let diagonals = this.board.compareDiagonals(undoneMove.gameState.board[1]);
+                        this.board.updateDiagonals(diagonals);
+                        this.currentState = undoneMove.gameState;
+                    }
+                }
                 if(this.currentState.turns[0] > 0) {
                     this.player1 = true;
                 } else {
