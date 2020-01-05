@@ -118,13 +118,28 @@ class MyGameOrchestrator {
             case 3:
                 this.currentTurnState.updateTurnsRequestOver();
                 break;
+
+            case 4:
+                this.currentTurnState.pickTile(this.board.getTile(this.reply[0], this.reply[1]));
+                break;
         
             default:
                 break;
         }
     }
     orchestrate() {
-        this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
+        if((this.player1 && this.player1Dif == 0) || (!this.player1 && this.player2Dif == 0)){
+            this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
+        }
+        else if(this.player1){
+            this.currentTurnState.pickPiece(this.pickablePiece);
+            this.prolog.getAIinput(this.player1Dif, this.currentState.turnsToString(), this.currentState.boardToString());
+        }
+        else{
+            this.currentTurnState.pickPiece(this.pickablePiece);
+            this.prolog.getAIinput(this.player2Dif, this.currentState.turnsToString(), this.currentState.boardToString());
+        }
+
         if(!this.waintingReply){
             if(this.currentTurnState.state == 2){
                 let piece = this.currentTurnState.getPiece();
@@ -185,7 +200,7 @@ class MyGameOrchestrator {
                 this.initTurnVars();
             }
         }
-        if(this.undoing){
+        if(this.undoing){ //FIXME: might have to undo 2 moves at a time when a bot is playing
             let undoneMove = this.gameSequence.undo();
             if(undoneMove == null){
                 console.log("No moves to undo.");
