@@ -10,10 +10,13 @@ class GameScene extends CGFscene {
    * @constructor
    * @param {MyInterface} myinterface
    */
-  constructor(myinterface) {
+  constructor(myinterface, squexGame, player1Dif, player2Dif) {
     super();
 
     this.interface = myinterface;
+    this.game = squexGame;
+    this.player1Dif = player1Dif;
+    this.player2Dif = player2Dif;
   }
 
   /**
@@ -53,7 +56,7 @@ class GameScene extends CGFscene {
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
     this.gameOverview = new MyGameOverview(this, this.rttTexture);
 
-    this.gameOrchestrator = new MyGameOrchestrator(this, 0, 1);
+    this.gameOrchestrator = new MyGameOrchestrator(this, this.player1Dif, this.player2Dif);
   }
 
   /**

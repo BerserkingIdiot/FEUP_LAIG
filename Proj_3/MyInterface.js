@@ -5,8 +5,9 @@ class MyInterface extends CGFinterface {
     /**
      * @constructor
      */
-    constructor() {
+    constructor(withGUI) {
         super();
+        this.withGUI = withGUI
     }
 
     /**
@@ -18,7 +19,9 @@ class MyInterface extends CGFinterface {
         // init GUI. For more information on the methods, check:
         //  http://workshop.chromeexperiments.com/examples/gui
 
-        this.gui = new dat.GUI();
+        if(this.withGUI){
+            this.gui = new dat.GUI();
+        }
 
         this.initKeys();
 
