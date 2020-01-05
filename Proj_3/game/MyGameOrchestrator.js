@@ -120,7 +120,7 @@ class MyGameOrchestrator {
                 break;
 
             case 4:
-                this.currentTurnState.pickTile(this.board.getTile(this.reply[0], this.reply[1]));
+                this.currentTurnState.pickTile(this.board.getTile(this.reply[0] - 1, this.reply[1] - 1));
                 break;
         
             default:
@@ -131,11 +131,11 @@ class MyGameOrchestrator {
         if((this.player1 && this.player1Dif == 0) || (!this.player1 && this.player2Dif == 0)){
             this.pickingHandler(this.scene.pickMode, this.scene.pickResults);
         }
-        else if(this.player1){
+        else if(this.player1 && !this.animationPlaying && this.currentTurnState.state == 0){
             this.currentTurnState.pickPiece(this.pickablePiece);
             this.prolog.getAIinput(this.player1Dif, this.currentState.turnsToString(), this.currentState.boardToString());
         }
-        else{
+        else if(!this.player1 && !this.animationPlaying && this.currentTurnState.state == 0){
             this.currentTurnState.pickPiece(this.pickablePiece);
             this.prolog.getAIinput(this.player2Dif, this.currentState.turnsToString(), this.currentState.boardToString());
         }

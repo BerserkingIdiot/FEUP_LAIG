@@ -53,7 +53,7 @@ class GameScene extends CGFscene {
     this.rttTexture = new CGFtextureRTT(this, window.innerWidth, window.innerHeight);
     this.gameOverview = new MyGameOverview(this, this.rttTexture);
 
-    this.gameOrchestrator = new MyGameOrchestrator(this, 0, 0);
+    this.gameOrchestrator = new MyGameOrchestrator(this, 0, 1);
   }
 
   /**

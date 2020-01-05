@@ -134,3 +134,7 @@ findAllEmpty(_, 0, []).
 findAllEmpty([0|Row], X, [X|XValues]):-
     Xn is X - 1,
     findAllEmpty(Row, Xn, XValues).
+
+findAllEmpty([_|Row], X, XValues):-
+    Xn is X - 1,
+    findAllEmpty(Row, Xn, XValues).

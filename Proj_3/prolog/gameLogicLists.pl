@@ -17,7 +17,8 @@ makePointList(X, [Y|YList], List):-
 
 subtractRandomIndex(List, Value, NewList):-
     length(List, Length),
-    random_between(1, Length, Index),
+    UpperBound is Length + 1,
+    random(1, UpperBound, Index),
     subtractIndex(List, Index, Value, NewList).
 
 subtractIndex([Value|List], 1, Value, List).
