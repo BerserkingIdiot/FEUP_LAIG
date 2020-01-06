@@ -15,6 +15,8 @@ class EndMenuScene extends CGFscene {
         this.game = squexGame;
         this.gameScene = gameScene;
         this.playerWon = playerWon;
+        this.player1 = gameScene.player1Dif;
+        this.player2 = gameScene.player2Dif
         this.overviewRTT = rtt;
         this.replaying = false;
     }
@@ -76,14 +78,12 @@ class EndMenuScene extends CGFscene {
     }
     replay() {
         this.gameScene.replay();
-        this.gameScene.interface.show();
         this.replaying = true;
     }
     rematch() {
         this.game.startGame(this.player1, this.player2);
     }
     exit() {
-        this.gameScene.interface.destroy();
         this.game.startMenu();
     }
     update(t) {

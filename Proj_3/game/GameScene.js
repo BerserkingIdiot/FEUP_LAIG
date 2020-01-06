@@ -197,8 +197,11 @@ class GameScene extends CGFscene {
   }
 
   gameEnd(player) {
-    this.game.startEndMenu(this, player, this.rttTexture);
-    this.interface.hide();
+    if(!this.ended){
+      this.ended = true;
+      this.interface.destroy();
+      this.game.startEndMenu(this, player, this.rttTexture);
+    }
   }
   replay() {
     let replayer = this.gameOrchestrator.requestReplay();

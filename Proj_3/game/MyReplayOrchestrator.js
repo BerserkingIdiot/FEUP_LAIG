@@ -121,7 +121,10 @@ class MyReplayOrchestrator {
 
     display(){
         if(this.scene.graph.displayOk) {
-            // this.themes.display();
+            this.scene.pushMatrix();
+            this.themes.display();
+            this.scene.popMatrix();
+            
             this.board.display();
             if(this.animationPlaying){
                 this.animator.display();
