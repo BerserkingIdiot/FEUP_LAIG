@@ -3,8 +3,8 @@
 
     <views>
         <perspective id="defaultCamera" near="0.1" far="500" angle="45">
-            <from x="10" y="10" z="10" />
-            <to x="1" y="0" z="0" />
+            <from x="-14" y="20" z="-14" />
+            <to x="4" y="0" z="4" />
         </perspective>
     </views>
 
@@ -24,7 +24,6 @@
     </lights>
 
     <textures>
-        <texture id="demoTexture" file="scenes/images/beach_club.jpg" />
         <texture id="wallTexture" file="scenes/images/bank.jpg" />
         <texture id="woodTexture" file="scenes/images/wood.jpg" />
     </textures>
@@ -65,20 +64,6 @@
     </transformations>
 
     <animations>
-        <animation id="demoAnim" >
-            <keyframe instant="5">
-                <translate x="0" y="0" z="0" />
-                <rotate angle_x="180" angle_y="0" angle_z="180" />
-                <scale x="1" y="1" z="1" />
-            </keyframe>
-        </animation>
-        <animation id="aroundSphere" >
-            <keyframe instant="5">
-                <translate x="0" y="0" z="0" />
-                <rotate angle_x="0" angle_y="360" angle_z="0" />
-                <scale x="1" y="1" z="1" />
-            </keyframe>
-        </animation>
     </animations>
 
     <primitives>
@@ -127,11 +112,10 @@
         <component id="Root">
             <transformation>
             </transformation>
-            <!-- <animationref id="demoAnim" /> -->
             <materials>
                 <material id="demoMaterial" />
             </materials>
-            <texture id="demoTexture" length_s="1" length_t="1"/>
+            <texture id="none"/>
             <children>
                 <componentref id="worldBox" />
                 <componentref id="table" />

@@ -77,6 +77,8 @@ class MyGameScenes {
     loadGraph() {
         // First the display on scene is stoped
         this.scene.sceneInited = false;
+        // Ensuring a camera is shown when the scene changes
+        this.scene.selectedCamera = 'Original Camera';
         // Then the graph is loaded and it restarts the scene display
         this.graph = new MySceneGraph(this.sceneFiles[this.currentScene], this.scene);
     }

@@ -38,7 +38,6 @@ class GameScene extends CGFscene {
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
-    this.axis = new CGFaxis(this);
     // Function update will be called 60 times per second
     this.setUpdatePeriod(FPS_60);
     // Enables mouse picking on the scene canvas
@@ -235,7 +234,6 @@ class GameScene extends CGFscene {
     this.applyViewMatrix();
 
     this.pushMatrix();
-    this.axis.display();
 
     // Updating lights to enable and disable them
     for (var i = 0; i < this.lights.length; i++) {
