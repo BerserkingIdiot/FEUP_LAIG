@@ -1,2 +1,3 @@
+drifting.xml as Drifting
 indoors.xml as Indoors
 demo.xml as Demo
