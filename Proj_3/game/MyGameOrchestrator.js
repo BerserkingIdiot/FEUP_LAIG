@@ -250,7 +250,7 @@ class MyGameOrchestrator {
             this.scene.gameOrchestrator = new MyReplayOrchestrator(this.scene, this.board, this.gameSequence, this.themes, this.currPlayer);
         }
         if(this.scene.graph.displayOk) {
-            // this.themes.display();
+            this.themes.display();
             this.board.display();
             if(this.animationPlaying){
                 this.animator.display();
