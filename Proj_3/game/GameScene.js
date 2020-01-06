@@ -197,6 +197,16 @@ class GameScene extends CGFscene {
       this.startTime = t; // Only when the scene is initiated we start to count the elapsed time
   }
 
+  gameEnd(player) {
+    this.game.startEndMenu(this, player, this.rttTexture);
+    this.interface.hide();
+  }
+  replay() {
+    let replayer = this.gameOrchestrator.requestReplay();
+
+    this.gameOrchestrator = replayer;
+  }
+
   /**
    * Renders the scene.
    *
@@ -233,6 +243,7 @@ class GameScene extends CGFscene {
     }
 
     this.setDefaultAppearance();
+    // console.log('Calling orchestrator');
     this.gameOrchestrator.display();
 
     this.popMatrix();
@@ -244,6 +255,7 @@ class GameScene extends CGFscene {
    */
   display() {
     if(this.sceneInited){
+      // console.log('Scene display');
       // Handling game logic at each display loop
       this.gameOrchestrator.orchestrate();
       // Renders the scene to a texture using the overview camera

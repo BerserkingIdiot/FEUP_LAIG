@@ -54,6 +54,15 @@ class MyInterface extends CGFinterface {
             i++
         }
     }
+    hide() {
+        this.gui.close();
+    }
+    destroy() {
+        this.gui.destroy();
+    }
+    show() {
+        this.gui.open();
+    }
 
     /**
      * Initializes the keyboard handlers

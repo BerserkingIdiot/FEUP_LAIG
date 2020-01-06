@@ -1,17 +1,22 @@
 var DEGREE_TO_RAD = Math.PI / 180;
+var FPS_60 = 1000 / 60;
 
 /**
- * MainMenuScene class, representing the scene that is to be rendered.
+ * EndMenuScene class, representing the scene that is to be rendered.
  */
-class MainMenuScene extends CGFscene {
+class EndMenuScene extends CGFscene {
     /**
      * @constructor
      * @param {MyInterface} myinterface 
      */
-    constructor(myinterface, squexGame) {
+    constructor(myinterface, squexGame, gameScene, playerWon, rtt) {
         super();
         this.interface = myinterface;
         this.game = squexGame;
+        this.gameScene = gameScene;
+        this.playerWon = playerWon;
+        this.overviewRTT = rtt;
+        this.replaying = false;
     }
     /**
      * Initializes the scene, setting some WebGL defaults, initializing the camera and the axis.
@@ -23,6 +28,7 @@ class MainMenuScene extends CGFscene {
         this.initCameras();
         this.initLights();
         this.enableTextures(true);
+        this.setUpdatePeriod(FPS_60);
         
         this.gl.clearDepth(100.0);
         // No depth test is used because the menu is a GUI whit overlaping elements
@@ -32,15 +38,14 @@ class MainMenuScene extends CGFscene {
         
         // Enables mouse picking on the scene
         this.setPickEnabled(true);
-        // this.axis = new CGFaxis(this);
-        this.menu = new MyMainMenu(this);
+        this.menu = new MyEndMenu(this, this.playerWon, this.overviewRTT);
     }
     /**
      * Initializes the scene camera
      * It is an ortho camera so everything appears to be in 2D
      */
     initCameras() {
-        this.camera = new CGFcameraOrtho(-1.5, 1.5, -1, 1, 0.1, 500, vec3.fromValues(0, 0, 10), vec3.fromValues(0, 0.0001, 0), vec3.fromValues(0, 0, 1));
+        this.camera = new CGFcameraOrtho(-1.49, 1.5, -1, 1, 0.1, 500, vec3.fromValues(0, 0, 10), vec3.fromValues(0, 0.0001, 0), vec3.fromValues(0, 0, 1));
     }
     initLights() {
         this.lights[0].setPosition(0, 0, 2, 1);
@@ -55,13 +60,13 @@ class MainMenuScene extends CGFscene {
         this.setShininess(10.0);
     }
     logPicking() {
-        // console.log('picker called');
         if (this.pickMode == false) {
 			if (this.pickResults != null && this.pickResults.length > 0) {
 				for (var i = 0; i < this.pickResults.length; i++) {
 					var obj = this.pickResults[i][0];
 					if (obj) {
                         var customId = this.pickResults[i][1];
+                        console.log("Picked object: " + obj + ", with pick id " + customId);
 						this.menu.onClick(customId);						
 					}
 				}
@@ -69,10 +74,32 @@ class MainMenuScene extends CGFscene {
 			}
 		}
     }
-    startGame(player1, player2) {
-        this.game.startGame(player1, player2);
+    replay() {
+        this.gameScene.replay();
+        this.gameScene.interface.show();
+        this.replaying = true;
+    }
+    rematch() {
+        this.game.startGame(this.player1, this.player2);
+    }
+    exit() {
+        this.gameScene.interface.destroy();
+        this.game.startMenu();
+    }
+    update(t) {
+        if (this.replaying) {
+            this.gameScene.update(t);
+        }
     }
     display() {
+        if(this.replaying) {
+            this.gameScene.display();
+            if(this.gameScene.gameOrchestrator.gameEnded) {
+                this.replaying = false;
+            }
+            return;
+        }
+
         // Check for picking results
         this.logPicking();
         this.clearPickRegistration();

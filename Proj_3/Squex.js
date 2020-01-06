@@ -3,20 +3,22 @@ class Squex {
         this.app = new CGFapplication(document.body);
         this.app.init();
 
-        this.startMenu();
+        this.startGame(0, 0);
     }
     startMenu() {
-        this.state = 'main_menu';
         this.interface = new MyInterface(false);
         this.scene = new MainMenuScene(this.interface, this);
-        this.refresh()
+        this.refresh();
     }
     startGame(player1, player2) {
-        this.state = 'game';
-        console.log('Player1 = ' + player1 + '; Player2 = ' + player2);
         this.interface = new MyInterface(true);
         this.scene = new GameScene(this.interface, this, player1, player2);
-        this.refresh()
+        this.refresh();
+    }
+    startEndMenu(gameScene, playerWon, rtt) {
+        this.interface = new MyInterface(false);
+        this.scene = new EndMenuScene(this.interface, this, gameScene, playerWon, rtt);
+        this.refresh();
     }
     refresh() {
         this.app.setScene(this.scene);

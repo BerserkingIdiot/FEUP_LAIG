@@ -6,21 +6,36 @@ class MyReplayOrchestrator {
         this.themes = themes;
         this.board = board;
         this.animator = new MyGameAnimator(this);
-        this.animationPlaying = false;
-
+        this.gameSequence.orchestrator = this;
         
+        // this.animationPlaying = false;
+        
+        // this.player1 = true;
+        // this.gameEnded = false;
+
+        // this.roundState = 5;
+        // this.gameSequence.replay();
+        // this.board.clear();
+        // this.dropInitiated = true;
+        // this.dropDone = false;
+
+        this.reset();
+    }
+    reset() {
+        this.animationPlaying = false;
         this.player1 = true;
         this.gameEnded = false;
 
         this.roundState = 5;
-        this.gameSequence.orchestrator = this;
         this.gameSequence.replay();
         this.board.clear();
         this.dropInitiated = true;
         this.dropDone = false;
-
     }
-
+    requestReplay() {
+        this.reset();
+        return this;
+    }
     update(time) {
         if(this.arcInitiated){
             this.animator.start(time, 'arc', this.gameSequence.getCurrentMove());
@@ -105,7 +120,6 @@ class MyReplayOrchestrator {
     }
 
     display(){
-        
         if(this.scene.graph.displayOk) {
             // this.themes.display();
             this.board.display();
@@ -115,10 +129,6 @@ class MyReplayOrchestrator {
                 this.gameSequence.getCurrentMove().piece.display();
             }
 
-        }
-        if(this.gameEnded) {
-            alert('Game Ended - Player ' + this.winner + ' Wins!');
-            this.gameEnded = false;
         }
     }
 }

@@ -241,10 +241,13 @@ class MyGameOrchestrator {
             this.undoing = false;
         }
     }
+    requestReplay() {
+        return new MyReplayOrchestrator(this.scene, this.board, this.gameSequence, this.themes, this.currPlayer);
+    }
     display(){
         if(this.gameEnded) {
-            alert('Game Ended - Player ' + this.currPlayer + ' Wins, replaying game...');
-            this.scene.gameOrchestrator = new MyReplayOrchestrator(this.scene, this.board, this.gameSequence, this.themes, this.currPlayer);
+            // alert('Game Ended - Player ' + this.currPlayer + ' Wins, replaying game...');
+            this.scene.gameEnd(this.currPlayer);
         }
         if(this.scene.graph.displayOk) {
             // this.themes.display();
