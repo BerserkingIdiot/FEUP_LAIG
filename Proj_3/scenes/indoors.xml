@@ -25,6 +25,8 @@
 
     <textures>
         <texture id="demoTexture" file="scenes/images/beach_club.jpg" />
+        <texture id="wallTexture" file="scenes/images/bank.jpg" />
+        <texture id="woodTexture" file="scenes/images/wood.jpg" />
     </textures>
 
     <materials>
@@ -45,6 +47,12 @@
             <ambient r="0.6" g="0.0" b="0.0" a="1.0" />
             <diffuse r="0.7" g="0.0" b="0.0" a="1.0" />
             <specular r="0.9" g="0.0" b="0.0" a="1.0" />
+        </material>
+        <material id="wood" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="0.6" g="0.4" b="0.0" a="1.0" />
+            <diffuse r="0.7" g="0.5" b="0.0" a="1.0" />
+            <specular r="0.5" g="0.3" b="0.0" a="1.0" />
         </material>
     </materials>
 
@@ -138,7 +146,7 @@
             <materials>
                 <material id="darkGrey" />
             </materials>
-            <texture id="none" />
+            <texture id="wallTexture" length_s="1" length_t="1"/>
             <children>
                 <componentref id="wall1"/>
                 <componentref id="wall2"/>
@@ -156,7 +164,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="wall"/>
             </children>
@@ -170,7 +178,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="wall"/>
             </children>
@@ -184,7 +192,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="wall"/>
             </children>
@@ -199,7 +207,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="wall"/>
             </children>
@@ -214,7 +222,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="wall"/>
             </children>
@@ -229,7 +237,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="wall"/>
             </children>
@@ -241,7 +249,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="side1"/>
                 <componentref id="side2"/>
@@ -258,7 +266,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="cubeSide"/>
             </children>
@@ -271,7 +279,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="cubeSide"/>
             </children>
@@ -284,7 +292,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="cubeSide"/>
             </children>
@@ -297,7 +305,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="cubeSide"/>
             </children>
@@ -310,7 +318,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="cubeSide"/>
             </children>
@@ -323,7 +331,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <primitiveref id="cubeSide"/>
             </children>
@@ -333,9 +341,9 @@
                 <translate x="4" y = "-2" z="4" />
             </transformation>
             <materials>
-                <material id="cupRed" />
+                <material id="wood" />
             </materials>
-            <texture id="none" />
+            <texture id="woodTexture" length_s="1" length_t="1"/>
             <children>
                 <componentref id="tableLeg1"/>
                 <componentref id="tableLeg2"/>
@@ -351,7 +359,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="tableLeg"/>
             </children>
@@ -363,7 +371,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="tableLeg"/>
             </children>
@@ -375,7 +383,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="tableLeg"/>
             </children>
@@ -387,7 +395,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="tableLeg"/>
             </children>
@@ -399,7 +407,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
@@ -422,9 +430,9 @@
                 <rotate axis="y" angle="45" />
             </transformation>
             <materials>
-                <material id="cupRed" />
+                <material id="wood" />
             </materials>
-            <texture id="none" />
+            <texture id="woodTexture" />
             <children>
                 <componentref id="chairLeg1"/>
                 <componentref id="chairLeg2"/>
@@ -440,9 +448,9 @@
                 <rotate axis="y" angle="-105" />
             </transformation>
             <materials>
-                <material id="cupRed" />
+                <material id="wood" />
             </materials>
-            <texture id="none" />
+            <texture id="woodTexture" />
             <children>
                 <componentref id="chairLeg1"/>
                 <componentref id="chairLeg2"/>
@@ -460,7 +468,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
@@ -473,7 +481,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
@@ -486,7 +494,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
@@ -499,7 +507,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
@@ -511,7 +519,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
@@ -524,7 +532,7 @@
             <materials>
                 <material id="inherit" />
             </materials>
-            <texture id="none" />
+            <texture id="inherit" />
             <children>
                 <componentref id="cube"/>
             </children>
