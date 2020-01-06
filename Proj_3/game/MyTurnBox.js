@@ -2,7 +2,7 @@ class MyTurnBox extends CGFobject {
     constructor(scene){
         super(scene);
 
-        this.base = new MyPlane(this.scene, 0, 20, 20);
+        this.base = new MyPlane(this.scene, 0, 5, 5);
 
         // White square tiles material
         this.boxMat = new CGFappearance(this.scene);
