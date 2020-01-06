@@ -36,8 +36,6 @@ class MyTurnBox extends CGFobject {
         this.twoTexture = new CGFtexture(this.scene, 'scenes/images/two.jpg');
         this.undoTexture = new CGFtexture(this.scene, 'scenes/images/undo.png');
         this.undoMat.setTexture(this.undoTexture);
-
-        //this.roofMat.setTexture(this.roofTexture);
     }
 
     display(turns){

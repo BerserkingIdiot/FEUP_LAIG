@@ -249,11 +249,13 @@ class MyGameOrchestrator {
     }
     display(){
         if(this.gameEnded) {
-            // alert('Game Ended - Player ' + this.currPlayer + ' Wins, replaying game...');
             this.scene.gameEnd(this.currPlayer);
         }
         if(this.scene.graph.displayOk) {
+            this.scene.pushMatrix();
             this.themes.display();
+            this.scene.popMatrix();
+            
             this.board.display();
             if(this.animationPlaying){
                 this.animator.display();
@@ -263,15 +265,7 @@ class MyGameOrchestrator {
                 this.scene.clearPickRegistration();
             }
 
-            //this.scene.setDefaultAppearance();
-            //this.scene.pushMatrix();
-            //this.scene.translate(4, 2, -1);
-            //this.scene.registerForPick(66, this.undoButton);
-            //this.undoButton.display();
-            //this.scene.clearPickRegistration();
-            //this.scene.popMatrix();
             this.turnBox.display(this.currentState.turns);
-            
         }
     }
 }

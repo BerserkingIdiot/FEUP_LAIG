@@ -30,7 +30,7 @@
 
     <materials>
         <material id="demoMaterial" shininess="10">
-            <emission r="1.0" g="1.0" b="1.0" a="1.0" />
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
             <ambient r="1.0" g="1.0" b="1.0" a="1.0" />
             <diffuse r="0.0" g="0.0" b="0.0" a="1.0" />
             <specular r="0.0" g="0.0" b="0.0" a="1.0" />
@@ -41,12 +41,6 @@
             <diffuse r="0.3" g="0.3" b="0.3" a="1.0" />
             <specular r="0.3" g="0.3" b="0.3" a="1.0" />
         </material>
-        <material id="cupRed" shininess="10">
-            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
-            <ambient r="0.6" g="0.0" b="0.0" a="1.0" />
-            <diffuse r="0.7" g="0.0" b="0.0" a="1.0" />
-            <specular r="0.9" g="0.0" b="0.0" a="1.0" />
-        </material>
         <material id="wood" shininess="10">
             <emission r="0.0" g="0.0" b="0.0" a="1.0" />
             <ambient r="0.6" g="0.4" b="0.0" a="1.0" />
@@ -56,52 +50,14 @@
     </materials>
 
     <transformations>
-        <transformation id="demoTransform">
-            <scale x="5" y="1" z="1"/>
-            <rotate axis="x" angle="-45" />
-            <rotate axis="z" angle="-45" />
-        </transformation>
     </transformations>
 
     <animations>
     </animations>
 
     <primitives>
-        <primitive id="triangle">
-            <triangle x1="0" y1="3" z1="1" 
-                x2="0" y2="0" z2="1"
-                x3="3" y3="3" z3="1" />
-        </primitive>
-        <primitive id="sphere">
-            <sphere radius="0.5" slices="40" stacks="40" />
-        </primitive>
-        <primitive id="mediumCylinder">
-            <cylinder base="0.2" top="0.2" height="2" slices="20" stacks="20" />
-        </primitive>
-        <primitive id="bigCylinder">
-            <cylinder base="0.5" top="0.5" height="3.5" slices="20" stacks="20" />
-        </primitive>
-        <primitive id="plane">
-            <plane npartsU="10" npartsV="10" />
-        </primitive>
         <primitive id="wall">
             <plane npartsU="50" npartsV="50" />
-        </primitive>
-        <primitive id="patch">
-            <patch npointsU="3" npointsV="3" npartsU="20" npartsV="20" >
-                <controlpoint xx="-0.5" yy="5" zz="0" />
-                <controlpoint xx="0" yy="5" zz="0.5" />
-                <controlpoint xx="0.5" yy="5" zz="0" />
-                <controlpoint xx="-0.7" yy="3" zz="1" />
-                <controlpoint xx="0" yy="3" zz="1.5" />
-                <controlpoint xx="0.7" yy="3" zz="2" />
-                <controlpoint xx="-1" yy="1.5" zz="1.5" />
-                <controlpoint xx="0" yy="1.5" zz="3" />
-                <controlpoint xx="1" yy="1.5" zz="2" />
-            </patch>
-        </primitive>
-         <primitive id="cylinder2">
-            <cylinder2 base="3" top="5" height="5" slices="20" stacks="10" />
         </primitive>
         <primitive id="cubeSide">
             <rectangle x1="-0.5" y1="-0.5" x2="0.5" y2="0.5" />
@@ -416,7 +372,7 @@
             <materials>
                 <material id="wood" />
             </materials>
-            <texture id="woodTexture" />
+            <texture id="woodTexture" length_s="1" length_t="1"/>
             <children>
                 <componentref id="chairLeg1"/>
                 <componentref id="chairLeg2"/>
@@ -434,7 +390,7 @@
             <materials>
                 <material id="wood" />
             </materials>
-            <texture id="woodTexture" />
+            <texture id="woodTexture" length_s="1" length_t="1"/>
             <children>
                 <componentref id="chairLeg1"/>
                 <componentref id="chairLeg2"/>

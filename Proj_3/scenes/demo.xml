@@ -3,8 +3,8 @@
 
     <views>
         <perspective id="defaultCamera" near="0.1" far="500" angle="45">
-            <from x="10" y="10" z="10" />
-            <to x="1" y="0" z="0" />
+            <from x="4" y="30" z="4" />
+            <to x="3.999" y="0" z="4" />
         </perspective>
     </views>
 
@@ -24,6 +24,7 @@
     </lights>
 
     <textures>
+        <texture id="demoTexture" file="scenes/images/bank.jpg" />
     </textures>
 
     <materials>
@@ -42,17 +43,22 @@
     </animations>
 
     <primitives>
+        <primitive id="sphere">
+            <sphere radius="4" slices="40" stacks="40" />
+        </primitive>
     </primitives>
 
     <components>
         <component id="demoRoot">
             <transformation>
+                <translate x="4" y="20" z="4"/>
             </transformation>
             <materials>
                 <material id="demoMaterial" />
             </materials>
             <texture id="none"/>
             <children>
+                <primitiveref id="sphere"/>
             </children>
         </component>
     </components>
