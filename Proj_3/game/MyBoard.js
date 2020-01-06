@@ -56,7 +56,38 @@ class MyBoard extends CGFobject {
         this.baseMat.apply();
         this.scene.pushMatrix();
         this.scene.translate(4, -0.1, 4);
-        this.scene.scale(12, 1, 12);
+        this.scene.scale(12, 1, 10);
+        this.base.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(4, -0.6, 9);
+        this.scene.rotate(Math.PI/2, 1, 0, 0);
+        this.scene.scale(12, 1, 1);
+        this.base.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(10, -0.6, 4);
+        this.scene.rotate(Math.PI/2, 0, 1, 0);
+        this.scene.rotate(Math.PI/2, 1, 0, 0);
+        this.scene.scale(10, 1, 1);
+        this.base.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(4, -0.6, -1);
+        this.scene.rotate(Math.PI, 0, 1, 0);
+        this.scene.rotate(Math.PI/2, 1, 0, 0);
+        this.scene.scale(12, 1, 1);
+        this.base.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(-2, -0.6, 4);
+        this.scene.rotate(-Math.PI/2, 0, 1, 0);
+        this.scene.rotate(Math.PI/2, 1, 0, 0);
+        this.scene.scale(10, 1, 1);
         this.base.display();
         this.scene.popMatrix();
 

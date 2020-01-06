@@ -15,8 +15,9 @@ class MyGameOrchestrator {
         
         this.currentTurnState = new TurnStateMachine(this.scene);
         
-        this.undoButton = new MyRectangle(this.scene, 66, -1, 1, -1, 1);
+        //this.undoButton = new MyRectangle(this.scene, 66, -1, 1, -1, 1);
         this.undoing = false;
+        this.turnBox = new MyTurnBox(this.scene);
 
         this.finalPaddingMove = new MyGameMove(new MyGamePiece(this.scene, 0, 0, 'white'), new MyOctoTile(this.scene, 0, 0));
 
@@ -229,10 +230,12 @@ class MyGameOrchestrator {
                 }
                 
                 if(this.player1){
-                    this.pickablePiece = new MyGamePiece(this.scene, -1.5, 4, 'white');
+                    this.pickablePiece = new MyGamePiece(this.scene, -1.5, 3.5, 'white');
+                    this.dropInitiated = true;
                 }
                 else{
-                    this.pickablePiece = new MyGamePiece(this.scene, 8.5, 4, 'black');
+                    this.pickablePiece = new MyGamePiece(this.scene, 8.5, 3.5, 'black');
+                    this.dropInitiated = true;
                 }
                 this.currentTurnState.clean();
                 this.initTurnVars();
@@ -250,7 +253,7 @@ class MyGameOrchestrator {
             this.scene.gameEnd(this.currPlayer);
         }
         if(this.scene.graph.displayOk) {
-            // this.themes.display();
+            this.themes.display();
             this.board.display();
             if(this.animationPlaying){
                 this.animator.display();
@@ -260,13 +263,14 @@ class MyGameOrchestrator {
                 this.scene.clearPickRegistration();
             }
 
-            this.scene.setDefaultAppearance();
-            this.scene.pushMatrix();
-            this.scene.translate(4, 2, -1);
-            this.scene.registerForPick(66, this.undoButton);
-            this.undoButton.display();
-            this.scene.clearPickRegistration();
-            this.scene.popMatrix();
+            //this.scene.setDefaultAppearance();
+            //this.scene.pushMatrix();
+            //this.scene.translate(4, 2, -1);
+            //this.scene.registerForPick(66, this.undoButton);
+            //this.undoButton.display();
+            //this.scene.clearPickRegistration();
+            //this.scene.popMatrix();
+            this.turnBox.display(this.currentState.turns);
             
         }
     }

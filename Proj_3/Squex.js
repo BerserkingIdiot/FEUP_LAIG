@@ -3,7 +3,7 @@ class Squex {
         this.app = new CGFapplication(document.body);
         this.app.init();
 
-        this.startGame(0, 0);
+        this.startMenu();
     }
     startMenu() {
         this.interface = new MyInterface(false);

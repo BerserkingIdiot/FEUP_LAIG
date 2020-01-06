@@ -15,7 +15,7 @@ serialInclude(['../lib/CGF.js', 'game/GameScene.js', 'MySceneGraph.js', 'MyInter
         'MyComponent.js', 'animations/MyAnimation.js', 'animations/MyKeyframe.js', 'animations/MyKeyframeAnimation.js', 'animations/MyArcAnimation.js', 'animations/MyDropAnimation.js', 'animations/MyGrowAnimation.js', 'primitives/MyPatch.js', 'primitives/MyPlane.js', 'primitives/MyCylinderNURB.js',
         'game/MyGameOverview.js', 'game/MyGamePiece.js', 'game/MyGameMove.js', 'game/MyGameOrchestrator.js', 'game/MyOctoTile.js', 'game/MySquareTile.js', 'game/MyBoard.js', 'game/MyGameScenes.js', 'game/MyGameState.js', 'game/MyGameAnimator.js',
         'game/MyGameSequence.js', 'prolog/Server.js', 'game/TurnStateMachine.js', 'game/MySquarePiece.js', 'game/MyReplayOrchestrator.js', 'main_menu/MyMainMenu.js' , 'main_menu/MainMenuScene.js', 'main_menu/MenuStateMachine.js', 
-        'end_menu/MyEndMenu.js', 'end_menu/EndMenuScene.js', 'Squex.js',
+        'end_menu/MyEndMenu.js', 'end_menu/EndMenuScene.js', 'game/MyTurnBox.js', 'Squex.js',
 
 main=function()
 {
