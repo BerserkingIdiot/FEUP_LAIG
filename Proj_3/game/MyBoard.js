@@ -10,7 +10,7 @@ class MyBoard extends CGFobject {
         this.initMaterials();
         
         this.initTiles();
-        this.base = new MyPlane(this.scene, 0, 20, 20);
+        this.base = new MyPlane(this.scene, 0, 10, 10);
     }
     initMaterials() {
         // White square tiles material
